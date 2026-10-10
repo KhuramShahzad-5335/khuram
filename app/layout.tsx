@@ -4,6 +4,7 @@ import { Shell } from "@/components/shell";
 import { siteUrl } from "@/lib/content";
 
 import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -35,6 +36,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <Analytics />
+        <SpeedInsights />
         <a href="#main" className="skip-link">
           Skip to content
         </a>
