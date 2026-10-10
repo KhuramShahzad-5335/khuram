@@ -1,0 +1,5 @@
+'use client';
+import {useEffect,useState} from 'react';
+import {Shuffle} from 'lucide-react';
+import {generatePalettes,type PaletteColors} from '@/lib/palettes';
+export function PaletteGallery({onApply}:{onApply:(colors:PaletteColors)=>void}){const [palettes,setPalettes]=useState<ReturnType<typeof generatePalettes>>([]),[selected,setSelected]=useState<number|null>(null);useEffect(()=>setPalettes(generatePalettes()),[]);return <div className="palette-gallery"><div className="palette-gallery-heading"><span>Freshly mixed palettes</span><button onClick={()=>{setPalettes(generatePalettes());setSelected(null)}} aria-label="Generate new palettes"><Shuffle size={13}/> Shuffle</button></div><div className="generated-palettes">{palettes.map((p,i)=><button key={i} onClick={()=>{onApply(p.colors);setSelected(i)}} aria-label={'Apply generated palette '+(i+1)} aria-pressed={selected===i} style={{background:p.colors.background,color:p.colors.text}}><span className="palette-swatches">{Object.values(p.colors).map((color,j)=><i key={j} style={{background:color}}/>)}</span><span>{p.name}<small>{selected===i?'Applied':'Try it →'}</small></span></button>)}</div></div>}
