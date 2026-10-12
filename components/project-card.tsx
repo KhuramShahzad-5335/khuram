@@ -1,5 +1,106 @@
-import Link from 'next/link';
-import {ArrowUpRight} from 'lucide-react';
-import type {Project} from '@/lib/content';
-export function ProjectVisual({project}:{project:Project}){return <div className={'project-visual '+project.visual} aria-label={project.name+' conceptual preview'}><div className="preview-top"><span/><span/><span/><code>{project.slug}.preview</code></div>{project.visual==='academy'?<div className="academy-preview"><span className="arabic" lang="ar">القرآن</span><h3>Learning with purpose.</h3><div className="preview-lines"/><span className="preview-pill">Explore the academy →</span></div>:project.visual==='agency'?<div className="agency-preview"><span>HASHTAG WEB®</span><h3>WE MAKE<br/><em>IDEAS</em> CLICK.</h3><div className="agency-mini">DESIGN / DEVELOP / DELIVER</div></div>:project.visual==='attendance'?<div className="attendance-preview"><aside>nfc<span>Dashboard</span><span>Students</span><span>Attendance</span></aside><div><strong>Attendance overview</strong><div className="stat-blocks"><i/><i/><i/></div><div className="chart-bars">{[40,70,55,88,64,95,75,84].map((h,i)=><i key={i} style={{height:h+'%'}}/>)}</div><div className="preview-lines"/></div></div>:project.visual==='documents'?<div className="document-preview"><div className="doc-sheet"><span>DOCUMENT_001</span><h3>A little input.<br/>A useful output.</h3><div className="preview-lines"/><div className="preview-lines"/><small>Python + Flask + AI</small></div><span className="document-star">✳</span></div>:<div className="minimal-preview"><span>&lt; /&gt;</span><h3>{project.name}</h3></div>}<small className="concept-label">ILLUSTRATIVE PREVIEW</small></div>}
-export function ProjectCard({project,index=0}:{project:Project;index?:number}){return <Link href={'/projects/'+project.slug+'/'} className="project-card"><ProjectVisual project={project}/><div className="project-card-meta"><span className="eyebrow">{project.category} / {String(index+1).padStart(2,'0')}</span><ArrowUpRight size={20}/></div><h3>{project.name}</h3><p>{project.description}</p><div className="tags">{project.stack.slice(0,3).map(s=><span key={s}>{s}</span>)}</div></Link>}
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
+import type { Project } from "@/lib/content";
+export function ProjectVisual({ project }: { project: Project }) {
+  return (
+    <div
+      className={"project-visual " + project.visual}
+      aria-label={project.name + " conceptual preview"}
+    >
+      <div className="preview-top">
+        <span />
+        <span />
+        <span />
+        <code>{project.slug}.preview</code>
+      </div>
+      {project.visual === "academy" ? (
+        <div className="academy-preview">
+          <span className="arabic" lang="ar">
+            القرآن
+          </span>
+          <h3>Learning with purpose.</h3>
+          <div className="preview-lines" />
+          <span className="preview-pill">Explore the academy →</span>
+        </div>
+      ) : project.visual === "agency" ? (
+        <div className="agency-preview">
+          <span>HASHTAG WEB®</span>
+          <h3>
+            WE MAKE
+            <br />
+            <em>IDEAS</em> CLICK.
+          </h3>
+          <div className="agency-mini">DESIGN / DEVELOP / DELIVER</div>
+        </div>
+      ) : project.visual === "attendance" ? (
+        <div className="attendance-preview">
+          <aside>
+            nfc<span>Dashboard</span>
+            <span>Students</span>
+            <span>Attendance</span>
+          </aside>
+          <div>
+            <strong>Attendance overview</strong>
+            <div className="stat-blocks">
+              <i />
+              <i />
+              <i />
+            </div>
+            <div className="chart-bars">
+              {[40, 70, 55, 88, 64, 95, 75, 84].map((h, i) => (
+                <i key={i} style={{ height: h + "%" }} />
+              ))}
+            </div>
+            <div className="preview-lines" />
+          </div>
+        </div>
+      ) : project.visual === "documents" ? (
+        <div className="document-preview">
+          <div className="doc-sheet">
+            <span>DOCUMENT_001</span>
+            <h3>
+              A little input.
+              <br />A useful output.
+            </h3>
+            <div className="preview-lines" />
+            <div className="preview-lines" />
+            <small>Python + Flask + AI</small>
+          </div>
+          <span className="document-star">✳</span>
+        </div>
+      ) : (
+        <div className="minimal-preview">
+          <span>&lt; /&gt;</span>
+          <h3>{project.name}</h3>
+        </div>
+      )}
+      <small className="concept-label">ILLUSTRATIVE PREVIEW</small>
+    </div>
+  );
+}
+export function ProjectCard({
+  project,
+  index = 0,
+}: {
+  project: Project;
+  index?: number;
+}) {
+  return (
+    <Link href={"/projects/" + project.slug + "/"} className="project-card">
+      <ProjectVisual project={project} />
+      <div className="project-card-meta">
+        <span className="eyebrow">
+          {project.category} / {String(index + 1).padStart(2, "0")}
+        </span>
+        <ArrowUpRight size={20} />
+      </div>
+      <h3>{project.name}</h3>
+      <p>{project.description}</p>
+      <div className="tags">
+        {project.stack.slice(0, 3).map((s) => (
+          <span key={s}>{s}</span>
+        ))}
+      </div>
+    </Link>
+  );
+}

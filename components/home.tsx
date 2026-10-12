@@ -1,21 +1,19 @@
 "use client";
 import Link from "next/link";
-import dynamic from "next/dynamic";
+import { ScenePreview } from "./scene-preview";
 import { useEffect, useRef } from "react";
-import { motion, useReducedMotion } from "framer-motion";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useReducedMotion } from "framer-motion";
 import {
   ArrowDown,
   ArrowUpRight,
   ArrowRight,
-  Code2,
   Terminal,
   Copy,
   Check,
 } from "lucide-react";
 import { useState } from "react";
 import { projects, skillGroups } from "@/lib/content";
+import { site } from "@/lib/site";
 import {
   Services,
   Process,
@@ -24,65 +22,90 @@ import {
   FAQ,
 } from "./extra-sections";
 import { BlogCard } from "./blog-card";
-import { posts } from "@/lib/posts";
+import type { PostSummary } from "@/lib/blog";
+import { SectionMotif } from "./section-motif";
 import { ProjectCard } from "./project-card";
-const Orbit = dynamic(() => import("./orbit"), {
-  ssr: false,
-  loading: () => (
-    <div className="orbit">
-      <div className="orbit-fallback">◇</div>
-    </div>
-  ),
-});
-export function Home() {
+export function Home({ posts }: { posts: PostSummary[] }) {
   const root = useRef<HTMLDivElement>(null),
     reduced = useReducedMotion(),
     [copied, setCopied] = useState(false);
+  const copyTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
+  useEffect(() => () => clearTimeout(copyTimer.current), []);
   useEffect(() => {
     if (reduced) return;
-    gsap.registerPlugin(ScrollTrigger);
-    const ctx = gsap.context(() => {
-      gsap.utils
-        .toArray<HTMLElement>("[data-reveal]")
-        .forEach((el) =>
-          gsap.from(el, {
-            y: 24,
-            opacity: 0,
-            duration: 0.7,
-            ease: "power2.out",
-            scrollTrigger: { trigger: el, start: "top 92%", once: true },
-          }),
-        );
-    }, root);
-    return () => ctx.revert();
+    let disposed = false;
+    let revert: (() => void) | undefined;
+    let removeRevealListener: (() => void) | undefined;
+    void Promise.all([import("gsap"), import("gsap/ScrollTrigger")])
+      .then(([{ gsap }, { ScrollTrigger }]) => {
+        if (disposed) return;
+        gsap.registerPlugin(ScrollTrigger);
+        const startReveals = () => {
+          if (disposed || revert) return;
+          const context = gsap.context(() => {
+            gsap.utils
+              .toArray<HTMLElement>("[data-reveal]")
+              .forEach((element) => {
+                gsap.from(element, {
+                  y: 24,
+                  opacity: 0,
+                  duration: 0.7,
+                  ease: "power2.out",
+                  scrollTrigger: {
+                    trigger: element,
+                    start: "top 92%",
+                    once: true,
+                  },
+                });
+              });
+          }, root);
+          revert = () => context.revert();
+        };
+        const loader = document.querySelector(".tech-loader");
+        if (!loader || loader.classList.contains("tech-loader-entering"))
+          startReveals();
+        else
+          window.addEventListener("portfolio:intro-reveal", startReveals, {
+            once: true,
+          });
+        removeRevealListener = () =>
+          window.removeEventListener("portfolio:intro-reveal", startReveals);
+      })
+      .catch(() => {
+        /* Content stays visible if the decorative animation cannot load. */
+      });
+    return () => {
+      disposed = true;
+      removeRevealListener?.();
+      revert?.();
+    };
   }, [reduced]);
   async function copy() {
     try {
-      await navigator.clipboard.writeText("krshahzad7@gmail.com");
+      await navigator.clipboard.writeText(site.email);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      clearTimeout(copyTimer.current);
+      copyTimer.current = setTimeout(() => setCopied(false), 2000);
     } catch {
-      window.location.href = "mailto:krshahzad7@gmail.com";
+      window.location.href = `mailto:${site.email}`;
     }
   }
   return (
     <main id="main" ref={root}>
       <section className="hero">
-        <div className="hero-copy">
+        <div className="hero-copy" data-reveal>
           <div className="status">
             <span /> SELF-EMPLOYED · LAHORE, PK
           </div>
-          <motion.h1
-            initial={false}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.65 }}
-          >
+          <h1>
             Thoughtful code.
             <br />
-            Useful things.
+            <span className="accent">Useful things.</span>
             <br />
             <span className="muted">A little personality.</span>
-          </motion.h1>
+          </h1>
           <p>
             I’m Khuram, a software developer turning ideas into
             <br className="desktop-break" /> web experiences that feel good to
@@ -102,7 +125,7 @@ export function Home() {
           </div>
         </div>
         <div className="hero-art">
-          <Orbit />
+          <ScenePreview />
           <div className="object-caption">
             <span className="accent">&lt; curiosity /&gt;</span>
             <span>always in development</span>
@@ -151,7 +174,7 @@ export function Home() {
             right, and an interface that doesn’t need a manual. I’m also
             exploring computer vision and applied AI.
           </p>
-          <a className="text-link" href="https://github.com/KhuramShahzad-5335">
+          <a className="text-link" href={site.github}>
             Peek at my GitHub <ArrowUpRight size={16} />
           </a>
         </div>
@@ -184,7 +207,7 @@ export function Home() {
               The stack. <span className="muted">Not the whole story.</span>
             </h2>
           </div>
-          <Code2 size={24} className="muted" />
+          <SectionMotif kind="tiles" />
         </div>
         <div className="skills-grid">
           {skillGroups.map((g) => (
@@ -211,13 +234,14 @@ export function Home() {
             Development notes, small discoveries, and the occasional rabbit
             hole.
             <br />
-            Three starting notes. Plenty of room for the next rabbit hole.
+            Plenty of room for the next rabbit hole.
           </p>
           <Link className="text-link" href="/blog/">
             Open the notebook <ArrowUpRight size={16} />
           </Link>
         </div>
         <div className="notebook-doodle">
+          <SectionMotif kind="steps" />
           <span>// notes to self</span>
           <strong>
             build.
@@ -232,7 +256,9 @@ export function Home() {
       <section className="section blog-home">
         <div className="blog-card-grid">
           {posts.map((post) => (
-            <BlogCard key={post.slug} post={post} />
+            <div key={post.slug} data-reveal>
+              <BlogCard post={post} />
+            </div>
           ))}
         </div>
       </section>
@@ -281,8 +307,8 @@ export function Home() {
           open.
         </p>
         <div className="email-line">
-          <a href="mailto:krshahzad7@gmail.com">
-            krshahzad7@gmail.com <ArrowUpRight size={24} />
+          <a href={`mailto:${site.email}`}>
+            {site.email} <ArrowUpRight size={24} />
           </a>
           <button
             className="icon-button"
@@ -296,10 +322,10 @@ export function Home() {
           </span>
         </div>
         <div className="contact-options">
-          <a href="https://wa.me/923471713760">
+          <a href={site.whatsapp}>
             WhatsApp <ArrowUpRight size={14} />
           </a>
-          <a href="tel:+923471713760">+92 347 1713760</a>
+          <a href={`tel:${site.phone}`}>{site.phoneLabel}</a>
           <span>Lahore, Pakistan · UTC+5</span>
         </div>
       </section>

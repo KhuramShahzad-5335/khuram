@@ -1,5 +1,7 @@
 # GitHub Project Inventory
 
+> Historical planning reference. The site is now implemented. Start with [README](../README.md) and the current architecture, design, content, and deployment guides for maintenance. Current owner instructions take precedence.
+
 Reviewed 10 October 2026. Source: https://github.com/KhuramShahzad-5335
 
 The public API returned 39 repositories: 22 non-fork repositories and 17 forks. Repository ownership and fork status do not establish individual authorship. Dependency manifests establish declared dependencies, not production usage or mastery. Live URLs are repository metadata and have not been availability tested. No repository code was executed.

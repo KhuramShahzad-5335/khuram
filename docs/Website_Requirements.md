@@ -1,5 +1,7 @@
 # Khuram Shahzad Portfolio Website Requirements
 
+> Historical planning reference. The site is now implemented. Start with [README](../README.md) and the current architecture, design, content, and deployment guides for maintenance. Current owner instructions take precedence.
+
 Version: 0.8
 Updated: 10 October 2026  
 Status: Living requirements document with further ideas and references to follow

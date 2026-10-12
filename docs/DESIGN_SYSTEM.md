@@ -1,0 +1,70 @@
+# Design system and confirmed requirements
+
+## Direction and audience
+
+A calm, capable developer portfolio with understated humor for clients, developers, and general visitors. Conventional navigation and clear action labels come first. Monospace labels, terminal hints, grids, playful interactions, and a hero 3D sculpture and box-based section artwork provide the geeky character. A game-style interface was withdrawn by the owner; do not add game navigation, scroll hijacking, or mandatory full-screen panels.
+
+The homepage combines scrollable sections with separate project, blog, and experiment routes. The default Terminal / Vercel palette is monochrome: near-black surfaces, white accents and gray secondary artwork. Visitors can select exactly two presets (Terminal / Vercel and Paper), generate four fresh palettes, edit individual colors, and reset. Preferences are local to the browser.
+
+## Tokens and visual rules
+
+| Token          | Default           | Purpose                             |
+| -------------- | ----------------- | ----------------------------------- |
+| `--background` | `#0a0a0a`         | Page canvas                         |
+| `--surface`    | `#151515`         | Panels and controls                 |
+| `--text`       | `#f5f5f5`         | Primary readable content            |
+| `--accent`     | `#ededed`         | Emphasis, geometry and interactions |
+| `--muted`      | `#a3a3a3`         | Secondary copy                      |
+| `--border`     | Text mixed at 13% | Shared subtle borders               |
+
+Defaults are in `lib/palettes.ts` and the first-paint CSS token block. Update both together when changing the default. Theme-aware Tailwind utilities use variables such as `text-(--muted)` and `border-(--border)`. The palette editor deliberately retains neutral fixed colors so visitors can recover from an unreadable custom theme.
+
+Use local font pairings: Clean / Sans, Editorial / Serif, and Developer / Mono. Heading and body variables change live and persist separately from color preferences; no external font requests are needed. Content is generally limited to 1440px with 6% desktop gutters and 5% smaller-screen gutters. Existing layout transitions use 1000px and 700px boundaries. Headings use tight tracking and responsive sizes; body copy must remain readable. Corners are subtle (roughly 5–12px), surfaces restrained, and borders thin. Avoid unnecessary shadows and competing accents.
+
+## Styling ownership
+
+Component details use Tailwind in the header, footer, blog cards, and generated palette controls. General typography, shared brand/button/tag/section patterns and established responsive layouts live in `app/globals.css` and `styles/sections.css`. Custom illustration and scene geometry stays in CSS. The tunnel's coordinated animation lives in `styles/tech-loader.css`. Shared CSS uses the components cascade layer so Tailwind utilities can override it without extra specificity. Extend shared patterns when multiple components need them; use utilities for isolated details and remove superseded declarations.
+
+## Motion contract
+
+The loader runs on every full reload, independent of session storage. It uses local technology SVG masks and five alternating tunnel rings. Icons are 33px, 25% smaller than their original 44px size.
+
+One `--intro-beat` of 0.72 seconds controls the rhythm: flight is five beats, rotation twenty beats, and each fade two beats. The minimum active intro is four beats; a bounded readiness timer prevents waiting indefinitely. Keep rotation continuous through the loader fade. **The loader must reach zero opacity before the site's fade-in begins.** The content is inert while the sequence runs. Do not reintroduce crossfading, session-only display, blur transitions, or change timing independently.
+
+Reduced-motion visitors bypass the intro and receive static 3D alternatives. The server-rendered site stays readable without JavaScript. Offscreen and hidden-tab 3D scenes should not run continuously. Scroll reveals are subtle and must preserve readable content if animation code cannot load. Never uncomment the owner's center/skip UI or testimonial section without an explicit request.
+
+## Accessible interactions
+
+Use semantic links for navigation, buttons for actions, descriptive accessible names, visible keyboard focus, and appropriate heading order. The mobile menu identifies its controlled navigation and closes on link selection. Process tabs use roving tab focus and arrow/Home/End navigation. The palette dialog contains focus, supports Escape/backdrop close, makes background content inert, locks body scroll, and restores focus on close.
+
+Do not encode meaning solely through color. Warn when custom body-text contrast is below 4.5:1, retain a readable reset surface, and review the muted/accent contrast too. A custom palette warning is not a guarantee that every color combination is accessible. Images need dimensions and useful alt text; decorative geometry should be hidden from assistive technology where it conveys no information.
+
+The loader is present in the initial server HTML, preventing a content flash before hydration. A noscript override keeps reading available without JavaScript. Scroll reveals begin at `portfolio:intro-reveal`; 3D waits until `portfolio:intro-complete`.
+
+Shuffle generates four new previews and immediately applies the currently selected mood (Dark initially). The generator repairs primary text to at least 7:1 and muted/accent colors to at least 4.5:1 against both background and surface. Custom edits retain contrast warnings; these token checks do not certify every rendered interaction.
+
+Generated moods are Dark, Light, Funky, and Extreme. Dark uses a near-black neutral canvas; Light uses white and pale neutral surfaces. Funky uses colorful pastel surfaces with vivid primary and secondary colors; Extreme uses near-black surfaces and saturated complementary colors. A twelve-step hue wheel with random shade/saturation variation visits every hue family, including red, orange and yellow, before repeating.
+
+`--primary` and `--secondary` are vivid paint colors for CTAs, conceptual previews, shapes and 3D materials. `--on-primary` and `--on-secondary` choose black or white ink at runtime for filled-control readability. `--accent` is separately repaired for readable small text. This separation keeps a bright yellow fill from being turned into olive just to serve as text on a white page. Reading areas retain `--background`, `--surface`, `--text`, and `--muted`. Older five-color saved palettes migrate to the new paint roles.
+
+The editor retains neutral fixed tokens and uses a transparent backdrop so desktop visitors can see the site change. SectionMotif SVGs provide inexpensive dimensional shapes; the hero WebGL scene inherits live primary/secondary colors. All other sections use SVG box motifs or BoxDiagram architecture illustrations; do not restore non-hero WebGL models. Preserve viewport, visibility and reduced-motion gating.
+
+BoxDiagram replaces the former service and playground 3D models. It illustrates UI → API → Data; the playground lets visitors select a layer and change Flow / Layers / Grid layouts. Its boxes, controls and explanatory text are palette-aware, and its content remains available without WebGL.
+
+On screens up to 700px, center the hero artwork in a maximum 420px column and use a 320–380px frame height with 20px vertical and 16px horizontal padding. The entire website assembly scale with the available canvas width (up to 1.34 scale from about 389px); keep labels inset and the fallback container the same height. Canvas resizing updates the sculpture without adding another render loop.
+
+The monochrome preset migrates an exact saved copy of the former green Terminal / Vercel preset to the new values. Edited custom palettes retain their colors. Desktop/tablet frames include 16px padding while preserving their previous drawing-area heights.
+
+The hero sculpture is an exploded miniature website: wireframe skeleton, browser UI, detached palette swatches, branching logic module, and cylindrical database records. Its layers gently converge and separate; primary, secondary, accent, surface, and text tokens repaint the assembly. Rotation rocks slowly to keep the website recognizable, with drag exploration retained. No remote models or fonts are required.
+
+Dragging the hero separates the assembly along its local layout and depth planes; releasing smoothly rebuilds it with frame-rate-independent damping. Keep the expanded geometry inside the responsive frame.
+
+The hero WebGL stage extends past its decorative grid frame (36px vertically and 24px horizontally on desktop, 28px/10px on mobile). The grid is an inset visual boundary, not a clipping container. Keep the surrounding hero gutter clear and prevent document overflow; preserve the larger stage when editing the assembly.
+
+The current assembly renders at 75% of the responsive base scale, retaining the oversized canvas for disassembly clearance.
+
+The assembly is a finished room-like shell with side walls, floor, ceiling, and backplane. Logic modules and the database shelf are children of their wall groups, so they remain mounted during disassembly. The skeleton uses clean perimeter rails and an orthogonal grid instead of triangulated wireframe faces.
+
+Small INTERFACE, COLOR, LOGIC/JS, DATA, and API labels identify the miniature components. Labels use locally drawn canvas textures, repaint with the palette, and dispose their textures on replacement/unmount; no remote font files. The interface includes code markup, page content, cards, a CTA, and a pixel arrow pointer.
+
+Labels are mounted contrast-safe nameplates with rounded backing and a fine keyline, rather than floating text. Major blocks use inexpensive three-segment rounded bevels; small traces remain sharp. The swatches share a tray and label tab, and wall edges have contrasting trim.

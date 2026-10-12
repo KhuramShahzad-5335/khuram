@@ -1,33 +1,86 @@
-# Khuram Shahzad Portfolio
+# Khuram Shahzad — Portfolio & Notebook
 
-The app lives at this repository's root. This is the folder to open, edit, and publish to GitHub. The older Desktop copy is a backup. Planning documents are in `docs/`; previous staging files and research are preserved locally in the ignored `.local-archive/` folder.
+A static portfolio for a self-employed software developer in Lahore. Built for clients, fellow developers, and curious visitors: clear navigation, practical project stories, a dark visual system, editable palettes and local font pairings, and a little developer humor.
 
-For step-by-step GitHub and Vercel setup, see [the deployment guide](docs/DEPLOYMENT.md). Vercel's Root Directory should be the repository root (`./`).
+**Live site:** [khuramshahzad.dev](https://www.khuramshahzad.dev/) · [GitHub](https://github.com/KhuramShahzad-5335) · [LinkedIn](https://www.linkedin.com/in/khuram-shahzad-0814b1230/)
 
-Static Next.js portfolio with TypeScript, Tailwind CSS, GSAP, Framer Motion, and React Three Fiber. No custom backend, database, accounts, or submission service.
+## Start here
 
-## Local development
+Use Node.js **22.13 or later** and npm. The app is at the repository root; there is no nested `portfolio/` app.
 
-Run `npm ci`, then `npm run dev`. Open http://127.0.0.1:3000.
+```sh
+npm ci
+npm run dev
+```
 
-Run `npm run typecheck` and `npm run build` to verify. The static export is generated in `out/`. Run `npm start` after building to preview that export locally.
+Open http://127.0.0.1:3000. For a production-style preview:
 
-## Content
+```sh
+npm run check:config
+npm run typecheck
+npm run format:check
+npm run build
+npm run check:site
+npm start
+```
 
-- Projects and experiments: `lib/content.ts`; expanded case studies: `lib/journeys.ts`
-- Homepage and sample testimonials: `components/home.tsx`
-- Blog articles: `lib/posts.ts`; static routes in `app/blog/`. Add a post record with sections and images, then rebuild. Word counts include the introduction, section headings, and paragraphs; code, captions, and further-reading labels are excluded. Reading time is estimated at 200 words per minute.
-- Palette: `components/shell.tsx`, `components/palette-gallery.tsx`, and `lib/palettes.ts`; named themes, shuffled generated previews, and browser-local saving.
+`npm start` serves the generated `out/` directory locally. It requires a successful build. `npm run check` runs all release checks in sequence. `npm run format` formats maintained source and documentation.
 
-Conceptual project previews are labeled illustrations, not real screenshots. Testimonials are visibly fictional placeholders. Replace these and revise draft project narratives before treating them as verified endorsements or complete case studies.
+## Stack and architecture
 
-## Before publishing on Vercel
+Next.js App Router, React, TypeScript, Tailwind CSS 4, GSAP, Framer Motion, Three.js with React Three Fiber/Drei, and Vercel Analytics/Speed Insights. Versions are recorded in `package.json`; reproducible installs use `package-lock.json`.
 
-Set `NEXT_PUBLIC_SITE_URL` to the final HTTPS domain and rebuild. Without it, pages deliberately use noindex and robots disallow indexing; no example-domain canonical should be published. Set the Vercel framework to Next.js. No GitHub or Vercel account changes have been made.
+The site uses `output: "export"`. Routes, metadata, articles, RSS, robots, and sitemap are generated at build time. There is no custom backend, database, account system, CMS, or contact submission service. Contact actions open email, telephone, WhatsApp, or social links.
 
-Review real mobile rendering, reduced motion, color contrast, contact links, and WebGL fallback. A PNG social preview is included; verify it on the final domain before launch. Domain, source publishing, and Vercel setup are handled by the owner.
+```text
+app/                  Route composition, metadata, global CSS, static feed
+components/           Site shell, interactive features, reusable presentation
+lib/                  Typed content, article helpers, palettes, SEO settings
+styles/               Shared section patterns and custom loader animation
+public/               Local illustrations, social images, SVG technology icons
+scripts/              Static preview, export audit, blog artwork generation
+docs/                Design, architecture, content and deployment guides
+```
 
+## Where to make changes
 
+| Change                                             | Source                                                        |
+| -------------------------------------------------- | ------------------------------------------------------------- |
+| Public identity, canonical domain, indexing rules  | `lib/site.ts`, `.env.example`                                 |
+| Project/experiment cards, technologies             | `lib/content.ts`                                              |
+| Project case studies                               | `lib/journeys.ts`                                             |
+| Articles and publication dates                     | `lib/posts.ts`                                                |
+| Word count, reading time, card summaries           | `lib/blog.ts`                                                 |
+| Home copy, contact details, commented testimonials | `components/home.tsx`                                         |
+| Header/footer                                      | `components/site-header.tsx`, `components/site-footer.tsx`    |
+| Theme colors and generators                        | `lib/palettes.ts`, `components/palette-editor.tsx`            |
+| Loader timing and tunnel                           | `components/tech-tunnel-loader.tsx`, `styles/tech-loader.css` |
 
-Additional sections and interactive controls live in components/extra-sections.tsx. Section 3D models are generated geometry in components/section-scene.tsx and mount near the viewport, with reduced-motion and WebGL fallbacks. Blog artwork is local original SVG with PNG sharing variants in public/images.
+Full articles stay outside the homepage browser bundle. The hero Three.js scene waits for intro completion and loads near its viewport and stops when offscreen or the browser tab is hidden. Reduced-motion visitors get static alternatives. Theme settings are stored only in the visitor's browser, with graceful fallback when storage is blocked.
 
+## Documentation
+
+- [Architecture and contributor workflow](docs/ARCHITECTURE.md)
+- [Design system and interaction requirements](docs/DESIGN_SYSTEM.md)
+- [Publishing articles and maintaining content](docs/CONTENT.md)
+- [Deployment, indexing, and launch checks](docs/DEPLOYMENT.md)
+- [Release validation and limitations](docs/VALIDATION.md)
+- [Agent handoff instructions](AGENTS.md)
+
+The original requirements, content drafts, and repository inventory in `docs/` are historical planning references. The implementation guides above describe the current site and take precedence over outdated proposals. Owner instructions take precedence over both.
+
+## Publishing and Google indexing
+
+Set `NEXT_PUBLIC_SITE_URL` to the final public HTTPS origin in Vercel's **Production** environment, then rebuild. Missing configuration deliberately generates `noindex`; Vercel Preview builds also stay `noindex`. Optional Google/Bing HTML verification tokens are documented in `.env.example`.
+
+The export includes canonical links, social previews, structured data, `robots.txt`, `sitemap.xml`, and `feed.xml`. Follow the [deployment guide](docs/DEPLOYMENT.md) to verify the live domain and submit the sitemap to search engines. Crawl readiness does not guarantee ranking or an indexing date.
+
+## Content accuracy and performance
+
+Project artwork is clearly labeled as illustrative. Some case studies are editable drafts with unverified details. Testimonials remain commented out; do not publish invented endorsements, claims, metrics, or contributions. Replace placeholders with evidence before presenting them as final work.
+
+The intro deliberately runs on every reload and finishes fading out before the site fades in. Its timing creates a visible-content delay and affects performance scores. Preserve that requirement unless the owner changes it; measure production pages rather than claiming guaranteed 100/100 results.
+
+Keep private documents, resumes, credentials, generated build folders, and temporary QA artifacts out of this repository. Source assets and maintained documentation belong here. Review Vercel analytics privacy requirements for the intended audience before adding further tracking.
+
+The GitHub quality workflow runs the same release checks on pushes and pull requests. Palette checks sample generated colors against both page and panel backgrounds.

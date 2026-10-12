@@ -1,5 +1,7 @@
 # Khuram Shahzad Website Content Drafts
 
+> Historical planning reference. The site is now implemented. Start with [README](../README.md) and the current architecture, design, content, and deployment guides for maintenance. Current owner instructions take precedence.
+
 Updated: 10 October 2026
 
 These are editable starting points for the static portfolio. Project facts come from the supplied resumes and the GitHub inventory. Suggested narrative angles are editorial scaffolding, not verified accounts of decisions or challenges. Replace them with Khuram's experience before presenting them as personal history. Entries with limited evidence remain neutral. All testimonials below are fictional samples.

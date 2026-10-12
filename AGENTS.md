@@ -7,3 +7,16 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## Portfolio handoff
+
+Read `README.md`, `docs/ARCHITECTURE.md`, `docs/DESIGN_SYSTEM.md`, `docs/CONTENT.md`, and `docs/DEPLOYMENT.md` before changes. They describe the current implementation; older planning documents are historical. Follow explicit current owner instructions first.
+
+- Preserve commented-out JSX. Do not restore the loader center/skip controls or testimonials during cleanup.
+- Preserve reload intro behavior: loader fully fades out, then content fades in; coherent timing, reduced-motion bypass, no session gating.
+- Keep conventional navigation, static export, readable server HTML, and the dark theme with visitor palette customization. No scroll hijacking, game navigation, backend, or CMS unless requested.
+- Prefer Server Components. Keep full article bodies out of client bundles; pass summaries. Gate 3D work by viewport/tab visibility and reduced motion.
+- Use Tailwind for isolated component styling; CSS for shared patterns, tokens, typography, illustrations, and coordinated animation. Remove superseded styling rather than layering conflicting rules.
+- Keep project contributions and personal details factual. Retain uncertainty labels, illustrative preview labels, and intentional employment overlaps. Never invent metrics or testimonials.
+- Do not edit generated output as source. Keep personal deliverables and temporary QA artifacts outside the repository.
+- Run `npm run check` and relevant mobile/keyboard/reduced-motion/loader checks. Report limits honestly; do not claim guaranteed 100/100 scores, rankings, or indexing.

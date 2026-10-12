@@ -1,66 +1,41 @@
-# Publish to GitHub and Vercel
+# Deployment and indexing
 
-## Use this repository
+## Vercel configuration
 
-The complete app is now at the repository root:
+Publish the repository root to GitHub and import it into Vercel. The owner manages those accounts. Select the Next.js framework preset, root directory `./`, install command `npm ci`, and build command `npm run build`. Let the framework handle the output configuration for the static export. Use a compatible Node.js 22.13+ runtime. Do not upload `.next/`, `out/`, `node_modules/`, private files, or `.env.local` to Git.
 
-`C:\Users\Lenovo\Documents\ChatGPT\Portrtfolio Site`
+Add the final domain in Vercel and configure its DNS as instructed by the domain provider. Choose one canonical HTTPS origin (currently intended: `https://www.khuramshahzad.dev`). Redirect other domain variants to it in Vercel. Check HTTPS and redirect loops before indexing. Existing `khuram-one.vercel.app` links should redirect to the primary domain when possible.
 
-Open this folder in your editor or GitHub Desktop. `package.json`, `app/`, and `.git/` belong to this same folder. The existing Git repository has been preserved; do not run `git init` again. The Desktop `khuram-portfolio` copy is a backup, and `.local-archive/` contains earlier staging files and research. Make future changes in this repository.
+Set `NEXT_PUBLIC_SITE_URL` in **Production** to the canonical HTTPS origin, with no path/query/fragment or credentials. The code normalizes the trailing slash. Rebuild/redeploy after changing it: metadata and robots are static build output, not runtime settings. Unset URLs and `VERCEL_ENV=preview` generate noindex. If you copy the static export to another host, its indexing directives are already baked into its files.
 
-Only app source, public assets, configuration, the lockfile, and documents belong on GitHub. `.gitignore` excludes dependencies, generated builds, environment files, and the local archive. GitHub's website upload skips local Git history; use GitHub Desktop or Git instead.
+Optional Google/Bing HTML verification tokens may be set as `GOOGLE_SITE_VERIFICATION` and `BING_SITE_VERIFICATION`. DNS verification works without these variables. These public verification values are not passwords. Never commit API keys.
 
-## GitHub Desktop
+## Validate the production domain
 
-1. Choose **File → Add local repository** and select the repository folder above.
-2. Review the changes, enter an initial commit message, and commit.
-3. Choose **Publish repository**, choose its name and visibility, and publish.
+- `/`, `/projects/`, `/blog/`, individual articles/projects, and `/experiments/` return useful HTML with status 200. Unknown routes return 404.
+- `robots.txt` allows crawling and names the production sitemap. Page metadata does not contain `noindex` except intentional drafts.
+- `sitemap.xml` contains only the intended canonical origin and public routes; article modification dates reflect actual edits.
+- Canonicals and social metadata use the production origin, and `/opengraph.png` plus article PNG previews load publicly.
+- `/feed.xml` lists published articles. Contact links, mobile navigation, keyboard interactions, and reduced-motion behavior work.
+- Hosting does not add password protection, firewall challenges, or `X-Robots-Tag: noindex` to production.
 
-If GitHub Desktop says this is not a Git repository, confirm you selected the folder containing `.git/`, rather than `app/` or the Desktop backup.
+Run `npm run check` locally with production configuration before launch and inspect the live output again after deployment. Local checks cannot verify Vercel DNS, redirects, headers, or actual search-engine access.
 
-## Git command line alternative
+## Google
 
-Create an empty repository on GitHub first, without adding a README, license, or `.gitignore`. Run these commands in PowerShell, replacing `YOUR-REPOSITORY` with its name:
+1. Add a Domain property in [Google Search Console](https://search.google.com/search-console/) for `khuramshahzad.dev`; verify via the provided DNS TXT record. A URL-prefix property with HTML verification is an alternative.
+2. Submit `https://www.khuramshahzad.dev/sitemap.xml` in Sitemaps.
+3. Use URL Inspection on the homepage and important article pages. Check the live page, declared canonical, crawl availability, and indexability. Request indexing for a small number of priority URLs.
+4. Monitor Page indexing and Core Web Vitals. Diagnose exclusions from the reported reasons instead of repeatedly requesting indexing.
 
-```powershell
-Set-Location -LiteralPath 'C:\Users\Lenovo\Documents\ChatGPT\Portrtfolio Site'
-git status
-git add .
-git commit -m "Initial portfolio website"
-git branch -M main
-git remote add origin https://github.com/KhuramShahzad-5335/YOUR-REPOSITORY.git
-git push -u origin main
-```
+Google's basic eligibility requires accessible pages with a successful HTTP response and indexable content. A sitemap helps discovery; neither submission nor technical compliance guarantees inclusion, timing, ranking, or a perfect SEO score. See [technical requirements](https://developers.google.com/search/docs/essentials/technical) and [sitemap guidance](https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap).
 
-If Git asks for your identity, configure your preferred Git author name and email before committing. If you already published through GitHub Desktop, skip these commands.
+## Other discovery
 
-## Vercel
+Add the site to [Bing Webmaster Tools](https://www.bing.com/webmasters/) and submit the same sitemap; importing a verified Google property is an available workflow. Link the canonical site from GitHub, LinkedIn, and relevant genuine profiles. Readers can subscribe to the RSS feed. Publish useful articles consistently and link related work naturally. There is no universal submission mechanism that guarantees visibility across all platforms.
 
-1. In Vercel, add a new project and import the GitHub repository.
-2. Use **Next.js** as the framework and leave **Root Directory** at the repository root (`./`). There is no `portfolio/` app subdirectory anymore.
-3. Leave the framework's build and output settings at their defaults. Keep the committed `package-lock.json`; Vercel installs the declared dependencies and builds the app.
-4. Set `NEXT_PUBLIC_SITE_URL` in the **Production** environment to your final HTTPS URL, with no trailing slash. For example, use your actual `https://your-project.vercel.app` address or your custom domain. Leave the variable unset in Preview to keep previews out of search indexes.
-5. Deploy. If you discover your final address only after the first deployment, add the variable and redeploy. Adding or changing a domain also requires updating this variable and rebuilding.
+## Performance and future features
 
-This app uses Next.js static export. Vercel serves its generated pages; no database or separate backend is required. `npm start` is only the local static preview server.
+Use Lighthouse on the deployed homepage and an article on both mobile and desktop. Record the test mode and inspect the actual bottleneck. The reload intro intentionally delays visible content; it cannot coexist with a guarantee of maximum loading scores. Reduced-motion runs are useful fallback checks and must be labeled separately. Verify field results after real visits with Vercel Speed Insights and Search Console.
 
-The site intentionally disables indexing when `NEXT_PUBLIC_SITE_URL` is unset. After setting it and rebuilding, check the canonical URL, `/robots.txt`, and `/sitemap.xml` on the production domain. Review the sample testimonials and draft project stories before launch.
-
-Official references: [Vercel Git deployment](https://vercel.com/docs/git), [build settings](https://vercel.com/docs/builds/configure-a-build), and [environment variables](https://vercel.com/docs/environment-variables).
-
-## Work locally
-
-```powershell
-npm ci
-npm run dev
-```
-
-To verify and preview the static build:
-
-```powershell
-npm run typecheck
-npm run build
-npm start
-```
-
-Open `http://127.0.0.1:3000`. Generated `out/` and `.next/` folders stay local.
+Static export keeps hosting simple, but Next Image does not optimize raster files at request time (`unoptimized: true`). Compress source images, avoid heavyweight third-party embeds, and keep 3D/animation work gated. Future backend features require a deliberate architecture change; a Markdown/MDX or headless-CMS build workflow can remain static if introduced carefully later.

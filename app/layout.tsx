@@ -1,29 +1,37 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Shell } from "@/components/shell";
-import { siteUrl } from "@/lib/content";
+import { SiteFooter } from "@/components/site-footer";
+import { site, siteUrl, isIndexable } from "@/lib/site";
 
-import { Analytics } from "@vercel/analytics/next"
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Telemetry } from "@/components/telemetry";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Khuram Shahzad — Software Developer",
+    default: site.title,
     template: "%s | Khuram Shahzad",
   },
-  description:
-    "Self-employed software developer in Lahore building thoughtful web experiences with React, Next.js, and the MERN stack.",
+  description: site.description,
   openGraph: {
-    title: "Khuram Shahzad — Software Developer",
+    title: site.title,
     description:
       "Thoughtful interfaces. Practical software. A little personality.",
     type: "website",
+    siteName: site.name,
+    url: siteUrl,
     images: ["/opengraph.png"],
   },
   icons: { icon: "/icon.svg" },
   twitter: { card: "summary_large_image" },
-  robots: process.env.NEXT_PUBLIC_SITE_URL
+  verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION,
+    other: process.env.BING_SITE_VERIFICATION
+      ? { "msvalidate.01": process.env.BING_SITE_VERIFICATION }
+      : undefined,
+  },
+  alternates: { types: { "application/rss+xml": "/feed.xml" } },
+  robots: isIndexable
     ? { index: true, follow: true }
     : { index: false, follow: false },
 };
@@ -34,13 +42,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <noscript>
+          <style>{`.tech-loader{display:none!important}#portfolio-content{opacity:1!important}`}</style>
+        </noscript>
+      </head>
       <body>
-        <Analytics />
-        <SpeedInsights />
+        <Telemetry enabled={process.env.VERCEL_ENV === "production"} />
         <a href="#main" className="skip-link">
           Skip to content
         </a>
-        <Shell>{children}</Shell>
+        <Shell footer={<SiteFooter />}>{children}</Shell>
       </body>
     </html>
   );

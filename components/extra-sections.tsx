@@ -1,12 +1,9 @@
 "use client";
-import { useState } from "react";
-import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { SectionMotif } from "./section-motif";
+import { BoxDiagram } from "./box-diagram";
 import { ArrowUpRight, Braces, Layers, Workflow, Plus } from "lucide-react";
-const Scene = dynamic(() => import("./section-scene"), {
-  ssr: false,
-  loading: () => <div className="scene-static">◇</div>,
-});
 const steps = [
   {
     title: "Find the real problem",
@@ -79,11 +76,11 @@ export function Services() {
             </article>
           ))}
         </div>
-        <div className="service-sculpture">
-          <Scene kind="stack" />
+        <div className="service-diagram">
+          <BoxDiagram />
           <p>
             <code>// layers, working together</code>
-            <span>Hover the stack. It has a little breathing room.</span>
+            <span>Interfaces, connections, and state—working together.</span>
           </p>
         </div>
       </div>
@@ -91,8 +88,10 @@ export function Services() {
   );
 }
 export function Process() {
-  const [active, setActive] = useState(0),
-    reduced = useReducedMotion();
+  const [active, setActive] = useState(0);
+  const reduced = useReducedMotion();
+  const [enhanced, setEnhanced] = useState(false);
+  useEffect(() => setEnhanced(true), []);
   return (
     <section className="section process">
       <div className="section-heading" data-reveal>
@@ -102,9 +101,10 @@ export function Process() {
             A process. <span className="muted">Not a magic trick.</span>
           </h2>
         </div>
-        <span className="eyebrow">CLICK A STEP TO EXPLORE</span>
+        <SectionMotif kind="prism" />
       </div>
       <div
+        data-reveal
         className="process-tabs"
         role="tablist"
         aria-label="Development process"
@@ -116,6 +116,7 @@ export function Process() {
             id={"step-tab-" + i}
             aria-controls="process-panel"
             aria-selected={active === i}
+            tabIndex={active === i ? 0 : -1}
             onClick={() => setActive(i)}
             onKeyDown={(e) => {
               if (["ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) {
@@ -124,8 +125,9 @@ export function Process() {
                   e.key === "Home"
                     ? 0
                     : e.key === "End"
-                      ? 3
-                      : (i + (e.key === "ArrowRight" ? 1 : 3)) % 4;
+                      ? steps.length - 1
+                      : (i + (e.key === "ArrowRight" ? 1 : steps.length - 1)) %
+                        steps.length;
                 setActive(next);
                 document.getElementById("step-tab-" + next)?.focus();
               }
@@ -137,14 +139,14 @@ export function Process() {
         ))}
       </div>
       <motion.div
+        initial={!enhanced || reduced ? false : { opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: reduced ? 0 : 0.25, ease: "easeOut" }}
         className="process-panel"
         id="process-panel"
         role="tabpanel"
         aria-labelledby={"step-tab-" + active}
         key={active}
-        initial={false}
-        animate={{ y: 0 }}
-        transition={{ duration: reduced ? 0 : 0.25 }}
       >
         <span className="process-number">0{active + 1}</span>
         <div>
@@ -180,25 +182,25 @@ export function Experience() {
       <ol className="timeline">
         {[
           [
-            "Now",
+            "Jan 2025 — Present",
             "Self-employed",
             "Software developer",
             "Independent web development and practical application work.",
           ],
           [
-            "May 2024 — Mar 2025",
+            "Aug 2024 — Dec 2025",
             "Officiallabs",
             "Frontend Developer",
             "Frontend architecture, application data flow, testing, and delivery workflows.",
           ],
           [
-            "Jun 2023 — May 2024",
+            "Sep 2023 — Sep 2024",
             "Hashtag Web",
             "MERN Stack Developer",
             "End-to-end web application development and third-party API integrations.",
           ],
           [
-            "2022 — Apr 2023",
+            "Jan 2022 — Apr 2024",
             "Techixen",
             "Web Developer",
             "Responsive web interfaces, integration work, and cross-functional collaboration.",
@@ -233,10 +235,10 @@ export function InteractionLab() {
       </div>
       <div className="lab-layout">
         <div className="lab-copy">
-          <h3>A tiny object lab.</h3>
+          <h3>A tiny layout lab.</h3>
           <p>
-            Rotate it. Change the shape. Try a wireframe. These little
-            experiments leave room for curiosity between the practical things.
+            Switch the layout. Select a layer. See how interfaces, connections,
+            and state fit together—with a little room for color.
           </p>
           <div className="keycap-row">
             {["build", "learn", "repeat"].map((k) => (
@@ -264,7 +266,7 @@ export function InteractionLab() {
                 : "Click a key. No terminal expertise required."}
           </p>
         </div>
-        <Scene kind="knot" interactive />
+        <BoxDiagram interactive />
       </div>
     </section>
   );

@@ -1,6 +1,63 @@
-import {experiments} from '@/lib/content';
-import {notFound} from 'next/navigation';
-import Link from 'next/link';
-export function generateStaticParams(){return experiments.map(e=>({slug:e.slug}))}
-export async function generateMetadata({params}:{params:Promise<{slug:string}>}){const {slug}=await params;const e=experiments.find(e=>e.slug===slug);return {title:e?.name,description:e?.description,alternates:{canonical:'/experiments/'+slug+'/'}}}
-export default async function Page({params}:{params:Promise<{slug:string}>}){const {slug}=await params;const e=experiments.find(e=>e.slug===slug);if(!e)notFound();return <main id="main" className="page-main reading"><Link className="text-link" href="/experiments/">← Back to playground</Link><span className="eyebrow detail-category">LEARNING / INTERFACE EXPERIMENT</span><h1>{e.name}</h1><p className="page-intro">{e.description}</p><div className="tags"><span>{e.stack}</span></div><article><h2>A small build, a useful exercise</h2><p>This project is part of my collection of practice builds and interface studies. The original repository is available below; detailed implementation notes will be added as the notebook grows.</p><p className="draft-note">This is a learning project. Specific contributions, completion scope, and lessons are still being documented.</p><div className="detail-links"><a className="button primary" href={e.repo}>Open repository ↗</a>{e.url&&<a className="button secondary" href={e.url}>Visit demo ↗</a>}</div></article></main>}
+import { pageMetadata } from "@/lib/metadata";
+import { experiments } from "@/lib/content";
+import { notFound } from "next/navigation";
+import Link from "next/link";
+export function generateStaticParams() {
+  return experiments.map((e) => ({ slug: e.slug }));
+}
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const e = experiments.find((e) => e.slug === slug);
+  if (!e) notFound();
+  return pageMetadata(e.name, e.description, "/experiments/" + slug + "/");
+}
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const e = experiments.find((e) => e.slug === slug);
+  if (!e) notFound();
+  return (
+    <main id="main" className="page-main reading">
+      <Link className="text-link" href="/experiments/">
+        ← Back to playground
+      </Link>
+      <span className="eyebrow detail-category">
+        LEARNING / INTERFACE EXPERIMENT
+      </span>
+      <h1>{e.name}</h1>
+      <p className="page-intro">{e.description}</p>
+      <div className="tags">
+        <span>{e.stack}</span>
+      </div>
+      <article>
+        <h2>A small build, a useful exercise</h2>
+        <p>
+          This project is part of my collection of practice builds and interface
+          studies. The original repository is available below; detailed
+          implementation notes will be added as the notebook grows.
+        </p>
+        <p className="draft-note">
+          This is a learning project. Specific contributions, completion scope,
+          and lessons are still being documented.
+        </p>
+        <div className="detail-links">
+          <a className="button primary" href={e.repo}>
+            Open repository ↗
+          </a>
+          {e.url && (
+            <a className="button secondary" href={e.url}>
+              Visit demo ↗
+            </a>
+          )}
+        </div>
+      </article>
+    </main>
+  );
+}

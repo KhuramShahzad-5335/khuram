@@ -1,4 +1,41 @@
-import {Home} from '@/components/home';
-import {siteUrl} from '@/lib/content';
-export const metadata={alternates:{canonical:'/'}};
-export default function Page(){const person={'@context':'https://schema.org','@type':'Person',name:'Khuram Shahzad',url:siteUrl,jobTitle:'Self-employed Software Developer',sameAs:['https://github.com/KhuramShahzad-5335','https://www.linkedin.com/in/khuram-shahzad-0814b1230/']};return <><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(person).replace(/</g,'\\u003c')}}/><Home/></>}
+import { Home } from "@/components/home";
+import { posts } from "@/lib/posts";
+import { summarizePost } from "@/lib/blog";
+import { site, siteUrl, serializeJsonLd } from "@/lib/site";
+import { pageMetadata } from "@/lib/metadata";
+export const metadata = pageMetadata(
+  "Software Developer",
+  site.description,
+  "/",
+);
+export default function Page() {
+  const schema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": siteUrl + "/#person",
+        name: site.name,
+        url: siteUrl,
+        jobTitle: "Self-employed Software Developer",
+        sameAs: [site.github, site.linkedin],
+      },
+      {
+        "@type": "WebSite",
+        "@id": siteUrl + "/#website",
+        name: site.title,
+        url: siteUrl,
+        publisher: { "@id": siteUrl + "/#person" },
+      },
+    ],
+  };
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(schema) }}
+      />
+      <Home posts={posts.map(summarizePost)} />
+    </>
+  );
+}

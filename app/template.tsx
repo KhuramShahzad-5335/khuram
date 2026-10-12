@@ -1,1 +1,3 @@
-export default function Template({children}:{children:React.ReactNode}){return <div className="route-entry">{children}</div>}
+export default function Template({ children }: { children: React.ReactNode }) {
+  return <div className="route-entry">{children}</div>;
+}

@@ -1,0 +1,8 @@
+node_modules
+.next
+out
+public
+package-lock.json
+docs/Website_Requirements.md
+docs/Website_Content_Drafts.md
+docs/GitHub_Project_Inventory.md
