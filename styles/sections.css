@@ -116,52 +116,6 @@
     color: var(--accent);
   }
 
-  .services-layout {
-    display: grid;
-    grid-template-columns: 1.3fr 1fr;
-    gap: 70px;
-    align-items: center;
-  }
-  .service-list article {
-    display: flex;
-    gap: 20px;
-    border-top: 1px solid var(--border);
-    padding: 28px 0;
-  }
-  .service-list article > svg:first-child {
-    flex-shrink: 0;
-    color: var(--accent);
-    margin-top: 3px;
-  }
-  .service-list article > svg:last-child {
-    flex-shrink: 0;
-    color: var(--muted);
-    margin-left: auto;
-  }
-  .service-list h3 {
-    font-size: 19px;
-    font-weight: 500;
-    letter-spacing: -0.4px;
-    margin: 0 0 12px;
-  }
-  .service-list p {
-    font-size: 13px;
-    line-height: 1.8;
-    color: var(--muted);
-    margin: 0;
-  }
-  .service-diagram > p {
-    font: 9px/1.8 monospace;
-    color: var(--muted);
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    padding-left: 4px;
-    margin-top: 15px;
-  }
-  .service-diagram code {
-    color: var(--accent);
-  }
   .process-tabs {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -625,9 +579,6 @@
     color: var(--accent);
   }
   @media (max-width: 1000px) {
-    .services-layout {
-      gap: 35px;
-    }
     .experience {
       gap: 50px;
     }
@@ -652,19 +603,11 @@
     }
   }
   @media (max-width: 700px) {
-    .services-layout,
     .experience,
     .lab-layout,
     .faq {
       grid-template-columns: 1fr;
       gap: 35px;
-    }
-    .service-list article {
-      gap: 15px;
-      padding: 22px 0;
-    }
-    .service-list h3 {
-      font-size: 18px;
     }
     .process-tabs {
       grid-template-columns: 1fr 1fr;

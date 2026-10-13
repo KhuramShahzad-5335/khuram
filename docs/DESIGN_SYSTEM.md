@@ -68,3 +68,7 @@ The assembly is a finished room-like shell with side walls, floor, ceiling, and 
 Small INTERFACE, COLOR, LOGIC/JS, DATA, and API labels identify the miniature components. Labels use locally drawn canvas textures, repaint with the palette, and dispose their textures on replacement/unmount; no remote font files. The interface includes code markup, page content, cards, a CTA, and a pixel arrow pointer.
 
 Labels are mounted contrast-safe nameplates with rounded backing and a fine keyline, rather than floating text. Major blocks use inexpensive three-segment rounded bevels; small traces remain sharp. The swatches share a tray and label tab, and wall edges have contrasting trim.
+
+## Services cards
+
+`components/services.tsx` replaces the earlier service list with four asymmetric cards: frontend interfaces, MVPs, backend/API connections, and AI integrations. Layout and spacing use Tailwind; shared conceptual preview geometry and coordinated hover motion live in `styles/services.css`. The cards have real contact links rather than pretending the whole panel is a button. Palette tokens repaint the previews; filled surfaces use their matching contrast ink. Hover tilts apply only on pointer devices, keyboard focus lifts the preview, and reduced motion removes transforms/transitions. Keep GSAP reveals on the outer wrapper so hover motion does not fight them. No continuous animation, external imagery, or additional client animation runtime is needed. Preview artwork is decorative and explicitly labeled conceptual.

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { ScenePreview } from "./scene-preview";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { useReducedMotion } from "framer-motion";
 import {
   ArrowDown,
@@ -14,18 +14,20 @@ import {
 import { useState } from "react";
 import { projects, skillGroups } from "@/lib/content";
 import { site } from "@/lib/site";
-import {
-  Services,
-  Process,
-  Experience,
-  InteractionLab,
-  FAQ,
-} from "./extra-sections";
+import { Process, Experience, InteractionLab, FAQ } from "./extra-sections";
 import { BlogCard } from "./blog-card";
 import type { PostSummary } from "@/lib/blog";
 import { SectionMotif } from "./section-motif";
 import { ProjectCard } from "./project-card";
-export function Home({ posts }: { posts: PostSummary[] }) {
+export function Home({
+  posts,
+  postCount,
+  services,
+}: {
+  posts: PostSummary[];
+  postCount: number;
+  services: ReactNode;
+}) {
   const root = useRef<HTMLDivElement>(null),
     reduced = useReducedMotion(),
     [copied, setCopied] = useState(false);
@@ -221,7 +223,7 @@ export function Home({ posts }: { posts: PostSummary[] }) {
           ))}
         </div>
       </section>
-      <Services />
+      {services}
       <Process />
       <Experience />
       <InteractionLab />
@@ -253,6 +255,17 @@ export function Home({ posts }: { posts: PostSummary[] }) {
       </section>
       <FAQ />
       <section className="section blog-home">
+        <div className="section-heading" data-reveal>
+          <div>
+            <span className="eyebrow">THE NOTEBOOK / LATEST NOTES</span>
+            <h2>
+              A few useful <span className="muted">rabbit holes.</span>
+            </h2>
+          </div>
+          <Link className="text-link" href="/blog/">
+            Browse all {postCount} articles <ArrowUpRight size={15} />
+          </Link>
+        </div>
         <div className="blog-card-grid">
           {posts.map((post) => (
             <div key={post.slug} data-reveal>

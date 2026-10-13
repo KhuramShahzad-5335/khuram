@@ -1,6 +1,7 @@
 import { Home } from "@/components/home";
-import { posts } from "@/lib/posts";
-import { summarizePost } from "@/lib/blog";
+import { Services } from "@/components/services";
+import { postIndex } from "@/lib/post-index";
+import { HOME_POST_LIMIT } from "@/lib/notebook";
 import { site, siteUrl, serializeJsonLd } from "@/lib/site";
 import { pageMetadata } from "@/lib/metadata";
 const homeMetadata = pageMetadata(
@@ -41,7 +42,11 @@ export default function Page() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(schema) }}
       />
-      <Home posts={posts.map(summarizePost)} />
+      <Home
+        posts={postIndex.slice(0, HOME_POST_LIMIT)}
+        postCount={postIndex.length}
+        services={<Services />}
+      />
     </>
   );
 }

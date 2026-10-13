@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next";
 import { projects, experiments } from "@/lib/content";
 import { siteUrl } from "@/lib/site";
+import { blogPageCount } from "@/lib/post-index";
+import { notebookUrl } from "@/lib/notebook";
 import { posts } from "@/lib/posts";
 export const dynamic = "force-static";
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -9,6 +11,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
       "/",
       "/projects/",
       "/blog/",
+      ...Array.from({ length: blogPageCount - 1 }, (_, i) =>
+        notebookUrl(i + 2),
+      ),
       "/experiments/",
       ...projects.map((p) => "/projects/" + p.slug + "/"),
       ...experiments.map((e) => "/experiments/" + e.slug + "/"),

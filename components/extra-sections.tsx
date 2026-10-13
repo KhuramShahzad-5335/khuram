@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { SectionMotif } from "./section-motif";
 import { BoxDiagram } from "./box-diagram";
-import { ArrowUpRight, Braces, Layers, Workflow, Plus } from "lucide-react";
+import { ArrowUpRight, Plus } from "lucide-react";
 const steps = [
   {
     title: "Find the real problem",
@@ -34,59 +34,6 @@ const steps = [
       "Review responsiveness, accessibility, performance, error handling, and the paths that are easy to miss.",
   },
 ];
-export function Services() {
-  return (
-    <section className="section services">
-      <div className="section-heading" data-reveal>
-        <div>
-          <span className="eyebrow">04 / HOW I CAN HELP</span>
-          <h2>
-            From a rough idea
-            <br />
-            <span className="muted">to a useful interface.</span>
-          </h2>
-        </div>
-      </div>
-      <div className="services-layout">
-        <div className="service-list">
-          {[
-            {
-              icon: Braces,
-              title: "Frontend development",
-              text: "Responsive React and Next.js interfaces, reusable components, and the little interactions that make a product comfortable to use.",
-            },
-            {
-              icon: Layers,
-              title: "Full-stack applications",
-              text: "MERN applications, backend services, and API integrations that connect the visible interface to the work behind it.",
-            },
-            {
-              icon: Workflow,
-              title: "Interface refinement",
-              text: "State management, animation, testing, and delivery workflows. The details that help a growing application stay understandable.",
-            },
-          ].map((s) => (
-            <article key={s.title} data-reveal>
-              <s.icon size={22} />
-              <div>
-                <h3>{s.title}</h3>
-                <p>{s.text}</p>
-              </div>
-              <ArrowUpRight size={16} />
-            </article>
-          ))}
-        </div>
-        <div className="service-diagram">
-          <BoxDiagram />
-          <p>
-            <code>// layers, working together</code>
-            <span>Interfaces, connections, and state—working together.</span>
-          </p>
-        </div>
-      </div>
-    </section>
-  );
-}
 export function Process() {
   const [active, setActive] = useState(0);
   const reduced = useReducedMotion();

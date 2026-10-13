@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "../styles/sections.css";
+@import "../styles/services.css";
 /* Shared design tokens, typography, layout, and illustrative artwork. */
 @layer components {
   :root {

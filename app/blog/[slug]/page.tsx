@@ -1,10 +1,12 @@
-import { summarizePost, formatPostDate } from "@/lib/blog";
+import { formatPostDate } from "@/lib/blog";
 import { serializeJsonLd } from "@/lib/site";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { posts, wordCount, readingMinutes } from "@/lib/posts";
 import { site, siteUrl } from "@/lib/site";
+import { RELATED_POST_LIMIT } from "@/lib/notebook";
+import { postIndex } from "@/lib/post-index";
 import { BlogCard } from "@/components/blog-card";
 export function generateStaticParams() {
   return posts.map((post) => ({ slug: post.slug }));
@@ -168,10 +170,11 @@ export default async function Page({
         <span className="eyebrow">KEEP THE RABBIT HOLE GOING</span>
         <h2>Another useful detour.</h2>
         <div className="blog-card-grid">
-          {posts
+          {postIndex
             .filter((other) => other.slug !== p.slug)
+            .slice(0, RELATED_POST_LIMIT)
             .map((post) => (
-              <BlogCard key={post.slug} post={summarizePost(post)} />
+              <BlogCard key={post.slug} post={post} />
             ))}
         </div>
       </section>

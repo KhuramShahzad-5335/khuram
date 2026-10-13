@@ -105,3 +105,7 @@ Keep status notes factual: date, deployed URL/revision when known, checks perfor
 ## Published guide and ongoing evidence
 
 The source article `/blog/personal-seo-rank-your-name/` explains this strategy through Khuram's ongoing case study. Maintain its dated progress log using `CONTENT.md`. Adding it increases the generated sitemap from the observed live baseline of 24 routes to 25; deploy and verify the live export before reporting that new count as public. Query-volume and ranking changes are unmeasured until real reporting data is available.
+
+## Archive discovery
+
+Notebook pagination uses indexable static routes: `/blog/` and `/blog/page/2/` onward as needed. Every archive page links to its articles and neighboring pages, has a unique title/canonical, and appears in the sitemap. The first page is never duplicated at `/blog/page/1/`. Homepage and related cards remain bounded; they are previews, not the only discovery path. Search filters are browser-local views and do not replace archive links or create additional canonical pages. The summary-only JSON search index is a utility asset, not a sitemap page. Article RSS entries are unchanged by pagination.

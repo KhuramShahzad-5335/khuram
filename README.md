@@ -52,11 +52,12 @@ docs/                Design, architecture, content and deployment guides
 | Articles and publication dates                     | `lib/posts.ts`                                                |
 | Word count, reading time, card summaries           | `lib/blog.ts`                                                 |
 | Home copy, contact details, commented testimonials | `components/home.tsx`                                         |
+| Services, conceptual previews                      | `components/services.tsx`, `styles/services.css`              |
 | Header/footer                                      | `components/site-header.tsx`, `components/site-footer.tsx`    |
 | Theme colors and generators                        | `lib/palettes.ts`, `components/palette-editor.tsx`            |
 | Loader timing and tunnel                           | `components/tech-tunnel-loader.tsx`, `styles/tech-loader.css` |
 
-Full articles stay outside the homepage browser bundle. The hero Three.js scene waits for intro completion and loads near its viewport and stops when offscreen or the browser tab is hidden. Reduced-motion visitors get static alternatives. Theme settings are stored only in the visitor's browser, with graceful fallback when storage is blocked.
+The homepage previews three recent articles. The notebook has static archive pagination, search, and topic filters; its search index downloads only when used. Full articles stay outside the homepage browser bundle. The hero Three.js scene waits for intro completion and loads near its viewport and stops when offscreen or the browser tab is hidden. Reduced-motion visitors get static alternatives. Theme settings are stored only in the visitor's browser, with graceful fallback when storage is blocked.
 
 ## Documentation
 

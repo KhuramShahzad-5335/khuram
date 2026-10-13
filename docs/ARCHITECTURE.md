@@ -42,3 +42,13 @@ Measure Lighthouse against the production export and record device/mode, URL, sc
 New public routes need unique metadata, a canonical, a sitemap entry, useful internal navigation, and real content. New client features must clean up timers/listeners/observers, handle blocked storage/network failures, and respect reduced motion. New raster images should be compressed, dimensioned, locally hosted where appropriate, and have meaningful alt text. Static export uses unoptimized Next Image: it cannot resize raster assets on demand.
 
 The local preview server is for development only, binds to localhost, and serves `out/`. It compresses text responses and caches hashed Next assets to approximate production delivery. Override the default port with the `PORT` environment variable if needed. Vercel handles production HTTPS and hosting. Never edit `out/`, `.next/`, or `node_modules/` as source fixes.
+
+## Notebook growth
+
+`lib/notebook.ts` owns card limits and archive URLs. `lib/post-index.ts` projects and sorts article summaries at build time; never import it into a Client Component. Homepage and related sections each receive at most three summaries. The notebook renders three articles per static archive page, at `/blog/` and `/blog/page/<number>/` starting at page 2. Archive pages have unique metadata, canonicals, sitemap entries, and ordinary next/previous links. Do not create a duplicate `/blog/page/1/` route.
+
+`NotebookBrowser` receives only the current page's summaries, category names, and counts. It requests `/blog/search-index.json` on first search/category use, caches the summary-only index in memory, and paginates filtered results locally. Search controls have labels, live result counts, clear/retry actions, empty states, and keyboard-accessible pagination. Without JavaScript, server-rendered archive cards and links remain usable. Search/filter state is temporary, not a separate indexable URL. New content and archive pages require a rebuild.
+
+The search index grows with the number of posts, but article bodies never enter it and initial page/card payloads stay bounded. For a very large archive, measure index size and filtering cost; consider partitioned static search or a worker before adding a backend. Do not describe a single downloadable index as infinitely scalable. Keep archive pagination as the crawlable fallback.
+
+The homepage services section is server-rendered in `components/services.tsx` and passed into `Home` as a React node. Its conceptual previews and pointer/focus interactions use CSS, keeping the service content and icon definitions out of the homepage client module. Home reveal animations remain on separate outer wrappers.
