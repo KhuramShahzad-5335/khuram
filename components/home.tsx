@@ -107,9 +107,8 @@ export function Home({ posts }: { posts: PostSummary[] }) {
             <span className="muted">A little personality.</span>
           </h1>
           <p>
-            I’m Khuram, a software developer turning ideas into
-            <br className="desktop-break" /> web experiences that feel good to
-            use.
+            I’m Khuram Shahzad, a self-employed software developer based in
+            Lahore. I turn ideas into web experiences that feel good to use.
           </p>
           <div className="hero-buttons">
             <Link className="button primary" href="/projects/">

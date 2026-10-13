@@ -3,11 +3,17 @@ import { posts } from "@/lib/posts";
 import { summarizePost } from "@/lib/blog";
 import { site, siteUrl, serializeJsonLd } from "@/lib/site";
 import { pageMetadata } from "@/lib/metadata";
-export const metadata = pageMetadata(
-  "Software Developer",
+const homeMetadata = pageMetadata(
+  "Khuram Shahzad - Software Developer in Lahore",
   site.description,
   "/",
 );
+export const metadata = {
+  ...homeMetadata,
+  title: { absolute: site.title },
+  openGraph: { ...homeMetadata.openGraph, title: site.title },
+  twitter: { ...homeMetadata.twitter, title: site.title },
+};
 export default function Page() {
   const schema = {
     "@context": "https://schema.org",

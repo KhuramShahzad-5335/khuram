@@ -26,7 +26,7 @@ Public HTTP checks on **13 October 2026** verified:
 
 These are dated observations, not permanent guarantees or a full crawl of production. Recheck after deployments and domain changes. Search Console's Page indexing and URL Inspection reports determine Google's reported state; a sitemap returning 200 does not prove indexing.
 
-**Recorded follow-up:** the live homepage title is currently `Software Developer`. Consider a specific title such as `Khuram Shahzad — Software Developer in Lahore`. This is an editorial improvement to implement separately; the documentation update does not change production metadata.
+**Implemented in source on 13 October 2026:** the homepage now declares the absolute title `Khuram Shahzad — Software Developer in Lahore`, uses the same title for its Open Graph/Twitter previews, and introduces Khuram by full name, self-employment, and Lahore in visible hero copy. The global description also includes his full name. The absolute title avoids duplicating his name through the shared title template. Deploy the updated build before treating this as live; the observations above describe the earlier deployment.
 
 ## Implementation ownership
 

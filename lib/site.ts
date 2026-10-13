@@ -24,9 +24,9 @@ export const isIndexable =
   process.env.VERCEL_ENV !== "preview";
 export const site = {
   name: "Khuram Shahzad",
-  title: "Khuram Shahzad — Software Developer",
+  title: "Khuram Shahzad — Software Developer in Lahore",
   description:
-    "Self-employed software developer in Lahore building thoughtful web experiences with React, Next.js, and the MERN stack.",
+    "Khuram Shahzad is a self-employed software developer in Lahore building thoughtful web experiences with React, Next.js, and the MERN stack.",
   email: "krshahzad7@gmail.com",
   phone: "+923471713760",
   phoneLabel: "+92 347 1713760",
