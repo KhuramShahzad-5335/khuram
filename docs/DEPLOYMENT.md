@@ -1,5 +1,7 @@
 # Deployment and indexing
 
+For the current live observations, on-page requirements, content/off-page strategy, and indexing contract, read [SEO.md](SEO.md).
+
 ## Vercel configuration
 
 Publish the repository root to GitHub and import it into Vercel. The owner manages those accounts. Select the Next.js framework preset, root directory `./`, install command `npm ci`, and build command `npm run build`. Let the framework handle the output configuration for the static export. Use a compatible Node.js 22.13+ runtime. Do not upload `.next/`, `out/`, `node_modules/`, private files, or `.env.local` to Git.

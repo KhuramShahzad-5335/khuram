@@ -64,6 +64,7 @@ Full articles stay outside the homepage browser bundle. The hero Three.js scene 
 - [Design system and interaction requirements](docs/DESIGN_SYSTEM.md)
 - [Publishing articles and maintaining content](docs/CONTENT.md)
 - [Deployment, indexing, and launch checks](docs/DEPLOYMENT.md)
+- [SEO strategy, live condition, and maintenance](docs/SEO.md)
 - [Release validation and limitations](docs/VALIDATION.md)
 - [Agent handoff instructions](AGENTS.md)
 

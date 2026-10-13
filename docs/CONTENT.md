@@ -24,6 +24,8 @@ Word counts include the introduction, section headings, and paragraphs. They exc
 
 ## Search quality
 
+Follow [SEO.md](SEO.md) for the on-page and off-page strategy, route requirements, and distinction between technical readiness and confirmed indexing.
+
 Give every article a distinctive title, helpful excerpt, actual author/date, descriptive images, useful headings, and relevant internal links. Publish substantive firsthand details when available; the current starting articles and draft case studies need continued editorial development. Avoid keyword stuffing, unverified results, duplicate boilerplate, or changing slugs without redirects. Search inclusion and ranking depend on content as well as technical readiness.
 
 Keep contact details consistent with `lib/site.ts` and homepage phone/WhatsApp links. Never copy resume contact data or private documents into public assets without checking the owner's current intent.
