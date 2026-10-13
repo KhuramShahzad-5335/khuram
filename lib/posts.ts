@@ -91,6 +91,10 @@ export const posts: Post[] = [
         ],
         links: [
           {
+            title: "Search Console: property types and verification",
+            url: "https://support.google.com/webmasters/answer/34592",
+          },
+          {
             title: "Google: request a recrawl",
             url: "https://developers.google.com/search/docs/crawling-indexing/ask-google-to-recrawl",
           },

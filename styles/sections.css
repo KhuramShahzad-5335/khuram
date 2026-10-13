@@ -458,6 +458,9 @@
     align-items: start;
   }
   .article-toc {
+    max-height: calc(100dvh - 60px);
+    overflow-y: auto;
+    padding-right: 8px;
     position: sticky;
     top: 30px;
     padding-top: 7px;
@@ -721,6 +724,9 @@
       gap: 35px;
     }
     .article-toc {
+      max-height: none;
+      overflow: visible;
+      padding-right: 0;
       position: static;
       border-bottom: 1px solid var(--border);
       padding-bottom: 25px;
