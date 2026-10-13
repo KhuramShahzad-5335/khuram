@@ -81,7 +81,7 @@ export function onColor(color: string) {
     : "#ffffff";
 }
 export const presets = [
-  { name: "Terminal / Vercel", colors: defaultColors },
+  { name: "Monochrome", colors: defaultColors },
   {
     name: "Paper",
     colors: {
