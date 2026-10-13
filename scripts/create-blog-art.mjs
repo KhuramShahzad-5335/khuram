@@ -60,4 +60,53 @@ diagram(
   ["Color roles", "Components", "Coherent theme"],
   "#c4b5fd",
 );
-console.log("Created six original blog illustrations.");
+
+// Personal SEO: conceptual artwork, never a claimed Google ranking screenshot.
+fs.writeFileSync(
+  path.join(dir, "blog-personal-seo.svg"),
+  base(
+    "04 / PERSONAL SEO · A LIVING CASE STUDY",
+    "#93c5fd",
+    `<path d="M340 300h125M735 300h125M600 360v95" stroke="#93c5fd" stroke-width="2" stroke-dasharray="7 9"/>
+  <rect x="100" y="195" width="240" height="215" rx="18" fill="#192331" stroke="#93c5fd" stroke-opacity=".5"/>
+  <circle cx="156" cy="255" r="25" fill="#93c5fd"/><text x="144" y="262" font-family="monospace" font-size="18" fill="#101315">KS</text>
+  <text x="128" y="326" fill="#eef4fb" font-family="Arial" font-size="22">Your name.</text><text x="128" y="363" fill="#9caec4" font-family="Arial" font-size="18">Your work. Your story.</text>
+  <rect x="465" y="175" width="270" height="205" rx="18" fill="#182333" stroke="#93c5fd" stroke-opacity=".5"/>
+  <path d="M465 216h270" stroke="#93c5fd" stroke-opacity=".3"/><circle cx="490" cy="195" r="5" fill="#b7ef9c"/><circle cx="510" cy="195" r="5" fill="#c4b5fd"/>
+  <rect x="490" y="240" width="86" height="102" rx="8" fill="#93c5fd" fill-opacity=".2"/><path d="M596 250h110m-110 30h85m-85 30h100" stroke="#a8c5e8" stroke-width="6"/>
+  <text x="535" y="416" fill="#93c5fd" font-family="monospace" font-size="15">PORTFOLIO</text>
+  <rect x="860" y="195" width="240" height="215" rx="18" fill="#192331" stroke="#c4b5fd" stroke-opacity=".5"/>
+  <circle cx="900" cy="241" r="11" stroke="#c4b5fd" stroke-width="3" fill="none"/><path d="m909 250 10 10" stroke="#c4b5fd" stroke-width="3"/>
+  <text x="940" y="250" fill="#eef4fb" font-family="monospace" font-size="16">name + role</text>
+  <path d="M886 290h187m-187 26h160m-160 26h180" stroke="#93c5fd" stroke-width="5" stroke-opacity=".65"/>
+  <text x="886" y="382" fill="#9caec4" font-family="Arial" font-size="17">Discovery ≠ a guarantee</text>
+  <rect x="390" y="465" width="420" height="95" rx="14" fill="#172520" stroke="#b7ef9c" stroke-opacity=".4"/>
+  <text x="435" y="505" fill="#b7ef9c" font-family="monospace" font-size="16">PROFILES + PROJECT EVIDENCE</text>
+  <text x="435" y="535" fill="#96a99e" font-family="Arial" font-size="16">Build → connect → measure → improve</text>`,
+  ),
+);
+function seoDiagram(name, heading, labels, note) {
+  const boxes = labels
+    .map(
+      (label, i) =>
+        `<rect x="${60 + i * 230}" y="150" width="200" height="145" rx="14" fill="#192331" stroke="#93c5fd" stroke-opacity=".45"/><text x="${80 + i * 230}" y="193" fill="#93c5fd" font-family="monospace" font-size="14">0${i + 1}</text><text x="${80 + i * 230}" y="246" fill="#eef4fb" font-family="Arial" font-size="23">${label}</text>${i < labels.length - 1 ? `<path d="M${270 + i * 230} 224h15l-5-5m5 5-5 5" fill="none" stroke="#b7ef9c" stroke-width="2"/>` : ""}`,
+    )
+    .join("");
+  fs.writeFileSync(
+    path.join(dir, name),
+    `<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="460" viewBox="0 0 1000 460"><rect width="1000" height="460" rx="18" fill="#101315"/><text x="60" y="75" fill="#93c5fd" font-family="monospace" font-size="16" letter-spacing="2">${heading}</text>${boxes}<text x="60" y="365" fill="#a8b3bf" font-family="Arial" font-size="18">${note}</text></svg>`,
+  );
+}
+seoDiagram(
+  "personal-seo-flow.svg",
+  "SEARCH IS A PROCESS",
+  ["Discover", "Index", "Evaluate"],
+  "Clear links → readable pages → relevant results. Rankings are not guaranteed.",
+);
+seoDiagram(
+  "personal-seo-tracker.svg",
+  "TRACK EVIDENCE, NOT PROMISES",
+  ["Baseline", "Implement", "Measure", "Revise"],
+  "13 October 2026: source changes recorded. Search performance measurement pending.",
+);
+console.log("Created nine original blog illustrations.");

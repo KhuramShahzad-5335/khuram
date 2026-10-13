@@ -21,6 +21,12 @@ export async function generateMetadata({
     title: p.title,
     description: p.excerpt,
     alternates: { canonical: "/blog/" + p.slug + "/" },
+    twitter: {
+      card: "summary_large_image",
+      title: p.title,
+      description: p.excerpt,
+      images: [p.image.replace(".svg", ".png")],
+    },
     openGraph: {
       title: p.title,
       description: p.excerpt,
@@ -116,6 +122,20 @@ export default async function Page({
               {s.paragraphs.map((paragraph, i) => (
                 <p key={i}>{paragraph}</p>
               ))}
+              {s.links && (
+                <ul className="mt-5 space-y-2 text-sm">
+                  {s.links.map((link) => (
+                    <li key={link.url}>
+                      <a
+                        className="underline decoration-(--border) underline-offset-4 hover:decoration-(--accent)"
+                        href={link.url}
+                      >
+                        {link.title}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
               {s.code && (
                 <pre>
                   <code>{s.code}</code>

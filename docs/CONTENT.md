@@ -29,3 +29,11 @@ Follow [SEO.md](SEO.md) for the on-page and off-page strategy, route requirement
 Give every article a distinctive title, helpful excerpt, actual author/date, descriptive images, useful headings, and relevant internal links. Publish substantive firsthand details when available; the current starting articles and draft case studies need continued editorial development. Avoid keyword stuffing, unverified results, duplicate boilerplate, or changing slugs without redirects. Search inclusion and ranking depend on content as well as technical readiness.
 
 Keep contact details consistent with `lib/site.ts` and homepage phone/WhatsApp links. Never copy resume contact data or private documents into public assets without checking the owner's current intent.
+
+## Personal SEO case-study updates
+
+`personal-seo-rank-your-name` is a living guide using Khuram's portfolio, LinkedIn, and GitHub as the case study. Candidate keyword intents cover personal SEO, ranking a name, portfolio/freelancer SEO, profile consistency, indexing, and measurement; no paid keyword-volume dataset or exhaustive keyword list was used. Maintain readable answers rather than inserting repeated search phrases.
+
+Keep the `case-study-log` section chronological. For future updates, record the date, deployed revision/URL if known, evidence source, query/page/device/country filters, reporting window, and observations. Distinguish source implementation, live deployment, indexing, and ranking. Do not infer measured traffic gains from design work or replace unknown metrics with zero. Earlier social profile improvements are project history, not a current public profile audit. Update `updatedAt` for meaningful revisions and retain the original publication date and slug.
+
+Section-level `links` in `PostSection` render contextual primary references and related articles. They stay in the server-rendered article and are not included in homepage summaries. The SVG cover has a PNG counterpart for Open Graph/Twitter; the two inline diagrams are conceptual illustrations, not ranking screenshots.

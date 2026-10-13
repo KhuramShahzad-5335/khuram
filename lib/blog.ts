@@ -4,6 +4,7 @@ export type PostSection = {
   title: string;
   paragraphs: string[];
   code?: string;
+  links?: { title: string; url: string }[];
   image?: { src: string; alt: string; caption: string };
 };
 export type Post = {

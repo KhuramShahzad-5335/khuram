@@ -4,7 +4,7 @@ import { posts } from "@/lib/posts";
 import { BlogCard } from "@/components/blog-card";
 export const metadata = pageMetadata(
   "Notebook",
-  "Read about thoughtful interface motion, static blogging, and visitor-controlled color systems in Khuram Shahzad’s development notebook.",
+  "Practical guides to personal SEO, interface motion, static blogging, and color systems from Khuram Shahzad’s development notebook.",
   "/blog/",
 );
 export default function Page() {

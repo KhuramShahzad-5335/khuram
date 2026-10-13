@@ -101,3 +101,7 @@ Keep status notes factual: date, deployed URL/revision when known, checks perfor
 - [Google technical requirements](https://developers.google.com/search/docs/essentials/technical): basic eligibility, without guaranteed indexing.
 - [Google sitemap guidance](https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap): sitemap maintenance and discovery.
 - [Google link spam policy](https://developers.google.com/search/docs/essentials/spam-policies#link-spam): avoid manipulative link building.
+
+## Published guide and ongoing evidence
+
+The source article `/blog/personal-seo-rank-your-name/` explains this strategy through Khuram's ongoing case study. Maintain its dated progress log using `CONTENT.md`. Adding it increases the generated sitemap from the observed live baseline of 24 routes to 25; deploy and verify the live export before reporting that new count as public. Query-volume and ranking changes are unmeasured until real reporting data is available.
