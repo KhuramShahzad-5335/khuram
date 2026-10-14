@@ -22,7 +22,13 @@ export const metadata: Metadata = {
     url: siteUrl,
     images: ["/opengraph.png"],
   },
-  icons: { icon: "/icon.svg" },
+  icons: {
+    icon: [
+      { url: "/icon.png", type: "image/png", sizes: "96x96" },
+      { url: "/icon.svg", type: "image/svg+xml", sizes: "any" },
+    ],
+    apple: { url: "/apple-touch-icon.png", sizes: "180x180" },
+  },
   twitter: { card: "summary_large_image" },
   verification: {
     google: process.env.GOOGLE_SITE_VERIFICATION,

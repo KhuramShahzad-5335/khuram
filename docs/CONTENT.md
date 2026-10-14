@@ -41,3 +41,11 @@ Section-level `links` in `PostSection` render contextual primary references and 
 ## Growing the notebook
 
 Posts are ordered by publication date, newest first (source order breaks ties). Home and related-post previews are limited to three. The archive uses three cards per page and generates additional `/blog/page/<number>/` routes and sitemap entries automatically. Search and category filters use summaries from a lazily downloaded static index; no article-body bundle or backend is needed. Limits live in `lib/notebook.ts`. Rebuild after publishing, removing a post, or changing those limits. Review pagination and Search Console when archive membership shifts. See `ARCHITECTURE.md` for the search-index size tradeoff and no-JavaScript fallback.
+
+## Selected avatar
+
+The owner supplied the illustrated avatar from `https://cdn.21st.dev/assets/mirror/ec/ec81be4cc810190ce4d240fcc57295965c5cebaa8751558595ade91eb62c09a4.png`. Its local copy is `public/images/profile-avatar.png`; do not substitute the demo’s Hallie Richards name or HR initials. This is an owner-selected illustration, not a photo identity claim.
+
+## Museum-art collection
+
+The homepage and notebook moodboards credit the Art Institute of Chicago and link every artwork to its museum record. They are visual inspiration, not work by Khuram or illustrations of his project contributions. The twelve cached records in `lib/art-collection.json`, including Seurat 27992, van Gogh 28560, and Monet 16571, returned `is_public_domain: true` on 14 October 2026. All artwork is locally cached; original image URLs and the verification date are retained. Preserve each work’s title, artist, date, and museum link. The API/gallery does not publish blog posts or change the feed/sitemap. Recheck record/image availability and museum usage rules when changing the collection.

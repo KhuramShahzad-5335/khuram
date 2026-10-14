@@ -1,3 +1,4 @@
+import { ArtGallery } from "./art-gallery";
 import { NotebookBrowser } from "./notebook-browser";
 import {
   blogCategories,
@@ -8,7 +9,7 @@ import {
 export function NotebookPage({ page = 1 }: { page?: number }) {
   return (
     <main id="main" className="page-main">
-      <span className="eyebrow">THE NOTEBOOK / IDEAS WORTH KEEPING</span>
+      <span className="eyebrow">THE BLOG / DEVELOPMENT NOTEBOOK</span>
       <h1>
         Notes from
         <br />
@@ -27,6 +28,7 @@ export function NotebookPage({ page = 1 }: { page?: number }) {
         total={postIndex.length}
         categories={blogCategories}
       />
+      <ArtGallery />
       <div className="blog-bottom">
         <code>// write → review → build → deploy</code>
         <span>A static notebook. Room for the next idea.</span>

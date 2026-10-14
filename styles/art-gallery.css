@@ -1,0 +1,116 @@
+@layer components {
+  .art-desk {
+    border-radius: 20px;
+    background: radial-gradient(circle, var(--border) 1px, transparent 1px) 0
+      0 / 18px 18px;
+  }
+  .art-card {
+    position: relative;
+    min-width: 0;
+    padding: 18px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+    box-shadow: 6px 8px 0 color-mix(in srgb, var(--primary) 18%, transparent);
+    transform: rotate(-2deg);
+    transition: transform 350ms;
+    overflow-wrap: anywhere;
+    animation: art-arrive 350ms ease-out;
+  }
+  .art-card-1 {
+    transform: rotate(2deg) translateY(14px);
+    box-shadow: -6px 8px 0 color-mix(in srgb, var(--secondary) 23%, transparent);
+  }
+  .art-card-2 {
+    transform: rotate(-1deg);
+  }
+  .art-card-tape {
+    position: absolute;
+    top: -10px;
+    left: 40%;
+    width: 62px;
+    height: 20px;
+    transform: rotate(-6deg);
+    background: color-mix(in srgb, var(--secondary) 65%, var(--surface));
+    border: 1px solid var(--border);
+    opacity: 0.85;
+  }
+  .art-flip {
+    perspective: 800px;
+    background: var(--background);
+  }
+  .art-face {
+    position: absolute;
+    inset: 0;
+    display: block;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    backface-visibility: hidden;
+    transition:
+      transform 450ms,
+      opacity 450ms;
+  }
+  .art-front {
+    background: var(--background);
+    transform: rotateY(0);
+  }
+  .art-front-flipped {
+    transform: rotateY(-180deg);
+    opacity: 0;
+  }
+  .art-back {
+    background: var(--primary);
+    color: var(--on-primary);
+    padding: 12px;
+    text-align: left;
+    overflow: auto;
+    transform: rotateY(180deg);
+    opacity: 0;
+  }
+  .art-back-visible {
+    transform: rotateY(0);
+    opacity: 1;
+  }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .art-card:hover {
+      transform: rotate(0) translateY(-6px);
+    }
+  }
+  .art-card:focus-within {
+    outline: 1px solid var(--accent);
+    outline-offset: 4px;
+  }
+  @keyframes art-arrive {
+    from {
+      opacity: 0.2;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @media (max-width: 767px) {
+    .art-card,
+    .art-card-1,
+    .art-card-2 {
+      transform: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .art-card,
+    .art-face {
+      animation: none;
+      transition: none;
+      transform: none;
+    }
+    .art-front-flipped {
+      opacity: 0;
+    }
+    .art-back {
+      opacity: 0;
+    }
+    .art-back-visible {
+      opacity: 1;
+    }
+  }
+}

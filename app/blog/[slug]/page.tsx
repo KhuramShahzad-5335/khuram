@@ -7,6 +7,7 @@ import { posts, wordCount, readingMinutes } from "@/lib/posts";
 import { site, siteUrl } from "@/lib/site";
 import { RELATED_POST_LIMIT } from "@/lib/notebook";
 import { postIndex } from "@/lib/post-index";
+import { ProfileAvatar } from "@/components/profile-avatar";
 import { BlogCard } from "@/components/blog-card";
 export function generateStaticParams() {
   return posts.map((post) => ({ slug: post.slug }));
@@ -82,7 +83,7 @@ export default async function Page({
       <h1>{p.title}</h1>
       <p className="reading-lead">{p.excerpt}</p>
       <div className="article-meta">
-        <span className="author-avatar">KS</span>
+        <ProfileAvatar />
         <div>
           <strong>Khuram Shahzad</strong>
           <span>

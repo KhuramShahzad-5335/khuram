@@ -30,7 +30,7 @@ npm start
 
 Next.js App Router, React, TypeScript, Tailwind CSS 4, GSAP, Framer Motion, Three.js with React Three Fiber/Drei, and Vercel Analytics/Speed Insights. Versions are recorded in `package.json`; reproducible installs use `package-lock.json`.
 
-The site uses `output: "export"`. Routes, metadata, articles, RSS, robots, and sitemap are generated at build time. There is no custom backend, database, account system, CMS, or contact submission service. Contact actions open email, telephone, WhatsApp, or social links.
+The site uses `output: "export"`. Routes, metadata, articles, RSS, robots, and sitemap are generated at build time. There is no custom backend, database, account system, CMS, or contact submission service. The homepage and notebook include an interactive museum-art moodboard; a small public-domain collection is cached from the Art Institute of Chicago API, with instant local shuffling. Contact actions open email, telephone, WhatsApp, or social links.
 
 ```text
 app/                  Route composition, metadata, global CSS, static feed
@@ -86,3 +86,5 @@ The intro deliberately runs on every reload and finishes fading out before the s
 Keep private documents, resumes, credentials, generated build folders, and temporary QA artifacts out of this repository. Source assets and maintained documentation belong here. Review Vercel analytics privacy requirements for the intended audience before adding further tracking.
 
 The GitHub quality workflow runs the same release checks on pushes and pull requests. Palette checks sample generated colors against both page and panel backgrounds.
+
+Typography settings live in `lib/typography.ts`; the editor provides six local pairings, heading/body choices, and article reading controls. `components/color-picker.tsx` replaces native color dialogs with HSV controls and HEX/RGB/HSL entry. The owner-selected avatar is local; no image CDN dependency is needed at runtime. See the architecture guide for storage timing, migration, API timeouts, and fallback behavior.

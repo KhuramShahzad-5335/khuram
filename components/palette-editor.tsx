@@ -1,28 +1,30 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { X, RotateCcw } from "lucide-react";
+import { ColorPicker } from "./color-picker";
+import { TypographyControls } from "./typography-controls";
+import type { Typography } from "@/lib/typography";
 import { PaletteGallery } from "./palette-gallery";
 import {
   defaultColors as defaults,
   paletteContrast,
   presets,
-  fontPairings,
-  type FontPairing,
   type PaletteColors as Colors,
 } from "@/lib/palettes";
 export default function PaletteEditor({
   colors,
   setColors,
-  font,
-  setFont,
+  typography,
+  setTypography,
   onClose,
 }: {
   colors: Colors;
-  font: FontPairing;
-  setFont: (font: FontPairing) => void;
+  typography: Typography;
+  setTypography: (value: Typography) => void;
   setColors: (colors: Colors) => void;
   onClose: () => void;
 }) {
+  const [editing, setEditing] = useState<keyof Colors | null>(null);
   const ratios = paletteContrast(colors);
   const lowContrast = Object.entries(ratios)
     .filter(([, ratio]) => ratio < 4.5)
@@ -42,11 +44,15 @@ export default function PaletteEditor({
       if (event.key !== "Tab") return;
       const nodes = Array.from(
         document.querySelectorAll<HTMLElement>(
-          ".palette-panel button,.palette-panel input,.palette-panel select",
+          '.palette-panel button,.palette-panel input,.palette-panel select,.palette-panel summary,.palette-panel [tabindex="0"]',
         ),
       );
-      const first = nodes[0],
-        last = nodes[nodes.length - 1];
+      const visible = nodes.filter(
+        (node) =>
+          node.getClientRects().length > 0 && !node.hasAttribute("disabled"),
+      );
+      const first = visible[0],
+        last = visible[visible.length - 1];
       if (event.shiftKey && document.activeElement === first) {
         event.preventDefault();
         last?.focus();
@@ -94,33 +100,55 @@ export default function PaletteEditor({
             </button>
           ))}
         </div>
-        <label className="color-row">
-          <span>Typography</span>
-          <select
-            aria-label="Typography pairing"
-            value={font}
-            onChange={(event) => setFont(event.target.value as FontPairing)}
-          >
-            {Object.entries(fontPairings).map(([key, pairing]) => (
-              <option key={key} value={key}>
-                {pairing.label}
-              </option>
-            ))}
-          </select>
-        </label>
+        <TypographyControls value={typography} onChange={setTypography} />
         <PaletteGallery colors={colors} onApply={setColors} />
-        {Object.entries(colors).map(([key, value]) => (
-          <label className="color-row" key={key}>
-            <span>{key}</span>
-            <input
-              type="color"
-              aria-label={key + " color"}
-              value={value}
-              onChange={(e) => setColors({ ...colors, [key]: e.target.value })}
-            />
-            <code>{value}</code>
-          </label>
-        ))}
+        <div className="my-5 border-b border-[#444] pb-4">
+          <h3 className="mb-3 text-sm">Fine-tune a color</h3>
+          {Object.entries(colors).map(([key, value]) => {
+            const role = key as keyof Colors;
+            return (
+              <div key={key}>
+                <button
+                  type="button"
+                  className="my-1 flex w-full items-center gap-3 rounded-lg border border-[#444] px-3 py-2 text-left text-xs"
+                  aria-label={`Edit ${key} color`}
+                  aria-expanded={editing === key}
+                  aria-controls={
+                    editing === key ? "active-color-picker" : undefined
+                  }
+                  onClick={() => setEditing(editing === key ? null : role)}
+                >
+                  <span
+                    className="size-6 shrink-0 rounded border border-[#777]"
+                    style={{ background: value }}
+                    aria-hidden="true"
+                  />
+                  <span className="mr-auto capitalize">{key}</span>
+                  <code>{value}</code>
+                </button>
+                {editing === key && (
+                  <div id="active-color-picker">
+                    <ColorPicker
+                      key={key}
+                      value={value}
+                      label={key}
+                      onChange={(hex) => setColors({ ...colors, [key]: hex })}
+                    />
+                    <button
+                      type="button"
+                      className="text-button"
+                      onClick={() =>
+                        setColors({ ...colors, [key]: defaults[role] })
+                      }
+                    >
+                      Reset {key} color
+                    </button>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
         <p className="contrast-feedback">
           {lowContrast.length === 0
             ? "✓ Text, secondary text, and accents are readable on both backgrounds."

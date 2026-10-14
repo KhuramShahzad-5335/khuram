@@ -27,7 +27,7 @@ export async function generateMetadata({
 }) {
   const page = validPage((await params).page);
   return pageMetadata(
-    `Notebook — Page ${page}`,
+    `Blog & Notebook — Page ${page}`,
     `Browse page ${page} of Khuram Shahzad’s development notebook: practical articles and project lessons.`,
     notebookUrl(page),
   );

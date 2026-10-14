@@ -6,9 +6,9 @@ import { ArrowUpRight, Menu, Palette } from "lucide-react";
 
 const navigation = [
   ["About", "/#about"],
-  ["Work", "/projects/"],
-  ["Notebook", "/blog/"],
-  ["Playground", "/experiments/"],
+  ["Projects", "/projects/"],
+  ["Blog", "/blog/"],
+  ["Experiments", "/experiments/"],
 ] as const;
 export function SiteHeader({ onEditColors }: { onEditColors: () => void }) {
   const path = usePathname();

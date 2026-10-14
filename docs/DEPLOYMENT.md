@@ -41,3 +41,5 @@ Add the site to [Bing Webmaster Tools](https://www.bing.com/webmasters/) and sub
 Use Lighthouse on the deployed homepage and an article on both mobile and desktop. Record the test mode and inspect the actual bottleneck. The reload intro intentionally delays visible content; it cannot coexist with a guarantee of maximum loading scores. Reduced-motion runs are useful fallback checks and must be labeled separately. Verify field results after real visits with Vercel Speed Insights and Search Console.
 
 Static export keeps hosting simple, but Next Image does not optimize raster files at request time (`unoptimized: true`). Compress source images, avoid heavyweight third-party embeds, and keep 3D/animation work gated. Future backend features require a deliberate architecture change; a Markdown/MDX or headless-CMS build workflow can remain static if introduced carefully later.
+
+For favicon, site-name, and sitelink follow-up, see the 14 October search-appearance section in `SEO.md`. Deploy the updated icons and metadata before requesting another crawl; extra result links remain Google’s choice.

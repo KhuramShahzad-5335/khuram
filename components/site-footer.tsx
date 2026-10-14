@@ -21,6 +21,29 @@ export function SiteFooter() {
           <Mail size={18} aria-hidden="true" />
         </a>
       </div>
+      <nav
+        aria-label="Footer navigation"
+        className="flex w-full flex-wrap gap-x-6 gap-y-3 text-xs text-(--muted)"
+      >
+        <Link href="/projects/" className="hover:text-(--text)">
+          Projects
+        </Link>
+        <Link href="/blog/" className="hover:text-(--text)">
+          Blog & Notebook
+        </Link>
+        <Link href="/experiments/" className="hover:text-(--text)">
+          Experiments
+        </Link>
+        <a href="/#services" className="hover:text-(--text)">
+          Services
+        </a>
+        <a href="/#contact" className="hover:text-(--text)">
+          Contact
+        </a>
+        <a href="/feed.xml" className="hover:text-(--text)">
+          RSS feed
+        </a>
+      </nav>
       <small className="font-mono text-[9px] text-(--muted) max-[700px]:w-full">
         © {new Date().getFullYear()} {site.name}
       </small>

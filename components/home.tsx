@@ -1,5 +1,7 @@
 "use client";
 import Link from "next/link";
+import { ArtGallery } from "./art-gallery";
+import { ProfileAvatar } from "./profile-avatar";
 import { ScenePreview } from "./scene-preview";
 import { useEffect, useRef, type ReactNode } from "react";
 import { useReducedMotion } from "framer-motion";
@@ -113,7 +115,7 @@ export function Home({
             Lahore. I turn ideas into web experiences that feel good to use.
           </p>
           <div className="hero-buttons">
-            <Link className="button primary" href="/projects/">
+            <Link className="button secondaryy" href="/projects/">
               Explore my work <ArrowUpRight size={17} />
             </Link>
             <a className="button secondary" href="#contact">
@@ -187,7 +189,8 @@ export function Home({
             <span>khuram.ts</span>
           </div>
           <div className="avatar">
-            &lt; KS /&gt;<small>avatar.placeholder</small>
+            <ProfileAvatar large />
+            {/* <small>avatar.selected · illustrated</small> */}
           </div>
           <pre>
             <span className="accent">const</span>
@@ -274,6 +277,7 @@ export function Home({
           ))}
         </div>
       </section>
+      <ArtGallery home />
       {/* THE FEEDBACK SECTION. WILL ADD THIS FEATURE LATER ON. */}
       {/* <section className="section">
         <div className="section-heading" data-reveal>

@@ -30,7 +30,8 @@ export default function Page() {
       {
         "@type": "WebSite",
         "@id": siteUrl + "/#website",
-        name: site.title,
+        name: site.name,
+        alternateName: "Khuram Shahzad Portfolio",
         url: siteUrl,
         publisher: { "@id": siteUrl + "/#person" },
       },

@@ -95,24 +95,6 @@ export const presets = [
     },
   },
 ] satisfies { name: string; colors: PaletteColors }[];
-export const fontPairings = {
-  system: {
-    label: "Clean / Sans",
-    heading: "Arial, Helvetica, sans-serif",
-    body: "Arial, Helvetica, sans-serif",
-  },
-  editorial: {
-    label: "Editorial / Serif",
-    heading: "Georgia, 'Times New Roman', serif",
-    body: "Georgia, 'Times New Roman', serif",
-  },
-  developer: {
-    label: "Developer / Mono",
-    heading: "Consolas, 'Courier New', monospace",
-    body: "Consolas, 'Courier New', monospace",
-  },
-} as const;
-export type FontPairing = keyof typeof fontPairings;
 /** Preserve older five-color preferences while adding the two paint roles. */
 export function parsePalette(value: unknown): PaletteColors | null {
   if (!value || typeof value !== "object") return null;
