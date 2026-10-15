@@ -126,7 +126,7 @@ export function Home({
             <Link className="button primary" href="/projects/">
               Explore my work <ArrowUpRight size={17} />
             </Link>
-            <a className="button primary" href="#contact">
+            <a className="button secondary" href="#contact">
               Let’s build something <ArrowRight size={16} />
             </a>
           </div>
