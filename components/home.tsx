@@ -41,7 +41,6 @@ export function Home({
     if (reduced) return;
     let disposed = false;
     let revert: (() => void) | undefined;
-    let removeRevealListener: (() => void) | undefined;
     void Promise.all([import("gsap"), import("gsap/ScrollTrigger")])
       .then(([{ gsap }, { ScrollTrigger }]) => {
         if (disposed) return;
@@ -67,22 +66,13 @@ export function Home({
           }, root);
           revert = () => context.revert();
         };
-        const loader = document.querySelector(".tech-loader");
-        if (!loader || loader.classList.contains("tech-loader-entering"))
-          startReveals();
-        else
-          window.addEventListener("portfolio:intro-reveal", startReveals, {
-            once: true,
-          });
-        removeRevealListener = () =>
-          window.removeEventListener("portfolio:intro-reveal", startReveals);
+        startReveals();
       })
       .catch(() => {
         /* Content stays visible if the decorative animation cannot load. */
       });
     return () => {
       disposed = true;
-      removeRevealListener?.();
       revert?.();
     };
   }, [reduced]);

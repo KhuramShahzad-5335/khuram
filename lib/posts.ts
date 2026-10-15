@@ -9,7 +9,7 @@ export const posts: Post[] = [
       "A practical personal SEO guide covering name searches, portfolio SEO, profiles, indexing, and measurement—with Khuram Shahzad’s ongoing case study.",
     category: "SEO & PERSONAL BRANDING",
     date: "2026-10-13",
-    updatedAt: "2026-10-14",
+    updatedAt: "2026-10-15",
     image: "/images/blog-personal-seo.svg",
     imageAlt:
       "An original illustration connecting a personal identity card, portfolio, professional profiles, and a search result",
@@ -189,7 +189,7 @@ export const posts: Post[] = [
         title: "Performance and design still matter to visitors",
         paragraphs: [
           "Personal SEO cannot rescue a portfolio that is unpleasant to read. Check the mobile page, image weight, keyboard navigation, contrast, and layout stability. Let a visitor open a project without fighting the interface. Our hero sculpture is decorative; the identity and project links remain ordinary HTML.",
-          "This site intentionally runs an intro on reload. That creates a visible-content delay, so we should measure its cost honestly instead of advertising perfect loading scores. The 3D scene is deferred and visibility-gated, with a reduced-motion alternative. Those decisions reduce unnecessary work, but we still need production measurements.",
+          "The loading screen was removed on 15 October 2026 so content appears without an intro delay. We should measure its effect honestly instead of advertising perfect loading scores. The 3D scene is deferred and visibility-gated, with a reduced-motion alternative. Those decisions reduce unnecessary work, but we still need production measurements.",
           "Google describes page experience as part of its broader systems, not a single score that guarantees top rankings. Use field Core Web Vitals when sufficient data exists and lab tools to investigate problems. Record whether an audit used normal animations or reduced motion; they are different experiences.",
         ],
         links: [

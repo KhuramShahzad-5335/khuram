@@ -12,7 +12,6 @@ import {
   parseTypography,
   type Typography,
 } from "@/lib/typography";
-import { TechTunnelLoader } from "./tech-tunnel-loader";
 import { useEffect, useState } from "react";
 import { SiteHeader } from "./site-header";
 const PaletteEditor = dynamic(() => import("./palette-editor"));
@@ -99,7 +98,6 @@ export function Shell({
   }, [colors, typography, ready]);
   return (
     <>
-      <TechTunnelLoader />
       <div id="portfolio-content">
         <SiteHeader onEditColors={() => setPalette(true)} />
         {children}

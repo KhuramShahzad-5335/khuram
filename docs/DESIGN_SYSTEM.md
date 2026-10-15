@@ -23,15 +23,13 @@ Use six local font pairings: Clean, Editorial, Developer, Studio, Playful, and T
 
 ## Styling ownership
 
-Component details use Tailwind in the header, footer, blog cards, and generated palette controls. General typography, shared brand/button/tag/section patterns and established responsive layouts live in `app/globals.css` and `styles/sections.css`. Custom illustration and scene geometry stays in CSS. The tunnel's coordinated animation lives in `styles/tech-loader.css`. Shared CSS uses the components cascade layer so Tailwind utilities can override it without extra specificity. Extend shared patterns when multiple components need them; use utilities for isolated details and remove superseded declarations.
+Component details use Tailwind in the header, footer, blog cards, and generated palette controls. General typography, shared brand/button/tag/section patterns and established responsive layouts live in `app/globals.css` and `styles/sections.css`. Custom illustration and scene geometry stays in CSS. Shared CSS uses the components cascade layer so Tailwind utilities can override it without extra specificity. Extend shared patterns when multiple components need them; use utilities for isolated details and remove superseded declarations.
 
 ## Motion contract
 
-The loader runs on every full reload, independent of session storage. It uses local technology SVG masks and five alternating tunnel rings. Icons are 33px, 25% smaller than their original 44px size.
+The owner removed the loading screen on 15 October 2026, superseding the earlier reload-intro requirement. Render content immediately with no loader overlay, timed fade gate, or intro events. Keep section scroll reveals and their reduced-motion fallback.
 
-One `--intro-beat` of 0.72 seconds controls the rhythm: flight is five beats, rotation twenty beats, and each fade two beats. The minimum active intro is four beats; a bounded readiness timer prevents waiting indefinitely. Keep rotation continuous through the loader fade. **The loader must reach zero opacity before the site's fade-in begins.** The content is inert while the sequence runs. Do not reintroduce crossfading, session-only display, blur transitions, or change timing independently.
-
-Reduced-motion visitors bypass the intro and receive static 3D alternatives. The server-rendered site stays readable without JavaScript. Offscreen and hidden-tab 3D scenes should not run continuously. Scroll reveals are subtle and must preserve readable content if animation code cannot load. Never uncomment the owner's center/skip UI or testimonial section without an explicit request.
+Reduced-motion visitors receive static 3D alternatives. Server-rendered content remains readable without JavaScript. Offscreen and hidden-tab 3D scenes should not run continuously. Scroll reveals must preserve readable content if animation code cannot load. Preserve the commented-out testimonial section.
 
 ## Accessible interactions
 
@@ -39,7 +37,7 @@ Use semantic links for navigation, buttons for actions, descriptive accessible n
 
 Do not encode meaning solely through color. Warn when custom body-text contrast is below 4.5:1, retain a readable reset surface, and review the muted/accent contrast too. A custom palette warning is not a guarantee that every color combination is accessible. Images need dimensions and useful alt text; decorative geometry should be hidden from assistive technology where it conveys no information.
 
-The loader is present in the initial server HTML, preventing a content flash before hydration. A noscript override keeps reading available without JavaScript. Scroll reveals begin at `portfolio:intro-reveal`; 3D waits until `portfolio:intro-complete`.
+Scroll reveals initialize when their animation modules load. The hero scene loads independently when near the viewport, the tab is visible, and reduced motion is disabled.
 
 Shuffle generates four new previews and immediately applies the currently selected mood (Dark initially). The generator repairs primary text to at least 7:1 and muted/accent colors to at least 4.5:1 against both background and surface. Custom edits retain contrast warnings; these token checks do not certify every rendered interaction.
 

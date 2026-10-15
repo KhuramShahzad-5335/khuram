@@ -9,10 +9,10 @@ Keep route files focused on composition, static route generation, and metadata. 
 ## Important boundaries
 
 - `app/layout.tsx` owns language, global metadata, analytics, skip navigation, and the shared shell. The footer remains server-rendered and is passed into the client shell.
-- `components/shell.tsx` coordinates the intro and palette state. Header navigation and the lazily imported editor have separate responsibilities.
+- `components/shell.tsx` coordinates palette and typography state. Header navigation and the lazily imported editor have separate responsibilities.
 - `lib/site.ts` validates the deployment origin and centrally defines identity/indexing decisions. `lib/metadata.ts` keeps canonical and sharing fields aligned.
 - `lib/posts.ts` contains article bodies. Only build-time route modules import it. `lib/blog.ts` supplies small shared types, counts, dates, and summary projection. Pass summaries to client components rather than importing entire article records there.
-- `ScenePreview` waits for the loader’s `portfolio:intro-complete` event and defers the heavy 3D component until near the viewport, uses a stable-height fallback, and unmounts the hero scene offscreen, on hidden tabs, and for reduced motion. Each actual scene checks WebGL support.
+- `ScenePreview` defers the heavy 3D component until near the viewport, uses a stable-height fallback, and unmounts the hero scene offscreen, on hidden tabs, and for reduced motion. Each actual scene checks WebGL support.
 - Home scroll reveals import GSAP/ScrollTrigger asynchronously. Cleanup cancels work after unmount and reverts animations. Avoid multiple animation libraries owning the same property.
 
 ## Source hygiene
@@ -33,9 +33,9 @@ npm start
 
 The export audit checks every sitemap route for one H1, unique title, canonical, description, sharing image, consistent robots directives, parseable JSON-LD, image dimensions/alt attributes, local link targets, RSS membership, and draft exclusion. It supports production and intentionally non-indexable builds. It does not test external domains, search ranking, visual appearance, or all accessibility concerns.
 
-Review desktop and mobile layouts, keyboard navigation, menu close behavior, palette focus containment/Escape/reset/persistence, process arrow-key navigation, WebGL fallback, reduced motion, and JavaScript-disabled reading. Check the loader on reload, Escape, and normal completion: content remains hidden until the loader opacity reaches zero, then fades in and becomes interactive. Check background-tab scene behavior and console errors.
+Review desktop and mobile layouts, keyboard navigation, menu close behavior, palette focus containment/Escape/reset/persistence, process arrow-key navigation, WebGL fallback, reduced motion, and JavaScript-disabled reading. Check initial visits and reloads: content is immediately visible and interactive without a loading overlay or intro timers. Check background-tab scene behavior and console errors.
 
-Measure Lighthouse against the production export and record device/mode, URL, score, and date. Inspect field Core Web Vitals in Search Console/Speed Insights after deployment; local lab scores are not field data. An active loader materially changes LCP. Never label a reduced-motion run as the ordinary animated experience.
+Measure Lighthouse against the production export and record device/mode, URL, score, and date. Inspect field Core Web Vitals in Search Console/Speed Insights after deployment; local lab scores are not field data. Never label a reduced-motion run as the ordinary animated experience.
 
 ## Extending the site
 

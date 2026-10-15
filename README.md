@@ -36,28 +36,27 @@ The site uses `output: "export"`. Routes, metadata, articles, RSS, robots, and s
 app/                  Route composition, metadata, global CSS, static feed
 components/           Site shell, interactive features, reusable presentation
 lib/                  Typed content, article helpers, palettes, SEO settings
-styles/               Shared section patterns and custom loader animation
-public/               Local illustrations, social images, SVG technology icons
+styles/               Shared section patterns, illustrations, and animation
+public/               Local illustrations, social images, verification files
 scripts/              Static preview, export audit, blog artwork generation
 docs/                Design, architecture, content and deployment guides
 ```
 
 ## Where to make changes
 
-| Change                                             | Source                                                        |
-| -------------------------------------------------- | ------------------------------------------------------------- |
-| Public identity, canonical domain, indexing rules  | `lib/site.ts`, `.env.example`                                 |
-| Project/experiment cards, technologies             | `lib/content.ts`                                              |
-| Project case studies                               | `lib/journeys.ts`                                             |
-| Articles and publication dates                     | `lib/posts.ts`                                                |
-| Word count, reading time, card summaries           | `lib/blog.ts`                                                 |
-| Home copy, contact details, commented testimonials | `components/home.tsx`                                         |
-| Services, conceptual previews                      | `components/services.tsx`, `styles/services.css`              |
-| Header/footer                                      | `components/site-header.tsx`, `components/site-footer.tsx`    |
-| Theme colors and generators                        | `lib/palettes.ts`, `components/palette-editor.tsx`            |
-| Loader timing and tunnel                           | `components/tech-tunnel-loader.tsx`, `styles/tech-loader.css` |
+| Change                                             | Source                                                     |
+| -------------------------------------------------- | ---------------------------------------------------------- |
+| Public identity, canonical domain, indexing rules  | `lib/site.ts`, `.env.example`                              |
+| Project/experiment cards, technologies             | `lib/content.ts`                                           |
+| Project case studies                               | `lib/journeys.ts`                                          |
+| Articles and publication dates                     | `lib/posts.ts`                                             |
+| Word count, reading time, card summaries           | `lib/blog.ts`                                              |
+| Home copy, contact details, commented testimonials | `components/home.tsx`                                      |
+| Services, conceptual previews                      | `components/services.tsx`, `styles/services.css`           |
+| Header/footer                                      | `components/site-header.tsx`, `components/site-footer.tsx` |
+| Theme colors and generators                        | `lib/palettes.ts`, `components/palette-editor.tsx`         |
 
-The homepage previews three recent articles. The notebook has static archive pagination, search, and topic filters; its search index downloads only when used. Full articles stay outside the homepage browser bundle. The hero Three.js scene waits for intro completion and loads near its viewport and stops when offscreen or the browser tab is hidden. Reduced-motion visitors get static alternatives. Theme settings are stored only in the visitor's browser, with graceful fallback when storage is blocked.
+The homepage previews three recent articles. The notebook has static archive pagination, search, and topic filters; its search index downloads only when used. Full articles stay outside the homepage browser bundle. The hero Three.js scene loads near its viewport and stops when offscreen or the browser tab is hidden. Reduced-motion visitors get static alternatives. Theme settings are stored only in the visitor's browser, with graceful fallback when storage is blocked.
 
 ## Documentation
 
@@ -81,7 +80,7 @@ The export includes canonical links, social previews, structured data, `robots.t
 
 Project artwork is clearly labeled as illustrative. Some case studies are editable drafts with unverified details. Testimonials remain commented out; do not publish invented endorsements, claims, metrics, or contributions. Replace placeholders with evidence before presenting them as final work.
 
-The intro deliberately runs on every reload and finishes fading out before the site fades in. Its timing creates a visible-content delay and affects performance scores. Preserve that requirement unless the owner changes it; measure production pages rather than claiming guaranteed 100/100 results.
+The loading screen was removed at the owner’s request on 15 October 2026. Content is visible immediately on initial visits and reloads, with no intro overlay or timed content gate. Section reveals remain, and 3D stays visibility-gated. Measure production pages rather than claiming guaranteed 100/100 results.
 
 Keep private documents, resumes, credentials, generated build folders, and temporary QA artifacts out of this repository. Source assets and maintained documentation belong here. Review Vercel analytics privacy requirements for the intended audience before adding further tracking.
 

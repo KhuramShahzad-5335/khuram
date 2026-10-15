@@ -68,7 +68,7 @@ For each public route:
 5. Use descriptive image alt text when useful, empty alt for purely decorative imagery, defined dimensions, and compressed source assets. Illustrative project previews must stay labeled as illustrations.
 6. Preserve mobile usability, keyboard navigation, reduced-motion fallbacks, and readable server HTML. The hero WebGL work remains deferred and visibility-gated.
 
-The loader intentionally delays visible content on each reload. Preserve its agreed behavior, measure the ordinary animated experience separately from reduced-motion runs, and avoid claiming maximum speed scores. Static export uses unoptimized Next Image; source asset compression remains important.
+The loading screen was removed on 15 October 2026; content now appears without an intro gate. Measure the ordinary animated experience separately from reduced-motion runs, and avoid claiming maximum speed scores. Static export uses unoptimized Next Image; source asset compression remains important.
 
 ## Blog and project content strategy
 

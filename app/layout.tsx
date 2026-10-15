@@ -48,11 +48,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <noscript>
-          <style>{`.tech-loader{display:none!important}#portfolio-content{opacity:1!important}`}</style>
-        </noscript>
-      </head>
       <body>
         <Telemetry enabled={process.env.VERCEL_ENV === "production"} />
         <a href="#main" className="skip-link">

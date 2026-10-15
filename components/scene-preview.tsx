@@ -11,16 +11,8 @@ export function ScenePreview() {
   const [allowed, setAllowed] = useState(false);
   useEffect(() => {
     const query = matchMedia("(prefers-reduced-motion: reduce)");
-    const update = () =>
-      setAllowed(
-        !query.matches &&
-          !document.hidden &&
-          !document.querySelector(".tech-loader") &&
-          !document.getElementById("portfolio-content")?.inert,
-      );
-    // Let the intro commit before deciding whether to download the WebGL code.
-    const frame = requestAnimationFrame(update);
-    window.addEventListener("portfolio:intro-complete", update);
+    const update = () => setAllowed(!query.matches && !document.hidden);
+    update();
     query.addEventListener("change", update);
     document.addEventListener("visibilitychange", update);
     const observer = new IntersectionObserver(
@@ -30,8 +22,6 @@ export function ScenePreview() {
     if (ref.current) observer.observe(ref.current);
     return () => {
       observer.disconnect();
-      cancelAnimationFrame(frame);
-      window.removeEventListener("portfolio:intro-complete", update);
       query.removeEventListener("change", update);
       document.removeEventListener("visibilitychange", update);
     };
