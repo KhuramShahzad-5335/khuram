@@ -88,3 +88,5 @@ Keep private documents, resumes, credentials, generated build folders, and tempo
 The GitHub quality workflow runs the same release checks on pushes and pull requests. Palette checks sample generated colors against both page and panel backgrounds.
 
 Typography settings live in `lib/typography.ts`; the editor provides six local pairings, heading/body choices, and article reading controls. `components/color-picker.tsx` replaces native color dialogs with HSV controls and HEX/RGB/HSL entry. The owner-selected avatar is local; no image CDN dependency is needed at runtime. See the architecture guide for storage timing, migration, API timeouts, and fallback behavior.
+
+IndexNow support is ready for owner deployment. After a production build, `npm run indexnow` previews the submission without network access; `npm run indexnow -- --submit` verifies the public ownership file and submits the current sitemap once. For later updates specify changed page paths. Follow [the IndexNow deployment steps](docs/DEPLOYMENT.md) and keep Google Search Console configured separately. Acceptance does not guarantee search inclusion or visitors.

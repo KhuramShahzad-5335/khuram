@@ -12,7 +12,8 @@
     "check:site": "node scripts/check-site.mjs",
     "check": "npm run check:config && npm run check:palettes && npm run typecheck && npm run format:check && npm run build && npm run check:site",
     "check:config": "node scripts/check-config.mjs",
-    "check:palettes": "node --experimental-strip-types scripts/check-palettes.mjs"
+    "check:palettes": "node --experimental-strip-types scripts/check-palettes.mjs",
+    "indexnow": "node scripts/indexnow.mjs"
   },
   "dependencies": {
     "@react-three/drei": "10.7.9",

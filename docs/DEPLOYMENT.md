@@ -43,3 +43,21 @@ Use Lighthouse on the deployed homepage and an article on both mobile and deskto
 Static export keeps hosting simple, but Next Image does not optimize raster files at request time (`unoptimized: true`). Compress source images, avoid heavyweight third-party embeds, and keep 3D/animation work gated. Future backend features require a deliberate architecture change; a Markdown/MDX or headless-CMS build workflow can remain static if introduced carefully later.
 
 For favicon, site-name, and sitelink follow-up, see the 14 October search-appearance section in `SEO.md`. Deploy the updated icons and metadata before requesting another crawl; extra result links remain Google’s choice.
+
+## IndexNow setup and submission
+
+`indexnow.config.json` defines the canonical origin and a generated verification filename. The matching UTF-8 file in `public/` contains the ownership key; Next’s export copies it to the site root. This is the protocol’s publicly served verification value, not an account password. Keep it stable, outside frontend bundles, and out of the sitemap. No paid service, account login, browser widget, backend, or environment variable is required.
+
+1. Run the production `npm run check`, then deploy the source changes through the owner’s usual GitHub/Vercel flow.
+2. Open the verification URL reported by `npm run indexnow`; confirm HTTP 200 and only the expected key text, without a redirect/login/challenge.
+3. Run `npm run indexnow` to preview the current sitemap URLs. It performs no network calls.
+4. For the first submission, run `npm run indexnow -- --submit`. The helper first verifies the live key file, then sends one JSON request to the global IndexNow endpoint. A failed live check prevents the POST.
+5. Later, submit only new or meaningfully changed deployed pages: `npm run indexnow -- --submit /blog/personal-seo-rank-your-name/`. Multiple canonical paths/URLs are accepted. Current sitemap membership is required; this helper does not submit deleted pages.
+
+The helper reads the existing production export, refuses non-indexable/mismatched-origin builds, duplicates are removed, and unrelated hosts/fragments/query URLs/drafts are rejected. HTTP 200 means received; 202 means received with key validation pending. Neither proves crawling, indexing, visitors or rankings. A 403 needs key-file verification; a 429 needs backoff. Do not attach this command to every build or repeatedly submit the full sitemap. IndexNow notifies participating engines (including Bing); keep Google Search Console and the sitemap workflow separately.
+
+See [official IndexNow documentation](https://www.indexnow.org/documentation). Submission is pending until the ownership file is deployed and a real accepted response is recorded.
+
+### Verification file returns 404
+
+A successful local build does not publish files. If the helper reports HTTP 404, include the generated `public/<key>.txt` file (which may still be untracked), `indexnow.config.json`, and the other setup changes in the owner’s Git commit/push. Wait for the Vercel **Production** deployment to succeed and check the exact verification URL again. Do not regenerate the key or bypass the ownership check. The helper reads the response body and reports a concise failure with a nonzero exit code; it sends no IndexNow POST when verification fails.
