@@ -89,4 +89,23 @@ The GitHub quality workflow runs the same release checks on pushes and pull requ
 
 Typography settings live in `lib/typography.ts`; the editor provides six local pairings, heading/body choices, and article reading controls. `components/color-picker.tsx` replaces native color dialogs with HSV controls and HEX/RGB/HSL entry. The owner-selected avatar is local; no image CDN dependency is needed at runtime. See the architecture guide for storage timing, migration, API timeouts, and fallback behavior.
 
-IndexNow support is ready for owner deployment. After a production build, `npm run indexnow` previews the submission without network access; `npm run indexnow -- --submit` verifies the public ownership file and submits the current sitemap once. For later updates specify changed page paths. Follow [the IndexNow deployment steps](docs/DEPLOYMENT.md) and keep Google Search Console configured separately. Acceptance does not guarantee search inclusion or visitors.
+## IndexNow and search discovery
+
+**Latest owner-reported result — 15 October 2026:** the command verified the live ownership file and submitted 26 canonical URLs. IndexNow returned **HTTP 202**: URLs received, with search-engine key validation still pending. This is submission evidence, not confirmed crawling, indexing, rankings, or traffic.
+
+1. Keep the verification file defined by `indexnow.config.json` deployed at its existing public URL. Do not remove or regenerate it after submission.
+2. Add or verify the site in [Bing Webmaster Tools](https://www.bing.com/webmasters/) and submit [the production sitemap](https://www.khuramshahzad.dev/sitemap.xml).
+3. Continue using [Google Search Console](https://search.google.com/search-console/) separately. Submit the same sitemap if needed, inspect priority pages, and monitor indexing, impressions, and clicks. IndexNow does not replace this workflow.
+4. Publish useful original articles, link related pages, and share them with relevant audiences. Search-engine notification alone does not bring visitors.
+
+For a new or meaningfully updated article, build with production configuration, run the release checks, push, and wait for the Vercel Production deployment to succeed. Then submit only the deployed changed page, replacing the example path with its actual canonical path:
+
+```sh
+npm run indexnow -- --submit /blog/your-article-slug/
+```
+
+Multiple page paths can be supplied together. The helper requires current sitemap membership. `npm run indexnow` is a local dry run with no network requests; `npm run indexnow -- --submit` submits all current sitemap URLs and was used for the initial submission. Do not repeatedly resubmit the full sitemap or run it just to check indexing status.
+
+HTTP **200** means received; **202** means received with key validation pending. Neither guarantees indexing. If the live ownership file returns **404**, include `public/<key>.txt` in the Git push and deploy it before retrying; a local build does not update the live site. A **403** requires checking the key file; a **429** requires backing off.
+
+See [the deployment and troubleshooting guide](docs/DEPLOYMENT.md) and [official IndexNow documentation](https://www.indexnow.org/documentation).
