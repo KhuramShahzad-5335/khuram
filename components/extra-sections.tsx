@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { SectionMotif } from "./section-motif";
 import { BoxDiagram } from "./box-diagram";
 import { ArrowUpRight, Plus } from "lucide-react";
@@ -85,11 +85,8 @@ export function Process() {
           </button>
         ))}
       </div>
-      <motion.div
-        initial={!enhanced || reduced ? false : { opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: reduced ? 0 : 0.25, ease: "easeOut" }}
-        className="process-panel"
+      <div
+        className={`process-panel ${enhanced && !reduced ? "process-panel-enter" : ""}`}
         id="process-panel"
         role="tabpanel"
         aria-labelledby={"step-tab-" + active}
@@ -101,7 +98,7 @@ export function Process() {
           <p>{steps[active].text}</p>
           <small>{steps[active].detail}</small>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }

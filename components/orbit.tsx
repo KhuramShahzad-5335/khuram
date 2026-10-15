@@ -1,8 +1,23 @@
 "use client";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Float, OrbitControls, RoundedBox } from "@react-three/drei";
-import { useRef, useState, useEffect, useMemo } from "react";
-import { CanvasTexture, type Group } from "three";
+import { Float } from "@react-three/drei/core/Float";
+import { OrbitControls } from "@react-three/drei/core/OrbitControls";
+import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
+import {
+  createContext,
+  useContext,
+  useRef,
+  useState,
+  useEffect,
+  useMemo,
+  type ReactNode,
+} from "react";
+import {
+  BoxGeometry,
+  CanvasTexture,
+  type BufferGeometry,
+  type Group,
+} from "three";
 import { defaultColors, onColor } from "@/lib/palettes";
 type Paint = {
   primary: string;
@@ -11,6 +26,20 @@ type Paint = {
   surface: string;
   text: string;
 };
+const GeometryContext = createContext<Map<string, BufferGeometry> | null>(null);
+function GeometryPool({ children }: { children: ReactNode }) {
+  const pool = useMemo(() => new Map<string, BufferGeometry>(), []);
+  useEffect(
+    () => () => {
+      pool.forEach((geometry) => geometry.dispose());
+      pool.clear();
+    },
+    [pool],
+  );
+  return (
+    <GeometryContext.Provider value={pool}>{children}</GeometryContext.Provider>
+  );
+}
 function Block({
   position,
   size,
@@ -20,29 +49,31 @@ function Block({
   size: [number, number, number];
   color: string;
 }) {
-  const material = (
-    <meshStandardMaterial
-      color={color}
-      roughness={0.55}
-      metalness={0.12}
-      toneMapped={false}
-    />
-  );
-  const radius = Math.min(...size) * 0.32;
-  return Math.min(...size) >= 0.06 ? (
-    <RoundedBox
-      position={position}
-      args={size}
-      radius={radius}
-      smoothness={3}
-      bevelSegments={3}
-    >
-      {material}
-    </RoundedBox>
-  ) : (
+  const [width, height, depth] = size;
+  const pool = useContext(GeometryContext);
+  if (!pool) throw new Error("Model blocks require a geometry pool.");
+  // Analytic rounded normals avoid per-mesh extrusion and crease reconstruction.
+  const geometry = useMemo(() => {
+    const shortest = Math.min(width, height, depth);
+    const key = `${width}/${height}/${depth}`;
+    const cached = pool.get(key);
+    if (cached) return cached;
+    const next =
+      shortest >= 0.06
+        ? new RoundedBoxGeometry(width, height, depth, 3, shortest * 0.32)
+        : new BoxGeometry(width, height, depth);
+    pool.set(key, next);
+    return next;
+  }, [width, height, depth, pool]);
+  return (
     <mesh position={position}>
-      <boxGeometry args={size} />
-      {material}
+      <primitive object={geometry} attach="geometry" dispose={null} />
+      <meshStandardMaterial
+        color={color}
+        roughness={0.55}
+        metalness={0.12}
+        toneMapped={false}
+      />
     </mesh>
   );
 }
@@ -492,9 +523,25 @@ function Object3D({ paint, dragging }: { paint: Paint; dragging: boolean }) {
     </group>
   );
 }
+/** Warm shader programs before the first animated frame where the driver supports it. */
+function SceneWarmup() {
+  const { gl, scene, camera, setFrameloop } = useThree();
+  useEffect(() => {
+    let disposed = false;
+    const start = () => {
+      if (!disposed) setFrameloop("always");
+    };
+    void gl.compileAsync(scene, camera).then(start, start);
+    return () => {
+      disposed = true;
+    };
+  }, [gl, scene, camera, setFrameloop]);
+  return null;
+}
 export default function Orbit() {
   const [enabled, setEnabled] = useState(false);
   const [dragging, setDragging] = useState(false);
+  const [pixelRatio, setPixelRatio] = useState(1);
   const [paint, setPaint] = useState<Paint>(defaultColors);
   useEffect(() => {
     const update = () => {
@@ -519,6 +566,13 @@ export default function Orbit() {
   }, []);
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const mobile = window.matchMedia("(max-width: 700px)");
+    const updateRatio = () =>
+      setPixelRatio(
+        mobile.matches ? 1 : Math.min(window.devicePixelRatio, 1.5),
+      );
+    updateRatio();
+    mobile.addEventListener("change", updateRatio);
     const update = () => {
       if (query.matches) {
         setEnabled(false);
@@ -526,14 +580,19 @@ export default function Orbit() {
       }
       try {
         const canvas = document.createElement("canvas");
-        setEnabled(!!canvas.getContext("webgl2"));
+        const context = canvas.getContext("webgl2");
+        setEnabled(!!context);
+        context?.getExtension("WEBGL_lose_context")?.loseContext();
       } catch {
         setEnabled(false);
       }
     };
     update();
     query.addEventListener("change", update);
-    return () => query.removeEventListener("change", update);
+    return () => {
+      query.removeEventListener("change", update);
+      mobile.removeEventListener("change", updateRatio);
+    };
   }, []);
   return (
     <div
@@ -543,20 +602,29 @@ export default function Orbit() {
       <div className="orbit-grid" />
       {enabled ? (
         <div className="orbit-stage">
-          <Canvas camera={{ position: [0, 0, 6], fov: 42 }} dpr={[1, 1.5]}>
+          <Canvas
+            camera={{ position: [0, 0, 6], fov: 42 }}
+            dpr={pixelRatio}
+            frameloop="never"
+          >
             <ambientLight intensity={1.2} />
             <directionalLight position={[3, 4, 5]} intensity={3} />
-            <Object3D paint={paint} dragging={dragging} />
+            <GeometryPool>
+              <Object3D paint={paint} dragging={dragging} />
+            </GeometryPool>
             <OrbitControls
               enableZoom={false}
               enablePan={false}
               onStart={() => setDragging(true)}
               onEnd={() => setDragging(false)}
             />
+            <SceneWarmup />
           </Canvas>
         </div>
       ) : (
-        <div className="orbit-fallback">◇</div>
+        <div className="orbit-stage">
+          <div className="orbit-fallback">◇</div>
+        </div>
       )}
       <span className="orbit-coordinate">WEB_001 / ASSEMBLY</span>
       <span className="orbit-hint">

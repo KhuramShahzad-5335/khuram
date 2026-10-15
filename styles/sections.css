@@ -719,3 +719,45 @@
     }
   }
 }
+
+/* Native section reveals keep animation work off the JavaScript frame loop. */
+@layer components {
+  .reveal-pending {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  .process-panel-enter {
+    animation: process-panel-enter 0.25s ease-out;
+  }
+  @keyframes process-panel-enter {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal-pending {
+      opacity: 1;
+      transform: none;
+    }
+    .process-panel-enter {
+      animation: none;
+    }
+  }
+}
+
+@layer components {
+  /* Keep content in HTML while the browser defers distant section rendering. */
+  .hero ~ .section {
+    content-visibility: auto;
+    contain-intrinsic-block-size: auto 900px;
+  }
+  /* Fragment navigation needs actual section heights, including custom fonts. */
+  :root:has(:target) .hero ~ .section {
+    content-visibility: visible;
+  }
+}

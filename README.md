@@ -108,3 +108,5 @@ Multiple page paths can be supplied together. The helper requires current sitema
 HTTP **200** means received; **202** means received with key validation pending. Neither guarantees indexing. If the live ownership file returns **404**, include `public/<key>.txt` in the Git push and deploy it before retrying; a local build does not update the live site. A **403** requires checking the key file; a **429** requires backing off.
 
 See [the deployment and troubleshooting guide](docs/DEPLOYMENT.md) and [official IndexNow documentation](https://www.indexnow.org/documentation).
+
+Mobile performance: section reveals use native browser animation and process-panel transitions use CSS. The hero retains its complete interactive model, but shares cheaper rounded geometry, uses a mobile pixel ratio of 1, and initializes after an idle opportunity. Its fallback reserves the full frame during module loading. See [architecture performance notes](docs/ARCHITECTURE.md) before changing animation or scene loading.

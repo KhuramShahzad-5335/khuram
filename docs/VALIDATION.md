@@ -53,3 +53,26 @@ The live verification URL still returned HTTP 404. The helper now consumes respo
 The owner explicitly removed the earlier reload intro requirement. The loader component, stylesheet, noscript workaround, intro events, and eight loader-only technology SVGs plus their attribution file were removed. Section reveals now start independently; hero loading still respects viewport, tab visibility, and reduced motion. The personal SEO article and current handoff guides reflect the change; earlier validation entries describe historical behavior. Commented testimonials remain unchanged.
 
 The production release checks passed (26 sitemap routes and 837 internal references). Chrome checks passed at 1440px with motion enabled and at 390/320px with reduced motion: initial loads and reloads have no loader overlay or content opacity/inert gate, palette keyboard dismissal restores interaction, mobile navigation works, section content reveals, desktop hero canvas renders, reduced-motion visitors receive the static fallback, and no loader-icon requests or page errors occur. Home and blog remain readable without JavaScript. No production deployment or new Lighthouse score is claimed.
+
+## Mobile performance optimization — 15 October 2026
+
+The owner supplied a deployed-site mobile Lighthouse screenshot: Performance 37, FCP 3.5s, LCP 4.1s, TBT 8,900ms, CLS 0.171, Speed Index 6.2s. These are the owner’s report values, separate from the local measurements below.
+
+The complete hero model, rounded finish, labels, floating motion, rotation, palette repainting, drag disassembly, and section/process transitions were retained. Section reveals now use IntersectionObserver/Web Animations instead of downloading GSAP/ScrollTrigger; process transitions use CSS instead of Framer Motion. Both libraries remain installed but are not imported by those components. Initial viewport text stays opaque. Geometry is analytic and shared per mounted scene; mobile DPR is 1, desktop is capped at 1.5. Shader programs warm asynchronously before the continuous animation loop. The temporary WebGL probe context is released. A stable dynamic-import fallback fixes the collapsed model frame. Homepage offscreen sections defer rendering, with real layout restored for fragment navigation to preserve anchor targets after font changes.
+
+Sequential local Lighthouse 13.5 mobile lab measurements used the preserved prior export and optimized export, ordinary motion/WebGL enabled, simulated mobile throttling (4× CPU), and full-page screenshot collection disabled consistently. All reports warn that the host CPU is slower than Lighthouse expects. These are single-run comparisons, not a median or field/deployed results:
+
+| Metric      | Prior export | Final optimization run |
+| ----------- | ------------ | ---------------------- |
+| Performance | 37           | 61                     |
+| FCP         | 3.3s         | 2.2s                   |
+| LCP         | 4.6s         | 3.1s                   |
+| TBT         | 18,590ms     | 4,470ms                |
+| CLS         | 0.095        | 0                      |
+| Speed Index | 8.7s         | 3.4s                   |
+
+Intermediate iterations scored 48 and 35 as implementation and host load varied; do not treat the final score as a guarantee. Earlier simultaneous diagnostic runs are excluded from this comparison. Remaining blocking time is substantial and the Three.js/Fiber startup is still the largest runtime cost. Deploy and repeat mobile Lighthouse sequentially under consistent conditions, then review real Core Web Vitals as traffic becomes available. No runtime audit detection, disabled model, forced reduced-motion audit, or interaction requirement was used to obtain the reported score.
+
+The production release checks passed with 26 sitemap routes and 837 internal references. Chrome checks at 1440px/390px with normal motion and 320px with reduced motion verified model rendering, mobile/desktop pixel ratios, non-collapsing loading frame, drag input, palette controls, process keyboard tabs, mobile navigation, scene unmount/remount, live reduced-motion changes, readable no-JavaScript content and no page errors. Temporary screenshots and reports remain outside the repository.
+
+The final fragment safeguard passed additional 390px and 1440px checks with the Developer font pairing: Contact/Work/About anchors land in view, all homepage sections render while scrolling, FAQ disclosure works, and reloads show no loader. The safeguard is inactive for the unfragmented homepage URL used in the performance run.

@@ -4,7 +4,7 @@ import { ArtGallery } from "./art-gallery";
 import { ProfileAvatar } from "./profile-avatar";
 import { ScenePreview } from "./scene-preview";
 import { useEffect, useRef, type ReactNode } from "react";
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 import {
   ArrowDown,
   ArrowUpRight,
@@ -38,42 +38,60 @@ export function Home({
   );
   useEffect(() => () => clearTimeout(copyTimer.current), []);
   useEffect(() => {
-    if (reduced) return;
-    let disposed = false;
-    let revert: (() => void) | undefined;
-    void Promise.all([import("gsap"), import("gsap/ScrollTrigger")])
-      .then(([{ gsap }, { ScrollTrigger }]) => {
-        if (disposed) return;
-        gsap.registerPlugin(ScrollTrigger);
-        const startReveals = () => {
-          if (disposed || revert) return;
-          const context = gsap.context(() => {
-            gsap.utils
-              .toArray<HTMLElement>("[data-reveal]")
-              .forEach((element) => {
-                gsap.from(element, {
-                  y: 24,
-                  opacity: 0,
-                  duration: 0.7,
-                  ease: "power2.out",
-                  scrollTrigger: {
-                    trigger: element,
-                    start: "top 92%",
-                    once: true,
-                  },
-                });
-              });
-          }, root);
-          revert = () => context.revert();
-        };
-        startReveals();
-      })
-      .catch(() => {
-        /* Content stays visible if the decorative animation cannot load. */
-      });
+    if (reduced || !root.current || !("IntersectionObserver" in window)) return;
+    const elements = Array.from(
+      root.current.querySelectorAll<HTMLElement>("[data-reveal]"),
+    );
+    const animations = new Set<Animation>();
+    const animate = (element: HTMLElement, fade: boolean) => {
+      element.classList.remove("reveal-pending");
+      const animation = element.animate(
+        [
+          { transform: "translateY(24px)", opacity: fade ? 0 : 1 },
+          { transform: "translateY(0)", opacity: 1 },
+        ],
+        { duration: 700, easing: "cubic-bezier(0.215, 0.61, 0.355, 1)" },
+      );
+      animations.add(animation);
+      void animation.finished
+        .then(() => animations.delete(animation))
+        .catch(() => {});
+    };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          observer.unobserve(entry.target);
+          animate(entry.target as HTMLElement, true);
+        }
+      },
+      { rootMargin: "0px 0px -8% 0px" },
+    );
+    // Read layout once before mutating classes; keep initial viewport text painted.
+    const sectionTops = new Map<HTMLElement, number>();
+    const belowFold = elements.map((element) => {
+      const section = element.closest<HTMLElement>(".section");
+      if (section) {
+        if (!sectionTops.has(section)) {
+          sectionTops.set(section, section.getBoundingClientRect().top);
+        }
+        // Do not force layout inside distant content-visibility sections.
+        if (sectionTops.get(section)! >= window.innerHeight) return true;
+      }
+      return element.getBoundingClientRect().top >= window.innerHeight;
+    });
+    elements.forEach((element, index) => {
+      if (belowFold[index]) {
+        element.classList.add("reveal-pending");
+        observer.observe(element);
+      } else {
+        animate(element, false);
+      }
+    });
     return () => {
-      disposed = true;
-      revert?.();
+      observer.disconnect();
+      animations.forEach((animation) => animation.cancel());
+      elements.forEach((element) => element.classList.remove("reveal-pending"));
     };
   }, [reduced]);
   async function copy() {
@@ -105,10 +123,10 @@ export function Home({
             Lahore. I turn ideas into web experiences that feel good to use.
           </p>
           <div className="hero-buttons">
-            <Link className="button secondary" href="/projects/">
+            <Link className="button primary" href="/projects/">
               Explore my work <ArrowUpRight size={17} />
             </Link>
-            <a className="button secondary" href="#contact">
+            <a className="button primary" href="#contact">
               Let’s build something <ArrowRight size={16} />
             </a>
           </div>
