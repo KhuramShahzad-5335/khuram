@@ -105,7 +105,7 @@ export function Home({
             Lahore. I turn ideas into web experiences that feel good to use.
           </p>
           <div className="hero-buttons">
-            <Link className="button secondaryy" href="/projects/">
+            <Link className="button secondary" href="/projects/">
               Explore my work <ArrowUpRight size={17} />
             </Link>
             <a className="button secondary" href="#contact">
