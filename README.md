@@ -6,6 +6,8 @@ A portfolio and MongoDB-backed notebook for a self-employed software developer i
 
 ## Start here
 
+Advertising is currently disabled. See [AdSense preparation and owner setup](docs/ADSENSE.md) for verification, privacy/consent requirements, and the remaining account steps. Public publisher information lives at `/about/`, `/contact/`, `/privacy/`, and `/editorial/`.
+
 Use Node.js **22.13 or later** and npm. The app is at the repository root; there is no nested `portfolio/` app.
 
 ```sh

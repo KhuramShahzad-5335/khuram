@@ -59,6 +59,24 @@ const content = spawnSync(
   },
 );
 assert.equal(content.status, 0, content.stderr);
+const advertising = spawnSync(
+  process.execPath,
+  [
+    "--experimental-strip-types",
+    "--input-type=module",
+    "-e",
+    `import assert from 'node:assert/strict'; import {adsensePublisherId} from './lib/adsense.ts';
+   for (const value of ['', 'pub-123', 'ca-pub-1234567890123456<script>', 'pub-12345678901234567']) assert.equal(adsensePublisherId(value), null);
+   assert.equal(adsensePublisherId('pub-1234567890123456'), 'pub-1234567890123456');
+   assert.equal(adsensePublisherId(' ca-pub-1234567890123456 '), 'pub-1234567890123456');`,
+  ],
+  {
+    cwd: process.cwd(),
+    encoding: "utf8",
+    env: { ...process.env, NODE_NO_WARNINGS: "1" },
+  },
+);
+assert.equal(advertising.status, 0, advertising.stderr);
 console.log(
   "Configuration/content checks passed: indexing guards, URL validation, safe JSON-LD, unique slugs, and project journeys.",
 );

@@ -1,5 +1,7 @@
 # Deployment and indexing
 
+Optional advertising ownership verification uses `ADSENSE_PUBLISHER_ID`; it never enables ads. Follow [ADSENSE.md](ADSENSE.md) before applying or implementing ad serving. No account is configured yet.
+
 For the current live observations, on-page requirements, content/off-page strategy, and indexing contract, read [SEO.md](SEO.md).
 
 ## Vercel configuration

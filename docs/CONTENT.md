@@ -1,5 +1,7 @@
 # Content and blog publishing
 
+For AI-assisted editorial standards, the October research collection, and advertising readiness, see [ADSENSE.md](ADSENSE.md). Public readers can inspect `/editorial/` and contact the publisher about corrections. Topic popularity is a research hypothesis until actual search data supports it.
+
 Current publishing uses MongoDB and Compass, approved on 26 October 2026. Follow [BLOG_DATABASE.md](BLOG_DATABASE.md) for credentials, migration, document validation, draft/publication rules, cache timing, images and rollback.
 
 ## Sources and voice

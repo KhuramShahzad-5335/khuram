@@ -5,6 +5,9 @@ import { SiteFooter } from "@/components/site-footer";
 import { site, siteUrl, isIndexable } from "@/lib/site";
 
 import { Telemetry } from "@/components/telemetry";
+import { adsensePublisherId } from "@/lib/adsense";
+
+const publisherId = adsensePublisherId();
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -13,6 +16,9 @@ export const metadata: Metadata = {
     template: "%s | Khuram Shahzad",
   },
   description: site.description,
+  other: publisherId
+    ? { "google-adsense-account": `ca-${publisherId}` }
+    : undefined,
   openGraph: {
     title: site.title,
     description:

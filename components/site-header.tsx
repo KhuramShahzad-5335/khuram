@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Menu, Palette } from "lucide-react";
 
 const navigation = [
@@ -13,7 +13,12 @@ const navigation = [
 export function SiteHeader({ onEditColors }: { onEditColors: () => void }) {
   const path = usePathname();
   const [menu, setMenu] = useState(false);
-  useEffect(() => setMenu(false), [path]);
+  const previousPath = useRef(path);
+  useEffect(() => {
+    // Initial hydration must not close a menu opened by an early click.
+    if (previousPath.current !== path) setMenu(false);
+    previousPath.current = path;
+  }, [path]);
   return (
     <header className="relative z-10 mx-auto flex h-[90px] max-w-[1440px] items-center justify-between border-b border-(--border) px-[6%] max-[1000px]:px-[5%] max-[700px]:h-[75px]">
       <Link href="/" className="wordmark">
@@ -59,7 +64,7 @@ export function SiteHeader({ onEditColors }: { onEditColors: () => void }) {
         </a>
         <button
           className="icon-button min-[701px]:hidden"
-          onClick={() => setMenu(!menu)}
+          onClick={() => setMenu((open) => !open)}
           aria-label={menu ? "Close navigation" : "Open navigation"}
           aria-expanded={menu}
           aria-controls="main-navigation"

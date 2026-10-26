@@ -72,7 +72,11 @@ export default async function Page({
     dateModified: p.updatedAt || p.date,
     wordCount: wordCount(p),
     image: new URL(socialImage(p.image), siteUrl).href,
-    author: { "@type": "Person", name: "Khuram Shahzad", url: siteUrl },
+    author: {
+      "@type": "Person",
+      name: "Khuram Shahzad",
+      url: siteUrl + "/about/",
+    },
     mainEntityOfPage: siteUrl + "/blog/" + p.slug + "/",
   };
   return (
@@ -90,7 +94,9 @@ export default async function Page({
       <div className="article-meta">
         <ProfileAvatar />
         <div>
-          <strong>Khuram Shahzad</strong>
+          <Link href="/about/">
+            <strong>Khuram Shahzad</strong>
+          </Link>
           <span>
             <time dateTime={p.date}>{formatPostDate(p.date)}</time> ·{" "}
             {wordCount(p)} words · {readingMinutes(p)} min read
@@ -163,6 +169,12 @@ export default async function Page({
             </section>
           ))}
           <div className="further-reading">
+            <p>
+              <Link href="/editorial/">
+                Sources, AI assistance, and editorial standards
+              </Link>{" "}
+              · <Link href="/contact/">Report a correction</Link>
+            </p>
             <h2>Further reading</h2>
             {p.sources.map((s) => (
               <a key={s.url} href={s.url}>

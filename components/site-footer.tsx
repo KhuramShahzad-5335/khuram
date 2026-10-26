@@ -37,9 +37,18 @@ export function SiteFooter() {
         <a href="/#services" className="hover:text-(--text)">
           Services
         </a>
-        <a href="/#contact" className="hover:text-(--text)">
+        <Link href="/contact/" className="hover:text-(--text)">
           Contact
-        </a>
+        </Link>
+        <Link href="/about/" className="hover:text-(--text)">
+          About
+        </Link>
+        <Link href="/editorial/" className="hover:text-(--text)">
+          Editorial standards
+        </Link>
+        <Link href="/privacy/" className="hover:text-(--text)">
+          Privacy
+        </Link>
         <a href="/feed.xml" className="hover:text-(--text)">
           RSS feed
         </a>

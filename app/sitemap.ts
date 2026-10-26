@@ -14,6 +14,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       "/",
       "/projects/",
       "/blog/",
+      "/about/",
+      "/contact/",
+      "/editorial/",
+      "/privacy/",
       ...Array.from({ length: blogPageCount - 1 }, (_, i) =>
         notebookUrl(i + 2),
       ),
