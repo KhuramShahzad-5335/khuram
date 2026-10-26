@@ -32,24 +32,31 @@ async function main() {
     `/${key}.txt`,
     "Verification filename and contents differ.",
   );
-  assert.equal(
-    (await read(`out${config.keyFile}`)).trim(),
-    key,
-    "Rebuild: exported verification file is missing or differs.",
-  );
-  const robots = await read("out/robots.txt");
+  const liveRead = async (pathname) => {
+    const response = await fetch(new URL(pathname, origin), {
+      redirect: "error",
+      signal: AbortSignal.timeout(20000),
+    });
+    assert.equal(
+      response.status,
+      200,
+      `Live ${pathname} returned ${response.status}`,
+    );
+    return response.text();
+  };
+  const robots = await liveRead("/robots.txt");
   assert(
     !/^Disallow:\s*\/$/m.test(robots),
-    "Refusing a non-indexable build. Rebuild with production configuration.",
+    "Refusing a non-indexable site. Check production configuration.",
   );
-  const sitemap = await read("out/sitemap.xml");
+  const sitemap = await liveRead("/sitemap.xml");
   const listed = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) =>
     match[1].replaceAll("&amp;", "&"),
   );
   assert(
     listed.length > 0 &&
       listed.every((value) => new URL(value).origin === origin.origin),
-    "Build sitemap does not match the configured origin.",
+    "Live sitemap does not match the configured origin.",
   );
   const requested = args.filter((arg) => arg !== "--submit");
   const urls = [
@@ -84,7 +91,7 @@ async function main() {
   for (const url of urls) console.log(url);
   if (!submit) {
     console.log(
-      "No network requests sent. Deploy the verification file, then add --submit. For later updates, specify only changed page URLs.",
+      "Read-only live check; no URLs submitted. Add --submit after verifying the changed pages are live.",
     );
   } else {
     const proof = await fetch(keyLocation, {

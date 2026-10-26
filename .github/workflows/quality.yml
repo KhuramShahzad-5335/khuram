@@ -18,6 +18,7 @@ jobs:
     env:
       NEXT_PUBLIC_SITE_URL: https://www.khuramshahzad.dev
       VERCEL_ENV: production
+      BLOG_SOURCE: files
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:

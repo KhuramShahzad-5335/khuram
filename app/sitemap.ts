@@ -1,11 +1,14 @@
 import type { MetadataRoute } from "next";
 import { projects, experiments } from "@/lib/content";
 import { siteUrl } from "@/lib/site";
-import { blogPageCount } from "@/lib/post-index";
+import { getNotebook } from "@/lib/post-index";
 import { notebookUrl } from "@/lib/notebook";
-import { posts } from "@/lib/posts";
+import { getPublishedPosts } from "@/lib/server/posts";
 export const dynamic = "force-static";
-export default function sitemap(): MetadataRoute.Sitemap {
+export const revalidate = 60;
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const { blogPageCount } = await getNotebook();
+  const posts = await getPublishedPosts();
   return [
     ...[
       "/",

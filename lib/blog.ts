@@ -1,4 +1,4 @@
-/** Small browser-safe types/helpers; article bodies remain in lib/posts.ts on the server. */
+/** Small browser-safe types/helpers; article bodies remain on the server; lib/posts.ts is the migration snapshot. */
 export type PostSection = {
   id: string;
   title: string;

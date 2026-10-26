@@ -1,12 +1,9 @@
 import { ArtGallery } from "./art-gallery";
 import { NotebookBrowser } from "./notebook-browser";
-import {
-  blogCategories,
-  blogPageCount,
-  getBlogPage,
-  postIndex,
-} from "@/lib/post-index";
-export function NotebookPage({ page = 1 }: { page?: number }) {
+import { getNotebook } from "@/lib/post-index";
+import { BLOG_PAGE_SIZE } from "@/lib/notebook";
+export async function NotebookPage({ page = 1 }: { page?: number }) {
+  const { postIndex, blogPageCount, blogCategories } = await getNotebook();
   return (
     <main id="main" className="page-main">
       <span className="eyebrow">THE BLOG / DEVELOPMENT NOTEBOOK</span>
@@ -22,7 +19,10 @@ export function NotebookPage({ page = 1 }: { page?: number }) {
       </p>
       <NotebookBrowser
         key={page}
-        initialPosts={getBlogPage(page)}
+        initialPosts={postIndex.slice(
+          (page - 1) * BLOG_PAGE_SIZE,
+          page * BLOG_PAGE_SIZE,
+        )}
         initialPage={page}
         pageCount={blogPageCount}
         total={postIndex.length}
@@ -30,8 +30,8 @@ export function NotebookPage({ page = 1 }: { page?: number }) {
       />
       <ArtGallery />
       <div className="blog-bottom">
-        <code>// write → review → build → deploy</code>
-        <span>A static notebook. Room for the next idea.</span>
+        <code>// write → review → publish</code>
+        <span>Room for the next idea.</span>
       </div>
     </main>
   );

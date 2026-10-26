@@ -40,16 +40,16 @@ These are dated observations, not permanent guarantees or a full crawl of produc
 | Public route discovery                                     | `app/sitemap.ts`                                     |
 | Crawl policy                                               | `app/robots.ts`                                      |
 | RSS                                                        | `app/feed.xml/route.ts`                              |
-| Published article content                                  | `lib/posts.ts`                                       |
-| Export regression checks                                   | `scripts/check-config.mjs`, `scripts/check-site.mjs` |
+| Published article content                                  | MongoDB `posts`, `lib/server/posts.ts`               |
+| Server regression checks                                   | `scripts/check-config.mjs`, `scripts/check-site.mjs` |
 
-The site is a static export. Server Components generate readable content at build time; browser JavaScript enhances it. Core article text must not depend on a canvas, animation, click, or client fetch. Keep full article bodies out of homepage client bundles. Do not describe the deployment as requiring a live rendering server or backend.
+The source now supports a Next.js Node server with MongoDB-backed articles and 60-second request-driven ISR. This architecture change does not itself prove deployment or indexing. Core article text is readable server HTML and does not depend on canvas, animation, clicks, or client fetching. Keep full article bodies out of homepage client bundles. See BLOG_DATABASE.md for publication, cache lag and rollback.
 
 ## Indexability contract
 
 - Production builds need a valid `NEXT_PUBLIC_SITE_URL=https://www.khuramshahzad.dev` and must not use `VERCEL_ENV=preview`.
 - Missing configuration, the fallback `https://example.com`, and Vercel Preview builds deliberately generate non-indexable directives. Invalid configured origins fail validation.
-- Metadata and crawl rules are baked into the export. Changing a Vercel variable requires rebuilding and deploying; uploading a previously non-indexable export elsewhere does not repair it.
+- Origin and deployment environment changes require rebuilding and deploying. Published article metadata and discovery endpoints refresh with the server-rendered content; editing the database does not repair incorrect deployment environment settings.
 - Public useful routes belong in the sitemap with the chosen canonical HTTPS origin. Keep previews, errors, and private content out. Published posts are added automatically; their `lastModified` comes from actual publication/revision dates.
 - Production's old welcome preview remains crawlable so its page-level noindex can be read. Do not block that URL in robots as a substitute for noindex.
 - Redirect alternate hosts to the canonical origin through hosting configuration. A canonical tag does not replace a working redirect or repair duplicate routing.
@@ -62,19 +62,19 @@ For Search Console verification, sitemap submission, and priority URL inspection
 For each public route:
 
 1. Write a unique, accurate title and a useful description matching the page. Include the identity or subject where relevant; Google may choose different title links or snippets.
-2. Keep a clear H1 and meaningful section headings, descriptive link text, readable prose, and conventional navigation. The export audit requires one H1 as this project's convention, not a claim that Google mandates it.
+2. Keep a clear H1 and meaningful section headings, descriptive link text, readable prose, and conventional navigation. The server audit requires one H1 as this project's convention, not a claim that Google mandates it.
 3. Link related articles and project stories where they help the reader. Use real anchors with reachable destinations; homepage section fragments are not separate indexable pages.
 4. Keep canonical, Open Graph, Twitter, image URLs, and structured data consistent with the real page. Social preview tags improve sharing presentation; do not treat them as a ranking guarantee. Structured data must describe visible, factual information.
 5. Use descriptive image alt text when useful, empty alt for purely decorative imagery, defined dimensions, and compressed source assets. Illustrative project previews must stay labeled as illustrations.
 6. Preserve mobile usability, keyboard navigation, reduced-motion fallbacks, and readable server HTML. The hero WebGL work remains deferred and visibility-gated.
 
-The loading screen was removed on 15 October 2026; content now appears without an intro gate. Measure the ordinary animated experience separately from reduced-motion runs, and avoid claiming maximum speed scores. Static export uses unoptimized Next Image; source asset compression remains important.
+The loading screen was removed on 15 October 2026; content appears without an intro gate. Measure ordinary animation separately from reduced motion and avoid claiming maximum scores. Next Image remains unoptimized, so source asset compression remains important.
 
 ## Blog and project content strategy
 
 Publish firsthand explanations: what the problem was, the constraints, decisions, implementation details, tradeoffs, and what was learned. Expand the existing starter articles and case-study drafts with real examples, original screenshots where permitted, code, and relevant sources. Do not manufacture contributions, client results, testimonials, or metrics.
 
-Choose titles around concrete reader questions rather than vague updates. Add useful related links and an honest author/publication/revision date. Publishing is currently source-based: update `lib/posts.ts`, validate, rebuild, and deploy. This automatically updates the article route, summaries, sitemap, RSS, and article markup. Keep slugs stable; plan redirects before renaming an established URL.
+Choose titles around concrete reader questions. Add useful related links and honest author/publication/revision dates. Edit Compass documents as drafts, validate with `npm run blog:validate`, then publish. Article routes, summaries, sitemap, RSS and markup refresh through ISR. New image files still need deployment. Keep slugs stable; implement redirects before renaming an established URL. The static-blog article describes the earlier architecture and remains historical content until deliberately revised.
 
 ## Off-page strategy
 
@@ -88,7 +88,7 @@ The pasted checklist largely addresses on-page and technical SEO; off-page work 
 
 ## Release and monitoring workflow
 
-Before shipping SEO/content changes, run `npm run check` with production configuration, review the export, and verify the live deployment afterward. The existing export audit checks metadata, canonical consistency, sitemap routes, internal links, structured data parsing, RSS membership, and intentional draft exclusion. It is not Google's Rich Results Test and does not prove eligibility for a rich result.
+Before shipping SEO/content changes, run `npm run check` with production configuration, review the production server output, and verify the live deployment afterward. The existing server audit checks metadata, canonical consistency, sitemap routes, internal links, structured data parsing, RSS membership, and intentional draft exclusion. It is not Google's Rich Results Test and does not prove eligibility for a rich result.
 
 After deployment, inspect the affected live URLs, sitemap, robots, canonical/social assets, and response headers. Use Search Console to monitor indexing exclusions, impressions, clicks, queries, and click-through rate. Review page-level trends after there is sufficient data; no fixed indexing deadline or immediate ranking increase is promised. Use field Core Web Vitals and production lab measurements to diagnose real bottlenecks.
 

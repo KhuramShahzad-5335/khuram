@@ -1,15 +1,15 @@
 import { notFound } from "next/navigation";
 import { NotebookPage } from "@/components/notebook-page";
-import { blogPageCount } from "@/lib/post-index";
+import { getNotebook } from "@/lib/post-index";
 import { pageMetadata } from "@/lib/metadata";
 import { notebookUrl } from "@/lib/notebook";
-export const dynamicParams = false;
+export const dynamicParams = true;
+export const revalidate = 60;
 export function generateStaticParams() {
-  return Array.from({ length: Math.max(0, blogPageCount - 1) }, (_, i) => ({
-    page: String(i + 2),
-  }));
+  return [];
 }
-function validPage(value: string) {
+async function validPage(value: string) {
+  const { blogPageCount } = await getNotebook();
   const page = Number(value);
   if (
     !/^\d+$/.test(value) ||
@@ -25,7 +25,7 @@ export async function generateMetadata({
 }: {
   params: Promise<{ page: string }>;
 }) {
-  const page = validPage((await params).page);
+  const page = await validPage((await params).page);
   return pageMetadata(
     `Blog & Notebook — Page ${page}`,
     `Browse page ${page} of Khuram Shahzad’s development notebook: practical articles and project lessons.`,
@@ -37,5 +37,5 @@ export default async function Page({
 }: {
   params: Promise<{ page: string }>;
 }) {
-  return <NotebookPage page={validPage((await params).page)} />;
+  return <NotebookPage page={await validPage((await params).page)} />;
 }

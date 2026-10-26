@@ -1,119 +1,161 @@
 import assert from "node:assert/strict";
-import { readFile, stat } from "node:fs/promises";
-import path from "node:path";
+import { withLocalSite } from "./local-site.mjs";
 
-const root = path.resolve("out");
-const read = (file) => readFile(path.join(root, file), "utf8");
-const sitemap = await read("sitemap.xml");
-const urls = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(
-  (m) => new URL(m[1]),
-);
-assert(urls.length > 0, "Sitemap must contain routes");
-assert.equal(
-  new Set(urls.map(String)).size,
-  urls.length,
-  "Duplicate sitemap URLs",
-);
-const origin = urls[0].origin;
-const robots = await read("robots.txt");
-const indexable = !robots.includes("Disallow: /");
-if (indexable) {
-  assert.notEqual(
-    origin,
-    "https://example.com",
-    "Example domain must never be indexable",
+await withLocalSite(async (base) => {
+  const read = async (file) => {
+    const route = "/" + file.replace(/index\.html$/, "").replace(/^\//, "");
+    const response = await fetch(base + route, {
+      signal: AbortSignal.timeout(30000),
+    });
+    assert.equal(response.status, 200, `HTTP ${response.status}: ${route}`);
+    return response.text();
+  };
+  const checked = new Set();
+  const sitemap = await read("sitemap.xml");
+  const urls = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(
+    (m) => new URL(m[1]),
   );
-  assert(
-    robots.includes(`${origin}/sitemap.xml`),
-    "Production robots must expose sitemap",
-  );
-}
-const titles = new Set();
-let assetsChecked = 0;
-const tagAttr = (tag, key) => tag.match(new RegExp(`\\b${key}="([^"]*)"`))?.[1];
-for (const url of urls) {
-  assert.equal(url.origin, origin, "Sitemap mixes domains");
-  const route = url.pathname;
-  const html = await read(path.join(route.slice(1), "index.html"));
-  const title = html.match(/<title>(.*?)<\/title>/)?.[1];
-  assert(title && !titles.has(title), `Missing or duplicate title: ${route}`);
-  titles.add(title);
+  assert(urls.length > 0, "Sitemap must contain routes");
   assert.equal(
-    [...html.matchAll(/<h1[\s>]/g)].length,
-    1,
-    `Expected one h1: ${route}`,
+    new Set(urls.map(String)).size,
+    urls.length,
+    "Duplicate sitemap URLs",
   );
-  const tags = [...html.matchAll(/<(?:meta|link)\b[^>]*>/g)].map((m) => m[0]);
-  const canonical = tags.find((tag) => tagAttr(tag, "rel") === "canonical");
-  assert.equal(
-    tagAttr(canonical || "", "href"),
-    url.href,
-    `Canonical differs: ${route}`,
-  );
-  assert(
-    tags.some(
-      (tag) =>
-        tagAttr(tag, "name") === "description" && tagAttr(tag, "content"),
-    ),
-    `Missing description: ${route}`,
-  );
-  assert(
-    tags.some((tag) => tagAttr(tag, "property") === "og:image"),
-    `Missing share image: ${route}`,
-  );
-  const directive = tags.find((tag) => tagAttr(tag, "name") === "robots");
-  assert.equal(
-    (tagAttr(directive || "", "content") || "").includes("noindex"),
-    !indexable,
-    `Indexing directive differs: ${route}`,
-  );
-  for (const schema of html.matchAll(
-    /<script type="application\/ld\+json">(.*?)<\/script>/g,
-  ))
-    JSON.parse(schema[1]);
-  for (const image of html.matchAll(/<img\b[^>]*>/g)) {
-    assert(
-      tagAttr(image[0], "alt") !== undefined,
-      `Missing image alt: ${route}`,
+  const origin = urls[0].origin;
+  const robots = await read("robots.txt");
+  const indexable = !robots.includes("Disallow: /");
+  if (indexable) {
+    assert.notEqual(
+      origin,
+      "https://example.com",
+      "Example domain must never be indexable",
     );
     assert(
-      tagAttr(image[0], "width") && tagAttr(image[0], "height"),
-      `Missing image dimensions: ${route}`,
+      robots.includes(`${origin}/sitemap.xml`),
+      "Production robots must expose sitemap",
     );
   }
-  for (const match of html.matchAll(
-    /\b(?:href|src)="([^"?#]+)(?:[?#][^"]*)?"/g,
-  )) {
-    const target = match[1];
-    if (!target.startsWith("/") || target.startsWith("//")) continue;
-    const file = path.resolve(root, "." + decodeURIComponent(target));
-    assert(
-      file === root || file.startsWith(root + path.sep),
-      "Internal path escapes export",
+  const titles = new Set();
+  let assetsChecked = 0;
+  const tagAttr = (tag, key) =>
+    tag.match(new RegExp(`\\b${key}="([^"]*)"`))?.[1];
+  for (const url of urls) {
+    assert.equal(url.origin, origin, "Sitemap mixes domains");
+    const route = url.pathname;
+    const html = await read(route);
+    const title = html.match(/<title>(.*?)<\/title>/)?.[1];
+    assert(title && !titles.has(title), `Missing or duplicate title: ${route}`);
+    titles.add(title);
+    assert.equal(
+      [...html.matchAll(/<h1[\s>]/g)].length,
+      1,
+      `Expected one h1: ${route}`,
     );
-    try {
-      await stat(file);
-      assetsChecked++;
-    } catch {
-      assert.fail(`Broken local link/asset ${target} in ${route}`);
+    const tags = [...html.matchAll(/<(?:meta|link)\b[^>]*>/g)].map((m) => m[0]);
+    const canonical = tags.find((tag) => tagAttr(tag, "rel") === "canonical");
+    assert.equal(
+      tagAttr(canonical || "", "href"),
+      url.href,
+      `Canonical differs: ${route}`,
+    );
+    assert(
+      tags.some(
+        (tag) =>
+          tagAttr(tag, "name") === "description" && tagAttr(tag, "content"),
+      ),
+      `Missing description: ${route}`,
+    );
+    assert(
+      tags.some((tag) => tagAttr(tag, "property") === "og:image"),
+      `Missing share image: ${route}`,
+    );
+    const directive = tags.find((tag) => tagAttr(tag, "name") === "robots");
+    assert.equal(
+      (tagAttr(directive || "", "content") || "").includes("noindex"),
+      !indexable,
+      `Indexing directive differs: ${route}`,
+    );
+    for (const schema of html.matchAll(
+      /<script type="application\/ld\+json">(.*?)<\/script>/g,
+    ))
+      JSON.parse(schema[1]);
+    for (const image of html.matchAll(/<img\b[^>]*>/g)) {
+      assert(
+        tagAttr(image[0], "alt") !== undefined,
+        `Missing image alt: ${route}`,
+      );
+      assert(
+        tagAttr(image[0], "width") && tagAttr(image[0], "height"),
+        `Missing image dimensions: ${route}`,
+      );
+    }
+    for (const match of html.matchAll(
+      /\b(?:href|src)="([^"?#]+)(?:[?#][^"]*)?"/g,
+    )) {
+      const target = match[1];
+      if (!target.startsWith("/") || target.startsWith("//")) continue;
+      if (!checked.has(target)) {
+        const response = await fetch(new URL(target, base), {
+          method: "HEAD",
+          signal: AbortSignal.timeout(30000),
+        });
+        assert(
+          response.ok,
+          `Broken local link/asset ${target} in ${route}: ${response.status}`,
+        );
+        checked.add(target);
+        assetsChecked++;
+      }
     }
   }
-}
-const welcome = await read("blog/welcome/index.html");
-assert(welcome.includes("noindex"), "Draft preview must be noindex");
-assert(
-  !urls.some((url) => url.pathname === "/blog/welcome/"),
-  "Draft in sitemap",
-);
-const feed = await read("feed.xml");
-const blogUrls = urls.filter((url) => /^\/blog\/[^/]+\/$/.test(url.pathname));
-assert.equal(
-  [...feed.matchAll(/<item>/g)].length,
-  blogUrls.length,
-  "RSS article count differs",
-);
-for (const url of blogUrls)
-  assert(feed.includes(url.href), `Article missing from RSS: ${url.pathname}`);
-console.log(
-  `Export audit passed: ${urls.length} routes, ${assetsChecked} internal references, valid JSON-LD, RSS, and ${indexable ? "production" : "noindex"} directives.`,
-);
+  const welcome = await read("blog/welcome/index.html");
+  assert(welcome.includes("noindex"), "Draft preview must be noindex");
+  assert(
+    !urls.some((url) => url.pathname === "/blog/welcome/"),
+    "Draft in sitemap",
+  );
+  const feed = await read("feed.xml");
+  const blogUrls = urls.filter((url) => /^\/blog\/[^/]+\/$/.test(url.pathname));
+  assert.equal(
+    [...feed.matchAll(/<item>/g)].length,
+    blogUrls.length,
+    "RSS article count differs",
+  );
+  for (const url of blogUrls)
+    assert(
+      feed.includes(url.href),
+      `Article missing from RSS: ${url.pathname}`,
+    );
+  console.log(
+    `Server audit passed: ${urls.length} routes, ${assetsChecked} unique internal references, valid JSON-LD, RSS, and ${indexable ? "production" : "noindex"} directives.`,
+  );
+  const summaries = JSON.parse(await read("blog/search-index.json"));
+  assert(!sitemap.includes("/studio"), "Private studio in sitemap");
+  const studio = await fetch(base + "/studio/");
+  assert((studio.headers.get("x-robots-tag") || "").includes("noindex"));
+  assert((studio.headers.get("cache-control") || "").includes("no-store"));
+  assert((await studio.text()).includes("Owner sign-in"));
+  assert.equal(
+    summaries.length,
+    blogUrls.length,
+    "Search index article count differs",
+  );
+  assert(
+    summaries.every(
+      (p) => !("sections" in p) && !("intro" in p) && !("_id" in p),
+    ),
+    "Search index exposes full articles or database fields",
+  );
+  for (const route of [
+    "/blog/this-post-does-not-exist/",
+    "/blog/page/1/",
+    "/blog/page/999999/",
+  ]) {
+    const response = await fetch(base + route);
+    assert.equal(
+      response.status,
+      404,
+      `Unknown route must return 404: ${route}`,
+    );
+  }
+});

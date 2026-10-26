@@ -1,6 +1,7 @@
-import type { Post } from "./blog";
-export { wordCount, readingMinutes } from "./blog";
-export type { Post, PostSection } from "./blog";
+import type { Post } from "./blog.ts";
+// Migration snapshot only. Live articles are read by lib/server/posts.ts.
+export { wordCount, readingMinutes } from "./blog.ts";
+export type { Post, PostSection } from "./blog.ts";
 export const posts: Post[] = [
   {
     slug: "personal-seo-rank-your-name",

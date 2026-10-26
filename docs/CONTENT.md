@@ -1,4 +1,6 @@
-# Content and static blog publishing
+# Content and blog publishing
+
+Current publishing uses MongoDB and Compass, approved on 26 October 2026. Follow [BLOG_DATABASE.md](BLOG_DATABASE.md) for credentials, migration, document validation, draft/publication rules, cache timing, images and rollback.
 
 ## Sources and voice
 
@@ -11,14 +13,14 @@ The owner's placeholder testimonial section is commented out. Keep it disabled u
 ## Add an article
 
 1. Add local cover/inline artwork under `public/images/`; use descriptive filenames, dimensions, and alt text. Covers use 1200×720 illustrations. Supply a matching PNG for each SVG cover because social metadata currently uses the `.png` counterpart. `scripts/create-blog-art.mjs` regenerates the existing artwork; review it before changing or rerunning it.
-2. Add a typed `Post` record to `lib/posts.ts`: unique slug, title, excerpt, category, real ISO publication date (`YYYY-MM-DD`), image, imageAlt, introduction, sections, and source links. Each section needs a unique id, title, paragraphs, and optional code/image. Do not publish future/draft content by adding it to this array: every record is public.
+2. Create a document in `portfolio.posts` with `status: "draft"`, a unique slug, title, excerpt, category, actual publication date string (`YYYY-MM-DD`), image, imageAlt, intro, sections and sources. Each section needs a unique id, title, paragraphs and optional code/image. `lib/posts.ts` is the retained migration snapshot, not the live editor. Only published records whose dates have arrived are public.
 3. For meaningful revisions, add/update `updatedAt` with the actual revision date. Do not automatically stamp all pages with today's date.
 4. Review spelling, factual accuracy, sources, internal anchors, mobile reading, and code examples. Use original words and attribution where needed.
-5. Run `npm run check`, review with `npm start`, commit, and redeploy through Vercel.
+5. Run `npm run blog:validate`, then set `status` to `published`. Inspect the live article and discovery endpoints after caches regenerate. For code or new image files, also run `npm run check`, review with `npm start`, and deploy through Vercel.
 
-Adding a post automatically generates `/blog/<slug>/`, an index/home card, related links, BlogPosting structured data, sitemap membership, and an RSS item in `/feed.xml`. New posts require a rebuild; there is no browser publishing dashboard.
+Publishing a post makes `/blog/<slug>/`, archive/home cards, related links, BlogPosting metadata, sitemap membership and RSS available through server rendering and regeneration. Database-only edits do not need a rebuild. There is no browser publishing dashboard in this phase.
 
-Word counts include the introduction, section headings, and paragraphs. They exclude code, captions, source labels, title, and excerpt. Reading time is a minimum of one minute, estimated at 200 words per minute. Counts are calculated from the source article at build time and passed as small card summaries to the homepage.
+Word counts include the introduction, section headings, and paragraphs. They exclude code, captions, source labels, title, and excerpt. Reading time is a minimum of one minute at 200 words per minute. Counts are calculated server-side from the current article and passed as small card summaries.
 
 `/blog/welcome/` is an old reading-layout preview. It remains `noindex` and excluded from the sitemap; it is not a published article. It stays crawlable on production so crawlers can read the noindex directive.
 
@@ -40,7 +42,7 @@ Section-level `links` in `PostSection` render contextual primary references and 
 
 ## Growing the notebook
 
-Posts are ordered by publication date, newest first (source order breaks ties). Home and related-post previews are limited to three. The archive uses three cards per page and generates additional `/blog/page/<number>/` routes and sitemap entries automatically. Search and category filters use summaries from a lazily downloaded static index; no article-body bundle or backend is needed. Limits live in `lib/notebook.ts`. Rebuild after publishing, removing a post, or changing those limits. Review pagination and Search Console when archive membership shifts. See `ARCHITECTURE.md` for the search-index size tradeoff and no-JavaScript fallback.
+Posts are ordered by publication date, newest first, then slug for deterministic ties. Home and related previews are limited to three. Archives use three cards per page and support new `/blog/page/<number>/` routes on demand. Search uses a lazily downloaded summary index. Limits live in `lib/notebook.ts`. Database edits refresh through ISR; code/limit changes require deployment. Review pagination and Search Console after archive membership changes. See `ARCHITECTURE.md` for the search-index size tradeoff and no-JavaScript fallback.
 
 ## Selected avatar
 
@@ -49,3 +51,7 @@ The owner supplied the illustrated avatar from `https://cdn.21st.dev/assets/mirr
 ## Museum-art collection
 
 The homepage and notebook moodboards credit the Art Institute of Chicago and link every artwork to its museum record. They are visual inspiration, not work by Khuram or illustrations of his project contributions. The twelve cached records in `lib/art-collection.json`, including Seurat 27992, van Gogh 28560, and Monet 16571, returned `is_public_domain: true` on 14 October 2026. All artwork is locally cached; original image URLs and the verification date are retained. Preserve each work’s title, artist, date, and museum link. The API/gallery does not publish blog posts or change the feed/sitemap. Recheck record/image availability and museum usage rules when changing the collection.
+
+## Owner editor
+
+The preferred workflow is now the protected /studio/ editor: write, save draft, preview, then publish. See [STUDIO.md](STUDIO.md). Compass instructions above remain an alternative; do not edit the same article in both places simultaneously.

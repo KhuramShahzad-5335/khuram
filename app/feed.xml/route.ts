@@ -1,6 +1,7 @@
-import { posts } from "@/lib/posts";
+import { getPublishedPosts } from "@/lib/server/posts";
 import { site, siteUrl, absoluteUrl } from "@/lib/site";
 export const dynamic = "force-static";
+export const revalidate = 60;
 function xml(value: string) {
   return value.replace(
     /[<>&"']/g,
@@ -14,7 +15,8 @@ function xml(value: string) {
       })[char]!,
   );
 }
-export function GET() {
+export async function GET() {
+  const posts = await getPublishedPosts();
   const entries = [...posts]
     .sort((a, b) => b.date.localeCompare(a.date))
     .map((post) => {

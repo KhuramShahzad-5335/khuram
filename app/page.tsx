@@ -1,6 +1,6 @@
 import { Home } from "@/components/home";
 import { Services } from "@/components/services";
-import { postIndex } from "@/lib/post-index";
+import { getPostIndex } from "@/lib/post-index";
 import { HOME_POST_LIMIT } from "@/lib/notebook";
 import { site, siteUrl, serializeJsonLd } from "@/lib/site";
 import { pageMetadata } from "@/lib/metadata";
@@ -15,7 +15,9 @@ export const metadata = {
   openGraph: { ...homeMetadata.openGraph, title: site.title },
   twitter: { ...homeMetadata.twitter, title: site.title },
 };
-export default function Page() {
+export const revalidate = 60;
+export default async function Page() {
+  const postIndex = await getPostIndex();
   const schema = {
     "@context": "https://schema.org",
     "@graph": [

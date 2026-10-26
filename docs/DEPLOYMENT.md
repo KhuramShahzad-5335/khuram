@@ -4,11 +4,11 @@ For the current live observations, on-page requirements, content/off-page strate
 
 ## Vercel configuration
 
-Publish the repository root to GitHub and import it into Vercel. The owner manages those accounts. Select the Next.js framework preset, root directory `./`, install command `npm ci`, and build command `npm run build`. Let the framework handle the output configuration for the static export. Use a compatible Node.js 22.13+ runtime. Do not upload `.next/`, `out/`, `node_modules/`, private files, or `.env.local` to Git.
+Publish the repository root to GitHub and import it into Vercel. The owner manages those accounts. Select the Next.js framework preset, root directory `./`, install command `npm ci`, and build command `npm run build`. Remove any old out output-directory override; let the Next.js preset manage server output. See [BLOG_DATABASE.md](BLOG_DATABASE.md) for setup and publishing. Use a compatible Node.js 22.13+ runtime. Do not upload `.next/`, `out/`, `node_modules/`, private files, or `.env.local` to Git.
 
 Add the final domain in Vercel and configure its DNS as instructed by the domain provider. Choose one canonical HTTPS origin (currently intended: `https://www.khuramshahzad.dev`). Redirect other domain variants to it in Vercel. Check HTTPS and redirect loops before indexing. Existing `khuram-one.vercel.app` links should redirect to the primary domain when possible.
 
-Set `NEXT_PUBLIC_SITE_URL` in **Production** to the canonical HTTPS origin, with no path/query/fragment or credentials. The code normalizes the trailing slash. Rebuild/redeploy after changing it: metadata and robots are static build output, not runtime settings. Unset URLs and `VERCEL_ENV=preview` generate noindex. If you copy the static export to another host, its indexing directives are already baked into its files.
+Set `NEXT_PUBLIC_SITE_URL` in **Production** to the canonical HTTPS origin, with no path/query/fragment or credentials. The code normalizes the trailing slash. Rebuild/redeploy after changing it: the public origin is included in build output. Unset URLs and `VERCEL_ENV=preview` generate noindex. Set MONGODB_URI and MONGODB_DB=portfolio in Vercel Production. Use the same single database user as Compass. Atlas must allow build and runtime connections. Never expose credentials through NEXT_PUBLIC variables. BLOG_SOURCE defaults to mongodb; files is only an explicit offline/rollback mode.
 
 Optional Google/Bing HTML verification tokens may be set as `GOOGLE_SITE_VERIFICATION` and `BING_SITE_VERIFICATION`. DNS verification works without these variables. These public verification values are not passwords. Never commit API keys.
 
@@ -40,24 +40,28 @@ Add the site to [Bing Webmaster Tools](https://www.bing.com/webmasters/) and sub
 
 Use Lighthouse on the deployed homepage and an article on both mobile and desktop. Record the test mode and inspect the actual bottleneck. The loading screen has been removed; content should be visible immediately on visits and reloads. Reduced-motion runs are useful fallback checks and must be labeled separately. Verify field results after real visits with Vercel Speed Insights and Search Console.
 
-Static export keeps hosting simple, but Next Image does not optimize raster files at request time (`unoptimized: true`). Compress source images, avoid heavyweight third-party embeds, and keep 3D/animation work gated. Future backend features require a deliberate architecture change; a Markdown/MDX or headless-CMS build workflow can remain static if introduced carefully later.
+Blog routes use 60-second request-driven revalidation. Images remain unoptimized: compress source images and keep 3D work gated. Compass edits do not require a rebuild; image and code changes require deployment.
 
 For favicon, site-name, and sitelink follow-up, see the 14 October search-appearance section in `SEO.md`. Deploy the updated icons and metadata before requesting another crawl; extra result links remain Google’s choice.
 
 ## IndexNow setup and submission
 
-`indexnow.config.json` defines the canonical origin and a generated verification filename. The matching UTF-8 file in `public/` contains the ownership key; Next’s export copies it to the site root. This is the protocol’s publicly served verification value, not an account password. Keep it stable, outside frontend bundles, and out of the sitemap. No paid service, account login, browser widget, backend, or environment variable is required.
+`indexnow.config.json` defines the canonical origin and a generated verification filename. The matching UTF-8 file in `public/` contains the ownership key; Next serves it at the site root. This is the protocol’s publicly served verification value, not an account password. Keep it stable, outside frontend bundles, and out of the sitemap. No paid service, account login, browser widget, backend, or environment variable is required.
 
 1. Run the production `npm run check`, then deploy the source changes through the owner’s usual GitHub/Vercel flow.
 2. Open the verification URL reported by `npm run indexnow`; confirm HTTP 200 and only the expected key text, without a redirect/login/challenge.
-3. Run `npm run indexnow` to preview the current sitemap URLs. It performs no network calls.
+3. Run `npm run indexnow` to preview the current sitemap URLs. It fetches live robots.txt and sitemap without submitting.
 4. For the first submission, run `npm run indexnow -- --submit`. The helper first verifies the live key file, then sends one JSON request to the global IndexNow endpoint. A failed live check prevents the POST.
 5. Later, submit only new or meaningfully changed deployed pages: `npm run indexnow -- --submit /blog/personal-seo-rank-your-name/`. Multiple canonical paths/URLs are accepted. Current sitemap membership is required; this helper does not submit deleted pages.
 
-The helper reads the existing production export, refuses non-indexable/mismatched-origin builds, duplicates are removed, and unrelated hosts/fragments/query URLs/drafts are rejected. HTTP 200 means received; 202 means received with key validation pending. Neither proves crawling, indexing, visitors or rankings. A 403 needs key-file verification; a 429 needs backoff. Do not attach this command to every build or repeatedly submit the full sitemap. IndexNow notifies participating engines (including Bing); keep Google Search Console and the sitemap workflow separately.
+The helper reads live robots and sitemap, refuses non-indexable/mismatched-origin sites, duplicates are removed, and unrelated hosts/fragments/query URLs/drafts are rejected. HTTP 200 means received; 202 means received with key validation pending. Neither proves crawling, indexing, visitors or rankings. A 403 needs key-file verification; a 429 needs backoff. Do not attach this command to every build or repeatedly submit the full sitemap. IndexNow notifies participating engines (including Bing); keep Google Search Console and the sitemap workflow separately.
 
 See [official IndexNow documentation](https://www.indexnow.org/documentation). Submission is pending until the ownership file is deployed and a real accepted response is recorded.
 
 ### Verification file returns 404
 
 A successful local build does not publish files. If the helper reports HTTP 404, include the generated `public/<key>.txt` file (which may still be untracked), `indexnow.config.json`, and the other setup changes in the owner’s Git commit/push. Wait for the Vercel **Production** deployment to succeed and check the exact verification URL again. Do not regenerate the key or bypass the ownership check. The helper reads the response body and reports a concise failure with a nonzero exit code; it sends no IndexNow POST when verification fails.
+
+## Enable the private studio
+
+Run npm run studio:password locally and privately copy the generated STUDIO_PASSWORD_HASH from .env.local to Vercel Production settings. Redeploy, then open /studio/ directly. Follow [STUDIO.md](STUDIO.md) for security, password rotation and the publish workflow. Missing credentials leave the editor locked.

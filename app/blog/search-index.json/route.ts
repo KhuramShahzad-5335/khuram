@@ -1,5 +1,6 @@
-import { postIndex } from "@/lib/post-index";
+import { getPostIndex } from "@/lib/post-index";
 export const dynamic = "force-static";
-export function GET() {
-  return Response.json(postIndex);
+export const revalidate = 60;
+export async function GET() {
+  return Response.json(await getPostIndex());
 }

@@ -3,22 +3,25 @@ import { serializeJsonLd } from "@/lib/site";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { posts, wordCount, readingMinutes } from "@/lib/posts";
+import { wordCount, readingMinutes } from "@/lib/blog";
+import { getPublishedPost } from "@/lib/server/posts";
 import { site, siteUrl } from "@/lib/site";
 import { RELATED_POST_LIMIT } from "@/lib/notebook";
-import { postIndex } from "@/lib/post-index";
+import { getPostIndex } from "@/lib/post-index";
 import { ProfileAvatar } from "@/components/profile-avatar";
 import { BlogCard } from "@/components/blog-card";
 export function generateStaticParams() {
-  return posts.map((post) => ({ slug: post.slug }));
+  return [];
 }
+export const revalidate = 60;
+export const dynamicParams = true;
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const p = posts.find((p) => p.slug === slug);
+  const p = await getPublishedPost(slug);
   if (!p) notFound();
   return {
     title: p.title,
@@ -56,8 +59,9 @@ export default async function Page({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const p = posts.find((p) => p.slug === slug);
+  const p = await getPublishedPost(slug);
   if (!p) notFound();
+  const postIndex = await getPostIndex();
   const schema = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",

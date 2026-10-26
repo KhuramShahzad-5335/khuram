@@ -14,7 +14,7 @@ Read `README.md`, `docs/ARCHITECTURE.md`, `docs/DESIGN_SYSTEM.md`, `docs/CONTENT
 
 - Preserve commented-out JSX, including testimonials. The loader implementation was explicitly removed by the owner; do not restore it.
 - Show content immediately on initial visits and reloads. No loading overlay, intro timers, or content fade gate. Preserve section animations and reduced-motion alternatives.
-- Keep conventional navigation, static export, readable server HTML, and the dark theme with visitor palette customization. No scroll hijacking, game navigation, backend, or CMS unless requested.
+- Keep conventional navigation, readable server HTML, and the dark theme with visitor palette customization. The owner approved MongoDB-backed blogs with Next.js ISR and Compass editing and a password-protected /studio/ editor on 26 October 2026; see `docs/BLOG_DATABASE.md`. Use the single configured MongoDB user as requested. No scroll hijacking, game navigation, or admin dashboard unless requested.
 - Prefer Server Components. Keep full article bodies out of client bundles; pass summaries. Gate 3D work by viewport/tab visibility and reduced motion.
 - Use Tailwind for isolated component styling; CSS for shared patterns, tokens, typography, illustrations, and coordinated animation. Remove superseded styling rather than layering conflicting rules.
 - Keep project contributions and personal details factual. Retain uncertainty labels, illustrative preview labels, and intentional employment overlaps. Never invent metrics or testimonials.
