@@ -73,6 +73,6 @@ Labels are mounted contrast-safe nameplates with rounded backing and a fine keyl
 
 Typography controls include a preview, independent heading/body selectors, article text scale (90–125%), line spacing (1.50–2.20), and an independent reset. System font availability varies by device. The custom color editor expands one role at a time and supports opaque HEX/RGB/HSL plus a saturation/brightness canvas. Saturation and brightness have separate accessible range alternatives. Neutral controls, validation messages, and contrast warnings remain readable under custom themes. The selected illustrated avatar sits in the About terminal and blog byline; retain its KS fallback.
 
-The art moodboard uses gently staggered collection cards, tape details, palette-colored frame shadows, a manual deal button, and clickable card backs with artist/date context. This is a visual detour beside the notebook, not a conventional wall gallery. Keep paintings in their original colors, mobile cards flat, and reduced-motion flips immediate. The owner removed trivia and cancelled the proposed game; do not reintroduce either during maintenance.
+The museum gallery was removed at the owner’s request. Do not restore art API calls, museum images, trivia or games.
 
 Mobile WebGL renders at a pixel ratio of 1; desktop is capped at 1.5. Preserve the complete model, label plates, soft corners, floating motion and drag-to-disassemble behavior. Do not replace mobile functionality with a required play button or remove animation to improve a lab score.

@@ -38,25 +38,53 @@ export function StudioImageUpload({
     setProgress(0);
     try {
       const bitmap = await createImageBitmap(file);
-      const { width, height } = bitmap;
-      bitmap.close();
-      if (width > 12000 || height > 12000 || width * height > 40000000)
+      const originalWidth = bitmap.width;
+      const originalHeight = bitmap.height;
+      if (
+        originalWidth > 12000 ||
+        originalHeight > 12000 ||
+        originalWidth * originalHeight > 40000000
+      ) {
+        bitmap.close();
         throw new Error(
           "Please resize this image to at most 12,000 pixels per side and 40 megapixels.",
         );
-      const extension =
-        file.type === "image/jpeg"
-          ? "jpg"
-          : file.type === "image/png"
-            ? "png"
-            : "webp";
+      }
+      const scale = Math.min(1, 1600 / Math.max(originalWidth, originalHeight));
+      const width = Math.max(1, Math.round(originalWidth * scale));
+      const height = Math.max(1, Math.round(originalHeight * scale));
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const context = canvas.getContext("2d");
+      if (!context) {
+        bitmap.close();
+        throw new Error("Your browser could not prepare the image.");
+      }
+      context.drawImage(bitmap, 0, 0, width, height);
+      bitmap.close();
+      const prepared = await new Promise<Blob>((resolve, reject) =>
+        canvas.toBlob(
+          (result) =>
+            result
+              ? resolve(result)
+              : reject(new Error("Image compression failed. Please retry.")),
+          "image/webp",
+          0.84,
+        ),
+      );
+      if (prepared.size > UPLOAD_LIMIT)
+        throw new Error(
+          "The prepared image is too large. Choose a smaller image.",
+        );
+      const extension = prepared.type === "image/webp" ? "webp" : "png";
       const blob = await upload(
         `blog/${crypto.randomUUID()}.${extension}`,
-        file,
+        prepared,
         {
           access: "public",
           handleUploadUrl: "/studio/api/upload/",
-          contentType: file.type,
+          contentType: prepared.type,
           abortSignal: AbortSignal.timeout(120000),
           onUploadProgress: ({ percentage }) =>
             setProgress(Math.round(percentage)),
@@ -68,7 +96,7 @@ export function StudioImageUpload({
         );
       onUploaded({ src: blob.url, width, height });
       setMessage(
-        "Uploaded. Add descriptive alt text, then save or publish to attach it to this article.",
+        `Uploaded (${Math.ceil(prepared.size / 1024)} KB). Add descriptive alt text, then save or publish to attach it to this article.`,
       );
     } catch (error) {
       setFailed(true);
@@ -101,8 +129,8 @@ export function StudioImageUpload({
         }}
       />
       <p id={id + "-hint"} className="text-xs text-(--muted)">
-        JPEG, PNG or WebP · up to 5 MB. Uploaded images are public, including
-        draft images.
+        JPEG, PNG or WebP · up to 5 MB. Automatically resized and compressed.
+        Uploaded images are public, including draft images.
       </p>
       {progress !== null && (
         <div role="status" className="text-sm">

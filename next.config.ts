@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
+import blogMediaRedirects from "./lib/blog-media-redirects.json";
 const config: NextConfig = {
   images: { unoptimized: true },
   trailingSlash: true,
+  redirects: async () => blogMediaRedirects,
   async headers() {
     return [
       {

@@ -12,7 +12,7 @@ The owner's placeholder testimonial section is commented out. Keep it disabled u
 
 ## Add an article
 
-1. Prefer cover/inline uploads in /studio/; see [STUDIO.md](STUDIO.md). Alternatively add local cover/inline artwork under `public/images/`; use descriptive filenames, dimensions, and alt text. Covers use 1200×720 illustrations. Supply a matching PNG for each SVG cover because social metadata currently uses the `.png` counterpart. `scripts/create-blog-art.mjs` regenerates the existing artwork; review it before changing or rerunning it.
+1. Upload cover and inline illustrations through /studio/. The editor resizes and compresses files, saves their Blob URLs, and keeps alt text and captions editable. There are no manual image paths or URL inputs. The editable originals of the migrated illustrations are retained under `assets/blog/`; runtime images are in Blob. See [STUDIO.md](STUDIO.md).
 2. Create a document in `portfolio.posts` with `status: "draft"`, a unique slug, title, excerpt, category, actual publication date string (`YYYY-MM-DD`), image, imageAlt, intro, sections and sources. Each section needs a unique id, title, paragraphs and optional code/image. `lib/posts.ts` is the retained migration snapshot, not the live editor. Only published records whose dates have arrived are public.
 3. For meaningful revisions, add/update `updatedAt` with the actual revision date. Do not automatically stamp all pages with today's date.
 4. Review spelling, factual accuracy, sources, internal anchors, mobile reading, and code examples. Use original words and attribution where needed.
@@ -47,10 +47,6 @@ Posts are ordered by publication date, newest first, then slug for deterministic
 ## Selected avatar
 
 The owner supplied the illustrated avatar from `https://cdn.21st.dev/assets/mirror/ec/ec81be4cc810190ce4d240fcc57295965c5cebaa8751558595ade91eb62c09a4.png`. Its local copy is `public/images/profile-avatar.png`; do not substitute the demo’s Hallie Richards name or HR initials. This is an owner-selected illustration, not a photo identity claim.
-
-## Museum-art collection
-
-The homepage and notebook moodboards credit the Art Institute of Chicago and link every artwork to its museum record. They are visual inspiration, not work by Khuram or illustrations of his project contributions. The twelve cached records in `lib/art-collection.json`, including Seurat 27992, van Gogh 28560, and Monet 16571, returned `is_public_domain: true` on 14 October 2026. All artwork is locally cached; original image URLs and the verification date are retained. Preserve each work’s title, artist, date, and museum link. The API/gallery does not publish blog posts or change the feed/sitemap. Recheck record/image availability and museum usage rules when changing the collection.
 
 ## Owner editor
 

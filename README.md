@@ -28,9 +28,9 @@ npm start
 
 ## Stack and architecture
 
-Next.js App Router, React, TypeScript, Tailwind CSS 4, GSAP, Framer Motion, Three.js with React Three Fiber/Drei, and Vercel Analytics/Speed Insights. Versions are recorded in `package.json`; reproducible installs use `package-lock.json`.
+Next.js App Router, React, TypeScript, Tailwind CSS 4, Three.js with React Three Fiber/Drei, and Vercel Analytics/Speed Insights. Versions are recorded in `package.json`; reproducible installs use `package-lock.json`.
 
-The site runs on the Next.js Node runtime. Blog content comes from MongoDB and renders into crawlable HTML with 60-second, request-driven incremental regeneration. New article URLs work without a rebuild. The protected /studio/ is the owner editor; Compass is an alternative. All write operations require an owner session. Sitemap, RSS and search follow the same publication rules. The homepage and notebook retain the local museum-art moodboard. Contact actions open email, telephone, WhatsApp, or social links.
+The site runs on the Next.js Node runtime. Blog content comes from MongoDB and renders into crawlable HTML with 60-second, request-driven incremental regeneration. New article URLs work without a rebuild. The protected /studio/ is the owner editor; Compass is an alternative. All write operations require an owner session. Sitemap, RSS and search follow the same publication rules. Contact actions open email, telephone, WhatsApp, or social links.
 
 ```text
 app/                  Route composition, metadata, global CSS, cached feed
@@ -38,7 +38,8 @@ components/           Site shell, interactive features, reusable presentation
 lib/                  Typed content, article helpers, palettes, SEO settings
 styles/               Shared section patterns, illustrations, and animation
 public/               Local illustrations, social images, verification files
-scripts/              Database migration, server audit, blog artwork generation
+scripts/              Database migration, server audit, validation utilities
+assets/blog/          Editable vector originals; published images live in Blob
 docs/                Design, architecture, content and deployment guides
 ```
 
@@ -70,7 +71,7 @@ The homepage previews three recent articles. The notebook has server-rendered ar
 - [Release validation and limitations](docs/VALIDATION.md)
 - [Agent handoff instructions](AGENTS.md)
 
-The original requirements, content drafts, and repository inventory in `docs/` are historical planning references. The implementation guides above describe the current site and take precedence over outdated proposals. Owner instructions take precedence over both.
+These maintained guides describe the current site. Obsolete planning drafts have been removed; owner instructions take precedence.
 
 ## Publishing and Google indexing
 

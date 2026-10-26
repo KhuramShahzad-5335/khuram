@@ -25,7 +25,18 @@ async function main() {
         section.image ? [section.image.src] : [],
       ),
     ]) {
-      await access(`public${image}`);
+      if (image.startsWith("https://")) {
+        const response = await fetch(image, {
+          method: "HEAD",
+          redirect: "error",
+          signal: AbortSignal.timeout(10000),
+        });
+        assert(
+          response.ok &&
+            response.headers.get("content-type")?.startsWith("image/"),
+          "Source image is unavailable",
+        );
+      } else await access(`public${image}`);
     }
   }
   const { client, db, collection } = await connectBlog();

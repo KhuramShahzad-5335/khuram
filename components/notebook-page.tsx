@@ -1,4 +1,3 @@
-import { ArtGallery } from "./art-gallery";
 import { NotebookBrowser } from "./notebook-browser";
 import { getNotebook } from "@/lib/post-index";
 import { BLOG_PAGE_SIZE } from "@/lib/notebook";
@@ -28,7 +27,6 @@ export async function NotebookPage({ page = 1 }: { page?: number }) {
         total={postIndex.length}
         categories={blogCategories}
       />
-      <ArtGallery />
       <div className="blog-bottom">
         <code>// write → review → publish</code>
         <span>Room for the next idea.</span>

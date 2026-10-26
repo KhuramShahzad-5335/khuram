@@ -1,6 +1,5 @@
 "use client";
 import Link from "next/link";
-import { ArtGallery } from "./art-gallery";
 import { ProfileAvatar } from "./profile-avatar";
 import { ScenePreview } from "./scene-preview";
 import { useEffect, useRef, type ReactNode } from "react";
@@ -285,7 +284,6 @@ export function Home({
           ))}
         </div>
       </section>
-      <ArtGallery home />
       {/* THE FEEDBACK SECTION. WILL ADD THIS FEATURE LATER ON. */}
       {/* <section className="section">
         <div className="section-heading" data-reveal>

@@ -11,7 +11,8 @@ export const posts: Post[] = [
     category: "SEO & PERSONAL BRANDING",
     date: "2026-10-13",
     updatedAt: "2026-10-15",
-    image: "/images/blog-personal-seo.svg",
+    image:
+      "https://vftlrwvstesgqbeh.public.blob.vercel-storage.com/blog/personal-seo-rank-your-name-cover-fb9c2066aa9d-wqsUMpAtVSdiNmhY8Cp0vUVWnYK7V8.webp",
     imageAlt:
       "An original illustration connecting a personal identity card, portfolio, professional profiles, and a search result",
     intro:
@@ -110,7 +111,7 @@ export const posts: Post[] = [
           },
         ],
         image: {
-          src: "/images/personal-seo-flow.svg",
+          src: "https://vftlrwvstesgqbeh.public.blob.vercel-storage.com/blog/personal-seo-rank-your-name-section-5-2bad0cc13dc0-m0sRKHVEKbpUEmACG8s6IrjuNuG79p.webp",
           alt: "Three distinct stages labeled discover, index, and evaluate, with a note that rankings are not guaranteed",
           caption:
             "Discovery, indexing, and ranking are separate stages. A sitemap is not a position-one button.",
@@ -232,7 +233,7 @@ export const posts: Post[] = [
           "Update this section when there is new evidence. Add a dated observation with its source and reporting period, distinguish deployment from Google processing, and explain what changed. Preserve earlier entries so readers can follow the experiment. Revise updatedAt only for a meaningful article change; do not rewrite history or refresh the date to imply progress.",
         ],
         image: {
-          src: "/images/personal-seo-tracker.svg",
+          src: "https://vftlrwvstesgqbeh.public.blob.vercel-storage.com/blog/personal-seo-rank-your-name-section-12-749fc0c2dc24-Xe8twRPVXUSGlHyrFJVUgPmAwoytjU.webp",
           alt: "Four progress stages labeled baseline, implement, measure, and revise, with measurement shown as pending",
           caption:
             "An ongoing case study: record evidence at each step, including what is still unknown.",
@@ -274,7 +275,8 @@ export const posts: Post[] = [
       "A useful animation explains something. A great one also knows when to get out of the way.",
     category: "INTERFACE DESIGN",
     date: "2026-10-10",
-    image: "/images/blog-motion.svg",
+    image:
+      "https://vftlrwvstesgqbeh.public.blob.vercel-storage.com/blog/motion-that-knows-when-to-stop-cover-d3a001b63915-dzM6xJDyy0ElV0UPx0dN8KGjNFYjym.webp",
     imageAlt:
       "An illustrated motion path connecting interface states on a dark grid",
     intro:
@@ -297,7 +299,7 @@ export const posts: Post[] = [
           `Navigation should behave like navigation. A link should have a real destination, the browser back button should work, and opening a project in a new tab should be unremarkable. That ordinary behavior is valuable. It gives visitors room to explore at their own pace while visual transitions add continuity around the edges.`,
         ],
         image: {
-          src: "/images/motion-flow.svg",
+          src: "https://vftlrwvstesgqbeh.public.blob.vercel-storage.com/blog/motion-that-knows-when-to-stop-section-1-a818e1e356a1-rSxNCaheq45MhXsy2l2k35k1oiiAVa.webp",
           alt: "An action leads to feedback and then readable content",
           caption: "Action, clear feedback, then room to continue.",
         },
@@ -335,7 +337,8 @@ export const posts: Post[] = [
       "Files, a build, and a place to read. A personal notebook can start with a surprisingly small architecture.",
     category: "WEB DEVELOPMENT",
     date: "2026-10-10",
-    image: "/images/blog-static.svg",
+    image:
+      "https://vftlrwvstesgqbeh.public.blob.vercel-storage.com/blog/a-blog-without-a-backend-cover-37807a077e03-jCyEs4SiLEBQABDfhcgLF5RNwgLLMJ.webp",
     imageAlt:
       "An illustrated pipeline carrying a text document through a build into a web page",
     intro:
@@ -357,7 +360,7 @@ export const posts: Post[] = [
           `A static export in Next.js generates HTML and associated assets during the build. Routes for articles need to be known at that time. This suits a notebook whose posts live with the project source. Adding a new post means updating that source and rebuilding; it does not mean maintaining a runtime publishing service.`,
         ],
         image: {
-          src: "/images/static-flow.svg",
+          src: "https://vftlrwvstesgqbeh.public.blob.vercel-storage.com/blog/a-blog-without-a-backend-section-1-6714c96026a6-xsBJxVHZt0aVS5GWgqeKnhWxU3chvh.webp",
           alt: "Four connected stages labeled write, preview, build, and read",
           caption: "A deliberately small publishing loop.",
         },
@@ -395,7 +398,8 @@ export const posts: Post[] = [
       "How a visitor-controlled palette can feel playful without turning the interface into a readability experiment.",
     category: "DESIGN SYSTEMS",
     date: "2026-10-10",
-    image: "/images/blog-colors.svg",
+    image:
+      "https://vftlrwvstesgqbeh.public.blob.vercel-storage.com/blog/color-tokens-not-color-chaos-cover-c58fcc42cd97-iwCDXcoNEgGb042SZR8oaKiydCbbn7.webp",
     imageAlt:
       "Five coordinated palette swatches connected to a small interface illustration",
     intro:
@@ -419,7 +423,7 @@ export const posts: Post[] = [
           `Random generation benefits from boundaries. Pick a shared hue family for the foundation, keep the background and surface related, and reserve a stronger color for the accent. For a dark palette, light text gives the composition a stable starting point. For a light palette, use darker text and a deeper accent. Variation works better when the system has a little structure.`,
         ],
         image: {
-          src: "/images/color-flow.svg",
+          src: "https://vftlrwvstesgqbeh.public.blob.vercel-storage.com/blog/color-tokens-not-color-chaos-section-1-2e6caa31a7bc-HExzTJDpS3W0HCh9ZzKeZOAlXAoopx.webp",
           alt: "Semantic color roles connect to text, a surface, and an action button",
           caption:
             "A palette is a set of relationships, not five unrelated colors.",

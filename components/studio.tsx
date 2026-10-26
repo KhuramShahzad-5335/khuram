@@ -199,11 +199,6 @@ export function Studio({
       );
     });
   }
-  const covers = Array.from(
-    new Map(
-      list.filter((a) => a.post.image).map((a) => [a.post.image, a.post.title]),
-    ).entries(),
-  );
   return (
     <div className="mx-auto max-w-6xl pb-16">
       <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
@@ -434,50 +429,6 @@ export function Studio({
                       onChange={(date) => change({ date })}
                     />
                   </div>
-                  <label className="block text-sm font-medium">
-                    Existing cover artwork
-                    <select
-                      className={inputClass}
-                      value={
-                        covers.some(([path]) => path === post.image)
-                          ? post.image
-                          : ""
-                      }
-                      onChange={(e) => {
-                        if (e.target.value) {
-                          const existing = list.find(
-                            (a) => a.post.image === e.target.value,
-                          )?.post;
-                          change({
-                            image: e.target.value,
-                            imageWidth: existing?.imageWidth,
-                            imageHeight: existing?.imageHeight,
-                          });
-                        }
-                      }}
-                    >
-                      <option value="">
-                        Choose artwork or enter a path below
-                      </option>
-                      {covers.map(([path, title]) => (
-                        <option key={path} value={path}>
-                          {title}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <Field
-                    label="Cover image URL or local path"
-                    value={post.image}
-                    onChange={(image) =>
-                      change({
-                        image,
-                        imageWidth: undefined,
-                        imageHeight: undefined,
-                      })
-                    }
-                    hint="Upload below, paste an existing blog Blob URL, or use a deployed /images/ file."
-                  />
                   <StudioImageUpload
                     label="Upload cover image"
                     src={post.image}
@@ -576,21 +527,6 @@ export function Studio({
                           Section image and links (optional)
                         </summary>
                         <div className="mt-4 space-y-4">
-                          <Field
-                            label="Section image URL or local path"
-                            value={section.image?.src || ""}
-                            onChange={(src) =>
-                              edit({
-                                image: src
-                                  ? {
-                                      src,
-                                      alt: section.image?.alt || "",
-                                      caption: section.image?.caption || "",
-                                    }
-                                  : undefined,
-                              })
-                            }
-                          />
                           <StudioImageUpload
                             label={`Upload section ${index + 1} image`}
                             src={section.image?.src || ""}
@@ -607,6 +543,13 @@ export function Studio({
                           />
                           {section.image && (
                             <>
+                              <button
+                                type="button"
+                                className="text-link"
+                                onClick={() => edit({ image: undefined })}
+                              >
+                                Remove section image
+                              </button>
                               <Field
                                 label="Section image description"
                                 value={section.image.alt}

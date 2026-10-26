@@ -1,7 +1,16 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import { withLocalSite } from "./local-site.mjs";
 
 await withLocalSite(async (base) => {
+  const redirects = JSON.parse(
+    await readFile("lib/blog-media-redirects.json", "utf8"),
+  );
+  for (const { source, destination } of redirects) {
+    const response = await fetch(base + source, { redirect: "manual" });
+    assert.equal(response.status, 308, "Legacy blog image URL must redirect");
+    assert.equal(response.headers.get("location"), destination);
+  }
   const read = async (file) => {
     const route = "/" + file.replace(/index\.html$/, "").replace(/^\//, "");
     const response = await fetch(base + route, {

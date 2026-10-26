@@ -1,0 +1,82 @@
+[
+  {
+    "source": "/images/blog-personal-seo.svg",
+    "destination": "https://vftlrwvstesgqbeh.public.blob.vercel-storage.com/blog/personal-seo-rank-your-name-cover-fb9c2066aa9d-wqsUMpAtVSdiNmhY8Cp0vUVWnYK7V8.webp",
+    "permanent": true
+  },
+  {
+    "source": "/images/blog-personal-seo.png",
+    "destination": "https://vftlrwvstesgqbeh.public.blob.vercel-storage.com/blog/personal-seo-rank-your-name-cover-fb9c2066aa9d-wqsUMpAtVSdiNmhY8Cp0vUVWnYK7V8.webp",
+    "permanent": true
+  },
+  {
+    "source": "/images/personal-seo-flow.svg",
+    "destination": "https://vftlrwvstesgqbeh.public.blob.vercel-storage.com/blog/personal-seo-rank-your-name-section-5-2bad0cc13dc0-m0sRKHVEKbpUEmACG8s6IrjuNuG79p.webp",
+    "permanent": true
+  },
+  {
+    "source": "/images/personal-seo-tracker.svg",
+    "destination": "https://vftlrwvstesgqbeh.public.blob.vercel-storage.com/blog/personal-seo-rank-your-name-section-12-749fc0c2dc24-Xe8twRPVXUSGlHyrFJVUgPmAwoytjU.webp",
+    "permanent": true
+  },
+  {
+    "source": "/images/blog-motion.svg",
+    "destination": "https://vftlrwvstesgqbeh.public.blob.vercel-storage.com/blog/motion-that-knows-when-to-stop-cover-d3a001b63915-dzM6xJDyy0ElV0UPx0dN8KGjNFYjym.webp",
+    "permanent": true
+  },
+  {
+    "source": "/images/blog-motion.png",
+    "destination": "https://vftlrwvstesgqbeh.public.blob.vercel-storage.com/blog/motion-that-knows-when-to-stop-cover-d3a001b63915-dzM6xJDyy0ElV0UPx0dN8KGjNFYjym.webp",
+    "permanent": true
+  },
+  {
+    "source": "/images/motion-flow.svg",
+    "destination": "https://vftlrwvstesgqbeh.public.blob.vercel-storage.com/blog/motion-that-knows-when-to-stop-section-1-a818e1e356a1-rSxNCaheq45MhXsy2l2k35k1oiiAVa.webp",
+    "permanent": true
+  },
+  {
+    "source": "/images/blog-static.svg",
+    "destination": "https://vftlrwvstesgqbeh.public.blob.vercel-storage.com/blog/a-blog-without-a-backend-cover-37807a077e03-jCyEs4SiLEBQABDfhcgLF5RNwgLLMJ.webp",
+    "permanent": true
+  },
+  {
+    "source": "/images/blog-static.png",
+    "destination": "https://vftlrwvstesgqbeh.public.blob.vercel-storage.com/blog/a-blog-without-a-backend-cover-37807a077e03-jCyEs4SiLEBQABDfhcgLF5RNwgLLMJ.webp",
+    "permanent": true
+  },
+  {
+    "source": "/images/static-flow.svg",
+    "destination": "https://vftlrwvstesgqbeh.public.blob.vercel-storage.com/blog/a-blog-without-a-backend-section-1-6714c96026a6-xsBJxVHZt0aVS5GWgqeKnhWxU3chvh.webp",
+    "permanent": true
+  },
+  {
+    "source": "/images/blog-colors.svg",
+    "destination": "https://vftlrwvstesgqbeh.public.blob.vercel-storage.com/blog/color-tokens-not-color-chaos-cover-c58fcc42cd97-iwCDXcoNEgGb042SZR8oaKiydCbbn7.webp",
+    "permanent": true
+  },
+  {
+    "source": "/images/blog-colors.png",
+    "destination": "https://vftlrwvstesgqbeh.public.blob.vercel-storage.com/blog/color-tokens-not-color-chaos-cover-c58fcc42cd97-iwCDXcoNEgGb042SZR8oaKiydCbbn7.webp",
+    "permanent": true
+  },
+  {
+    "source": "/images/color-flow.svg",
+    "destination": "https://vftlrwvstesgqbeh.public.blob.vercel-storage.com/blog/color-tokens-not-color-chaos-section-1-2e6caa31a7bc-HExzTJDpS3W0HCh9ZzKeZOAlXAoopx.webp",
+    "permanent": true
+  },
+  {
+    "source": "/images/blog-php2shell.svg",
+    "destination": "https://vftlrwvstesgqbeh.public.blob.vercel-storage.com/blog/php2shell-php-vulnerabilities-2026-fixes-cover-c725ba5b1ca7-QMHm3XFAjjqhbvN7d4OESBUDtkT8w0.webp",
+    "permanent": true
+  },
+  {
+    "source": "/images/blog-php2shell.png",
+    "destination": "https://vftlrwvstesgqbeh.public.blob.vercel-storage.com/blog/php2shell-php-vulnerabilities-2026-fixes-cover-c725ba5b1ca7-QMHm3XFAjjqhbvN7d4OESBUDtkT8w0.webp",
+    "permanent": true
+  },
+  {
+    "source": "/images/php2shell-evidence.svg",
+    "destination": "https://vftlrwvstesgqbeh.public.blob.vercel-storage.com/blog/php2shell-php-vulnerabilities-2026-fixes-section-3-03a0fac0d37a-ZqYxwM2UpA3UJiU2DaAyscZtDOTpJK.webp",
+    "permanent": true
+  }
+]

@@ -30,7 +30,7 @@ npm run blog:migrate -- --apply
 npm run blog:validate
 ```
 
-The first migration command connects and previews inserts without writing. `--apply` creates unique slug and publication-order indexes, inserts missing articles with `$setOnInsert`, and compares inserted content against the original. Re-running does not replace Compass edits, delete documents, or reset statuses/dates. Existing documents need unique string slugs. Source image files and social PNG counterparts must exist before importing.
+The first migration command connects and previews inserts without writing. `--apply` creates unique slug and publication-order indexes, inserts missing articles with `$setOnInsert`, and compares inserted content against the original. Re-running does not replace Compass edits, delete documents, or reset statuses/dates. Existing documents need unique string slugs. Referenced Blob images must remain publicly accessible before importing.
 
 `blog:validate` reads all documents, validates their structure, local image paths and Blob image availability, and reports publication counts. It does not publish or change anything. It checks files in this checkout; verify that new assets have also been deployed. Back up the collection with Compass export or an Atlas backup before substantial edits. Keep backups outside Git.
 
@@ -45,14 +45,14 @@ Documents keep the existing structured article format. Start by duplicating an i
 | `title`, `excerpt`, `category` | Visible title, metadata description, and topic                                        |
 | `date`                         | Actual publication date as a **string** `YYYY-MM-DD`, interpreted in UTC              |
 | `updatedAt`                    | Optional actual revision date string, not earlier than `date`                         |
-| `image`, `imageAlt`            | Deployed `/images/…` cover path and descriptive alternative text                      |
+| `image`, `imageAlt`            | Uploaded public Blob URL and descriptive alternative text                             |
 | `intro`                        | Opening paragraph                                                                     |
 | `sections`                     | Nonempty array of `{ id, title, paragraphs }`, with optional `code`, `links`, `image` |
 | `sources`                      | Array of `{ title, url }` reference links; may be empty                               |
 
 Section IDs must be unique hyphenated identifiers. Section images use `{ src, alt, caption }`. Links use HTTPS or a site-relative path; script URLs are rejected. Text is rendered as escaped React text, never raw HTML or executable MDX. Object IDs and extra database fields are projected away before data reaches the frontend.
 
-Image bytes live in public Vercel Blob (studio uploads) or `public/images/`, never in MongoDB. Studio uploads require no deployment. Local SVG covers still require a same-name PNG for social previews. Optional `imageWidth`/`imageHeight` on the post and `width`/`height` on section images preserve uploaded dimensions; older records default to 1200�720 covers and 1000�460 inline images. Public Blob URLs use HTTPS and the `blog/` path. See [STUDIO.md](STUDIO.md#image-uploads-with-vercel-blob) for configuration, upload limits and cleanup.
+Image bytes live in public Vercel Blob (studio uploads) or `public/images/`, never in MongoDB. Studio uploads require no deployment. Local SVG covers still require a same-name PNG for social previews. Optional `imageWidth`/`imageHeight` on the post and `width`/`height` on section images preserve uploaded dimensions; older records default to 1200x720 covers and 1000x460 inline images. Public Blob URLs use HTTPS and the `blog/` path. See [STUDIO.md](STUDIO.md#image-uploads-with-vercel-blob) for configuration, upload limits and cleanup.
 
 The private studio is now the recommended publishing interface. Run `npm run blog:validate` while an article edited in Compass is a draft. Then change `status` to `published` with a publication date no later than today in UTC. Future-dated posts remain excluded until their date is reached and the affected caches refresh. Draft is a publication state, not a secret storage boundary: do not put credentials or private personal data in article documents.
 

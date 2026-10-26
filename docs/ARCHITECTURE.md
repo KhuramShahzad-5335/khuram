@@ -13,7 +13,7 @@ Keep route files focused on composition, route generation, and metadata. Blog da
 - `lib/site.ts` validates the deployment origin and centrally defines identity/indexing decisions. `lib/metadata.ts` keeps canonical and sharing fields aligned.
 - `lib/server/posts.ts` reads published MongoDB records through a reusable connection pool. `lib/post-record.ts` validates and projects public article fields. `lib/posts.ts` is only the migration/CI snapshot. `lib/blog.ts` supplies browser-safe types, counts, dates, and summary projection. Pass summaries to client components rather than importing entire article records there. Database failures propagate; they do not silently serve the snapshot. Invalid published content fails regeneration and may leave the previous ISR cache available.
 - `ScenePreview` defers the heavy 3D component until near the viewport and an idle opportunity (bounded at 1200ms), uses the same-height fallback during the dynamic import, and unmounts the hero scene offscreen, on hidden tabs, and for reduced motion. Each actual scene checks WebGL support. Model blocks use analytic Three.js rounded geometry, shared by dimensions within each mounted scene and disposed on teardown. Mobile DPR is 1; desktop DPR is capped at 1.5. Shader warm-up uses Three.js `compileAsync` before starting the continuous animation loop; rendering starts normally if warm-up rejects. The temporary WebGL capability-check context is released. The full model, soft corners, floating motion, rotation and drag disassembly remain.
-- Home scroll reveals use IntersectionObserver and the Web Animations API, with the same 24px/700ms entrance. Layout reads are batched before class mutations. Initial viewport content remains opaque; below-fold reveals run once. Cleanup disconnects observation, cancels animations, and clears hidden states. Process-panel transitions use CSS. GSAP and Framer Motion remain installed but are no longer imported by these components. Avoid multiple animation systems owning the same property.
+- Home scroll reveals use IntersectionObserver and the Web Animations API, with the same 24px/700ms entrance. Layout reads are batched before class mutations. Initial viewport content remains opaque; below-fold reveals run once. Cleanup disconnects observation, cancels animations, and clears hidden states. Process-panel transitions use CSS. Unused GSAP and Framer Motion dependencies have been removed. Avoid multiple animation systems owning the same property.
 
 ## Source hygiene
 
@@ -21,7 +21,7 @@ Use strict TypeScript, explicit reusable types, and meaningful names. Unused loc
 
 Use Tailwind for component-specific layout and visual details. Reuse CSS tokens, shared section/layout patterns, focus treatments, and typography. Custom illustration geometry, responsive shared patterns, and coordinated keyframes remain CSS. Do not duplicate a utility and a CSS declaration controlling the same component. Follow the design guide before altering either.
 
-Prettier and EditorConfig standardize maintained source. Historical planning files and supplied icon artwork are excluded from automatic formatting. Preserve the owner's commented-out JSX; never reactivate it during cleanup.
+Prettier and EditorConfig standardize maintained source. Supplied icon artwork is excluded from automatic formatting. Preserve the owner's commented-out JSX; never reactivate it during cleanup.
 
 ## Release checks
 
@@ -60,14 +60,6 @@ The homepage services section is server-rendered in `components/services.tsx` an
 The opaque HSV picker uses pointer capture, keyboard controls, range alternatives, HEX/RGB/HSL validation, optional browser EyeDropper, and at most one color update per animation frame. It retains hue while dragging through black/white. `lib/color-picker.ts` contains its conversion helpers. Do not reintroduce the native color dialog, write storage per pointer event, or add alpha without revisiting the palette parser and contrast checks. The editor stays neutral and focus-contained even when the page becomes low contrast.
 
 `ProfileAvatar` uses the owner-selected illustrated asset at `public/images/profile-avatar.png` in About and blog bylines, with dimensioned local images and a KS error fallback. It is an illustration, not an asserted photograph. Preserve the selected avatar’s origin URL in CONTENT.md; no image-CDN request occurs during visits.
-
-## Museum-art moodboard
-
-The owner removed the facts feature and cancelled the game request. `ArtGallery` now lives after the homepage article previews and on notebook archive pages. It renders three museum works in server HTML and deals a random set after hydration and on each manual click. The desk uses staggered cards, tape, palette-colored frames, artist/date card backs, museum links, and reduced-motion alternatives. Actual paintings are not recolored. Mobile cards are flat and long text wraps.
-
-The Art Institute of Chicago API supplied a small 12-work collection cached on 14 October 2026. The museum’s documented hotlinks returned error pages from portfolio referrers in the development environment, while requests with the museum referrer returned JPEGs. Local caching was chosen for predictable runtime display, fast instant shuffling, and no visitor API dependency. `lib/art-collection.json` records artwork IDs, accurate title/artist/date, original image URLs, public-domain verification date, local image paths and actual dimensions. `lib/art-gallery.ts` exposes the deck and deals without repeating the immediately previous three works. The browser performs no museum API/image requests; pictures are dimensioned, locally hosted and lazy-loaded. Failed images retain captions, museum links, and explicit fallback text.
-
-For collection maintenance, query the museum API for selected fields and `is_public_domain: true`, confirm every record and image, download conservatively one image at a time with a delay of at least one second, and use the documented 400px IIIF width for these cards. Update only source assets/metadata, preserve credits and originals, record true image dimensions, and rebuild. Use the response’s IIIF base when obtaining new assets. See [the museum API documentation](https://api.artic.edu/docs/) for caching, image sizes, public-domain status and permitted use. Do not turn this feature into a backend, live slideshow, game, trivia feed, or separate indexed art routes.
 
 ## Mobile performance maintenance
 
