@@ -135,6 +135,36 @@ await withLocalSite(async (base) => {
   assert((studio.headers.get("x-robots-tag") || "").includes("noindex"));
   assert((studio.headers.get("cache-control") || "").includes("no-store"));
   assert((await studio.text()).includes("Owner sign-in"));
+  const uploadBody = {
+    type: "blob.generate-client-token",
+    payload: {
+      pathname: "blog/check.png",
+      clientPayload: null,
+      multipart: false,
+    },
+  };
+  for (const [origin, expected] of [
+    ["https://untrusted.example", 403],
+    [base, 401],
+  ]) {
+    const response = await fetch(base + "/studio/api/upload/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Origin: origin },
+      body: JSON.stringify(uploadBody),
+    });
+    assert.equal(
+      response.status,
+      expected,
+      "Upload authorization must reject unauthorized callers",
+    );
+    assert((response.headers.get("cache-control") || "").includes("no-store"));
+  }
+  const oversizedUpload = await fetch(base + "/studio/api/upload/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ data: "x".repeat(17000) }),
+  });
+  assert.equal(oversizedUpload.status, 413);
   assert.equal(
     summaries.length,
     blogUrls.length,

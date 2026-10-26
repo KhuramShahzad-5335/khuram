@@ -1,7 +1,40 @@
 import assert from "node:assert/strict";
 import { posts } from "../lib/posts.ts";
 import { parsePostRecord, isPublished } from "../lib/post-record.ts";
+import { isArticleImage, socialImage } from "../lib/article-images.ts";
 const record = { ...posts[0], status: "published" };
+const blob =
+  "https://example.public.blob.vercel-storage.com/blog/cover-Ab123.png";
+assert(isArticleImage(blob));
+assert.equal(socialImage(blob), blob);
+assert.equal(socialImage("/images/cover.svg"), "/images/cover.png");
+assert.equal(
+  new URL(socialImage(blob), "https://www.khuramshahzad.dev").href,
+  blob,
+);
+assert.equal(
+  parsePostRecord({ ...record, image: blob, imageWidth: 800, imageHeight: 600 })
+    .imageWidth,
+  800,
+);
+for (const image of [
+  "https://evil.example/blog/image.png",
+  "https://example.public.blob.vercel-storage.com.evil.example/blog/image.png",
+  "https://user@example.public.blob.vercel-storage.com/blog/image.png",
+  "https://example.public.blob.vercel-storage.com/blog/image.svg",
+  blob + "?download=1",
+  blob + "#fragment",
+  blob.replace("https:", "http:"),
+  "data:image/png;base64,abc",
+  "/images/../private.png",
+])
+  assert.throws(() => parsePostRecord({ ...record, image }));
+for (const dimensions of [
+  { imageWidth: 0, imageHeight: 1 },
+  { imageWidth: 800 },
+  { imageWidth: 12001, imageHeight: 1 },
+])
+  assert.throws(() => parsePostRecord({ ...record, ...dimensions }));
 for (const post of posts)
   assert.deepEqual(parsePostRecord({ ...post, status: "published" }), {
     ...post,

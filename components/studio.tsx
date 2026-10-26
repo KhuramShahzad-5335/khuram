@@ -3,6 +3,7 @@ import { useEffect, useId, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { PostRecord } from "@/lib/post-record";
 import { wordCount, readingMinutes } from "@/lib/blog";
+import { StudioImageUpload } from "./studio-image-upload";
 
 type Article = { post: PostRecord; revision: number };
 const inputClass =
@@ -100,7 +101,9 @@ export function Studio({
   const [originalSlug, setOriginalSlug] = useState<string | null>(null);
   const [revision, setRevision] = useState(0);
   const [password, setPassword] = useState("");
-  const [busy, setBusy] = useState(false);
+  const [saving, setBusy] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const busy = saving || uploading;
   const [message, setMessage] = useState("");
   const [failed, setFailed] = useState(false);
   const [dirty, setDirty] = useState(false);
@@ -108,14 +111,14 @@ export function Studio({
   useEffect(() => setList(articles), [articles]);
   useEffect(() => {
     function warn(e: BeforeUnloadEvent) {
-      if (dirty) {
+      if (dirty || uploading) {
         e.preventDefault();
         e.returnValue = "";
       }
     }
     window.addEventListener("beforeunload", warn);
     return () => window.removeEventListener("beforeunload", warn);
-  }, [dirty]);
+  }, [dirty, uploading]);
   function change(patch: Partial<PostRecord>) {
     setPost((p) => ({ ...p, ...patch }));
     setDirty(true);
@@ -332,6 +335,7 @@ export function Studio({
               </div>
               <button
                 className="button secondary"
+                disabled={busy}
                 onClick={() => setPreview(!preview)}
               >
                 {preview ? "Back to editor" : "Preview"}
@@ -440,7 +444,16 @@ export function Studio({
                           : ""
                       }
                       onChange={(e) => {
-                        if (e.target.value) change({ image: e.target.value });
+                        if (e.target.value) {
+                          const existing = list.find(
+                            (a) => a.post.image === e.target.value,
+                          )?.post;
+                          change({
+                            image: e.target.value,
+                            imageWidth: existing?.imageWidth,
+                            imageHeight: existing?.imageHeight,
+                          });
+                        }
                       }}
                     >
                       <option value="">
@@ -454,10 +467,28 @@ export function Studio({
                     </select>
                   </label>
                   <Field
-                    label="Cover image path"
+                    label="Cover image URL or local path"
                     value={post.image}
-                    onChange={(image) => change({ image })}
-                    hint="Use a deployed /images/ file. New image files still need to be added to the project and deployed."
+                    onChange={(image) =>
+                      change({
+                        image,
+                        imageWidth: undefined,
+                        imageHeight: undefined,
+                      })
+                    }
+                    hint="Upload below, paste an existing blog Blob URL, or use a deployed /images/ file."
+                  />
+                  <StudioImageUpload
+                    label="Upload cover image"
+                    src={post.image}
+                    onBusy={setUploading}
+                    onUploaded={({ src, width, height }) =>
+                      change({
+                        image: src,
+                        imageWidth: width,
+                        imageHeight: height,
+                      })
+                    }
                   />
                   <Field
                     label="Cover image description"
@@ -546,7 +577,7 @@ export function Studio({
                         </summary>
                         <div className="mt-4 space-y-4">
                           <Field
-                            label="Section image path"
+                            label="Section image URL or local path"
                             value={section.image?.src || ""}
                             onChange={(src) =>
                               edit({
@@ -557,6 +588,20 @@ export function Studio({
                                       caption: section.image?.caption || "",
                                     }
                                   : undefined,
+                              })
+                            }
+                          />
+                          <StudioImageUpload
+                            label={`Upload section ${index + 1} image`}
+                            src={section.image?.src || ""}
+                            onBusy={setUploading}
+                            onUploaded={(image) =>
+                              edit({
+                                image: {
+                                  ...image,
+                                  alt: section.image?.alt || "",
+                                  caption: section.image?.caption || "",
+                                },
                               })
                             }
                           />
@@ -631,11 +676,13 @@ export function Studio({
                 className="button"
                 onClick={() => void save("published")}
               >
-                {busy
-                  ? "Saving…"
-                  : post.status === "published"
-                    ? "Publish changes"
-                    : "Publish article"}
+                {uploading
+                  ? "Uploading image…"
+                  : busy
+                    ? "Saving…"
+                    : post.status === "published"
+                      ? "Publish changes"
+                      : "Publish article"}
               </button>
               {originalSlug && post.status === "published" && (
                 <a

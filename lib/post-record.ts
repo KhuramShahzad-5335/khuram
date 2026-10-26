@@ -1,4 +1,5 @@
 import type { Post, PostSection } from "./blog.ts";
+import { isArticleImage } from "./article-images.ts";
 
 export type PostRecord = Post & { status: "draft" | "published" };
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -35,13 +36,28 @@ function link(value: unknown): { title: string; url: string } {
   return { title: text(item.title, "link title", 500), url };
 }
 function imagePath(value: unknown): string {
-  const path = text(value, "image", 500);
-  if (
-    !/^\/images\/[a-zA-Z0-9_./-]+\.(svg|png|jpg|jpeg|webp|avif)$/.test(path) ||
-    path.includes("..")
-  )
-    throw new Error("Use a deployed /images/ file for article images");
+  const path = text(value, "image", 2048);
+  if (!isArticleImage(path))
+    throw new Error(
+      "Use an uploaded public Blob image or a deployed /images/ file",
+    );
   return path;
+}
+function dimensions(
+  width: unknown,
+  height: unknown,
+): { width?: number; height?: number } {
+  if (width === undefined && height === undefined) return {};
+  if (
+    !Number.isSafeInteger(width) ||
+    !Number.isSafeInteger(height) ||
+    (width as number) < 1 ||
+    (height as number) < 1 ||
+    (width as number) > 12000 ||
+    (height as number) > 12000
+  )
+    throw new Error("Image dimensions must be positive integers up to 12000");
+  return { width: width as number, height: height as number };
 }
 /** Validate Compass edits and project only public fields; never send Mongo IDs to the client. */
 export function parsePostRecord(value: unknown): PostRecord {
@@ -72,8 +88,9 @@ export function parsePostRecord(value: unknown): PostRecord {
         const image = object(section.image);
         result.image = {
           src: imagePath(image.src),
-          alt: text(image.alt, "image alt", 1000),
-          caption: text(image.caption, "caption", 2000),
+          alt: fieldText(image.alt, "image alt", 1000),
+          caption: fieldText(image.caption, "caption", 2000),
+          ...dimensions(image.width, image.height),
         };
       }
       if (
@@ -98,6 +115,7 @@ export function parsePostRecord(value: unknown): PostRecord {
     raw.updatedAt === undefined ? undefined : date(raw.updatedAt, "updatedAt");
   if (updatedAt && updatedAt < published)
     throw new Error("updatedAt cannot precede date");
+  const size = dimensions(raw.imageWidth, raw.imageHeight);
   return {
     slug,
     status: raw.status,
@@ -109,6 +127,7 @@ export function parsePostRecord(value: unknown): PostRecord {
     image:
       raw.status === "draft" && raw.image === "" ? "" : imagePath(raw.image),
     imageAlt: fieldText(raw.imageAlt, "imageAlt", 1000),
+    ...(size.width ? { imageWidth: size.width, imageHeight: size.height } : {}),
     intro: fieldText(raw.intro, "intro"),
     sections,
     sources: list(raw.sources, "sources").map(link),

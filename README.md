@@ -99,7 +99,7 @@ Typography settings live in `lib/typography.ts`; the editor provides six local p
 3. Continue using [Google Search Console](https://search.google.com/search-console/) separately. Submit the same sitemap if needed, inspect priority pages, and monitor indexing, impressions, and clicks. IndexNow does not replace this workflow.
 4. Publish useful original articles, link related pages, and share them with relevant audiences. Search-engine notification alone does not bring visitors.
 
-For a new or meaningfully updated article, publish through the studio, or validate and publish the Compass document. Wait for the public article and sitemap to refresh. New images or code still require a deployment. Then submit only the live changed page, replacing the example path with its actual canonical path:
+For a new or meaningfully updated article, publish through the studio, or validate and publish the Compass document. Wait for the public article and sitemap to refresh. Studio Blob uploads need no deployment; new local image files or code still require a deployment. Then submit only the live changed page, replacing the example path with its actual canonical path:
 
 ```sh
 npm run indexnow -- --submit /blog/your-article-slug/
@@ -115,4 +115,6 @@ Mobile performance: section reveals use native browser animation and process-pan
 
 ## Private article editor
 
-Open /studio/ directly after running npm run studio:password and restarting the server. The owner-only editor supports drafts, preview, sections, sources and publishing with cache refresh. It is not linked publicly. See [studio setup and security](docs/STUDIO.md). Add STUDIO_PASSWORD_HASH privately to Vercel and redeploy to enable the live editor. New image files still require deployment.
+Open /studio/ directly after running npm run studio:password and restarting the server. The owner-only editor supports drafts, preview, sections, sources and publishing with cache refresh. It is not linked publicly. See [studio setup and security](docs/STUDIO.md). Add STUDIO_PASSWORD_HASH privately to Vercel and redeploy to enable the live editor. Upload images through the studio without deploying; local image files still require deployment.
+
+Blog image uploads use public Vercel Blob and the existing studio owner session. Configure private `BLOB_READ_WRITE_TOKEN`; see [the studio upload workflow](docs/STUDIO.md#image-uploads-with-vercel-blob). Uploaded images are public even for drafts.

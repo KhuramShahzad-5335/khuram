@@ -26,7 +26,19 @@ There is one owner login and the same MongoDB user for all operations; no regist
 - Concurrent studio edits use a revision check; a stale save is rejected rather than replacing another studio save. Do not edit the same document in Compass simultaneously: Compass does not increment the studio revision.
 - The sidebar currently shows the newest 200 documents. For larger archives, add authenticated pagination before relying on the sidebar as a complete inventory.
 
-Images are selected from existing cover artwork or entered as deployed /images/ paths. There is no image-upload service in this version. Add new artwork to public/images and deploy it first; SVG covers need a matching PNG for social sharing. Never use the editor as private file storage.
+## Image uploads with Vercel Blob
+
+Connect a **Public** Blob store to the Vercel project. Keep `BLOB_READ_WRITE_TOKEN` in the server environment (Production and any desired Preview environment) and privately in ignored `.env.local` for local development. Restart/redeploy after configuring it. Never use a `NEXT_PUBLIC_` token. The SDK dependency is included.
+
+Use **Upload cover image** or expand a section's **Section image and links** and choose **Upload section image**. JPEG, PNG and WebP up to 5 MB are supported. The editor checks that the file decodes, records its dimensions, shows progress and a preview, and retains the old image when an upload fails. Add alt text and an inline caption, then save or publish. Uploading alone does not save the article. Article switching, saving and section edits are disabled during upload to prevent attaching the result to the wrong content. Unsaved text is retained after errors.
+
+`/studio/api/upload/` authorizes short-lived direct-to-Blob upload tokens using the existing owner session and same-origin policy. The route is under `/studio/` to receive the scoped session cookie. Tokens restrict content types, a 5 MB maximum and a `blog/` image path; random suffixes and overwrite protection prevent replacing published assets. No completion webhook or additional MongoDB user is needed. The private storage token is never sent to the browser. Request bodies are bounded and responses are private/no-store.
+
+The public image URL is stored in MongoDB. The public reader accepts HTTPS raster images under `blog/` on public Vercel Blob hosts, plus existing deployed `/images/` paths. Uploaded dimensions are preserved; social metadata and JSON-LD keep the absolute Blob URL. Existing SVG covers still use their local PNG counterparts. Image delivery remains unoptimized, so compress artwork before uploading; 1200�720 is a useful cover size.
+
+All uploaded images are public, **including draft images**. Do not upload private documents. Replaced or abandoned uploads are intentionally not automatically deleted: the same image may be referenced by multiple posts. Remove confirmed unused files manually from Vercel Storage after checking references. Never delete an image still used by a published article. Monitor Blob storage and transfer usage in Vercel.
+
+After the one-time code deployment, new uploaded images and articles require no Git push. Files manually added under `public/images/` still need deployment. Missing storage configuration produces an upload error without affecting existing images or article editing.
 
 ## Authentication and operations
 

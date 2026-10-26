@@ -40,7 +40,7 @@ Add the site to [Bing Webmaster Tools](https://www.bing.com/webmasters/) and sub
 
 Use Lighthouse on the deployed homepage and an article on both mobile and desktop. Record the test mode and inspect the actual bottleneck. The loading screen has been removed; content should be visible immediately on visits and reloads. Reduced-motion runs are useful fallback checks and must be labeled separately. Verify field results after real visits with Vercel Speed Insights and Search Console.
 
-Blog routes use 60-second request-driven revalidation. Images remain unoptimized: compress source images and keep 3D work gated. Compass edits do not require a rebuild; image and code changes require deployment.
+Blog routes use 60-second request-driven revalidation. Images remain unoptimized: compress source images and keep 3D work gated. Compass edits do not require a rebuild; local image files and code changes require deployment; studio Blob uploads do not.
 
 For favicon, site-name, and sitelink follow-up, see the 14 October search-appearance section in `SEO.md`. Deploy the updated icons and metadata before requesting another crawl; extra result links remain Google’s choice.
 
@@ -65,3 +65,5 @@ A successful local build does not publish files. If the helper reports HTTP 404,
 ## Enable the private studio
 
 Run npm run studio:password locally and privately copy the generated STUDIO_PASSWORD_HASH from .env.local to Vercel Production settings. Redeploy, then open /studio/ directly. Follow [STUDIO.md](STUDIO.md) for security, password rotation and the publish workflow. Missing credentials leave the editor locked.
+
+Blog image uploads use public Vercel Blob and the existing studio owner session. Configure private `BLOB_READ_WRITE_TOKEN`; see [the studio upload workflow](STUDIO.md#image-uploads-with-vercel-blob). Uploaded images are public even for drafts.

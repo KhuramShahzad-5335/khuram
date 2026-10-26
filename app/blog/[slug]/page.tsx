@@ -10,6 +10,7 @@ import { RELATED_POST_LIMIT } from "@/lib/notebook";
 import { getPostIndex } from "@/lib/post-index";
 import { ProfileAvatar } from "@/components/profile-avatar";
 import { BlogCard } from "@/components/blog-card";
+import { socialImage } from "@/lib/article-images";
 export function generateStaticParams() {
   return [];
 }
@@ -31,7 +32,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: p.title,
       description: p.excerpt,
-      images: [p.image.replace(".svg", ".png")],
+      images: [socialImage(p.image)],
     },
     openGraph: {
       title: p.title,
@@ -44,9 +45,9 @@ export async function generateMetadata({
       publishedTime: p.date,
       images: [
         {
-          url: p.image.replace(".svg", ".png"),
-          width: 1200,
-          height: 720,
+          url: socialImage(p.image),
+          width: p.imageWidth || 1200,
+          height: p.imageHeight || 720,
           alt: p.imageAlt,
         },
       ],
@@ -70,7 +71,7 @@ export default async function Page({
     datePublished: p.date,
     dateModified: p.updatedAt || p.date,
     wordCount: wordCount(p),
-    image: siteUrl + p.image.replace(".svg", ".png"),
+    image: new URL(socialImage(p.image), siteUrl).href,
     author: { "@type": "Person", name: "Khuram Shahzad", url: siteUrl },
     mainEntityOfPage: siteUrl + "/blog/" + p.slug + "/",
   };
@@ -100,12 +101,12 @@ export default async function Page({
         <Image
           src={p.image}
           alt={p.imageAlt}
-          width={1200}
-          height={720}
+          width={p.imageWidth || 1200}
+          height={p.imageHeight || 720}
           fetchPriority="high"
           loading="eager"
         />
-        <figcaption>Original illustration for this notebook entry.</figcaption>
+        <figcaption>{p.imageAlt}</figcaption>
       </figure>
       <div className="article-layout">
         <aside className="article-toc">
@@ -153,8 +154,8 @@ export default async function Page({
                   <Image
                     src={s.image.src}
                     alt={s.image.alt}
-                    width={1000}
-                    height={460}
+                    width={s.image.width || 1000}
+                    height={s.image.height || 460}
                   />
                   <figcaption>{s.image.caption}</figcaption>
                 </figure>

@@ -39,7 +39,7 @@ Measure Lighthouse against the production export and record device/mode, URL, sc
 
 ## Extending the site
 
-New public routes need unique metadata, a canonical, a sitemap entry, useful internal navigation, and real content. New client features must clean up timers/listeners/observers, handle failures, and respect reduced motion. Images remain locally deployed, dimensioned, compressed, and use meaningful alt text. Next Image remains deliberately unoptimized during this migration; changing image delivery is a separate task.
+New public routes need unique metadata, a canonical, a sitemap entry, useful internal navigation, and real content. New client features must clean up timers/listeners/observers, handle failures, and respect reduced motion. Images may be locally deployed or uploaded through the studio to public Vercel Blob; preserve dimensions, compression, and meaningful alt text. Next Image remains deliberately unoptimized during this migration; changing image delivery is a separate task.
 
 `npm start` runs the production Next server bound to localhost; set `PORT` when needed. Vercel handles production HTTPS and hosting. The old static preview script was removed, and `out/` is no longer generated or audited. Never edit generated `.next/`, old `out/`, or `node_modules/` as source fixes.
 
@@ -78,3 +78,5 @@ Homepage sections after the hero use `content-visibility: auto` and a remembered
 ## Private studio
 
 /studio/ is dynamically rendered and excluded from public discovery. lib/server/studio-auth.ts checks owner sessions; /studio/api/ validates Origin and authentication for every write. Credentials never enter client props. MongoDB stores expiring session digests and a shared login-attempt budget. components/studio.tsx provides the editor; lib/post-record.ts validates both Compass and editor documents. Drafts can have unfinished body fields; publishing uses strict validation. See [STUDIO.md](STUDIO.md).
+
+Blog image uploads use public Vercel Blob and the existing studio owner session. Configure private `BLOB_READ_WRITE_TOKEN`; see [the studio upload workflow](STUDIO.md#image-uploads-with-vercel-blob). Uploaded images are public even for drafts.

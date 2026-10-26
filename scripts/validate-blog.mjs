@@ -20,11 +20,24 @@ async function main() {
         ...record.sections.flatMap((s) => (s.image ? [s.image.src] : [])),
       ]) {
         if (!image) continue;
+        if (image.startsWith("https://")) {
+          const response = await fetch(image, {
+            method: "HEAD",
+            redirect: "error",
+            signal: AbortSignal.timeout(10000),
+          });
+          if (
+            !response.ok ||
+            !response.headers.get("content-type")?.startsWith("image/")
+          )
+            throw new Error(`Blog image is unavailable: ${record.slug}`);
+          continue;
+        }
         await access(`public${image}`);
       }
     }
     console.log(
-      `Database validation passed: ${records.length} articles, ${published} currently published; image files present locally.`,
+      `Database validation passed: ${records.length} articles, ${published} currently published; local and Blob images checked.`,
     );
   } finally {
     await client.close();

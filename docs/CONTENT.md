@@ -12,13 +12,13 @@ The owner's placeholder testimonial section is commented out. Keep it disabled u
 
 ## Add an article
 
-1. Add local cover/inline artwork under `public/images/`; use descriptive filenames, dimensions, and alt text. Covers use 1200×720 illustrations. Supply a matching PNG for each SVG cover because social metadata currently uses the `.png` counterpart. `scripts/create-blog-art.mjs` regenerates the existing artwork; review it before changing or rerunning it.
+1. Prefer cover/inline uploads in /studio/; see [STUDIO.md](STUDIO.md). Alternatively add local cover/inline artwork under `public/images/`; use descriptive filenames, dimensions, and alt text. Covers use 1200×720 illustrations. Supply a matching PNG for each SVG cover because social metadata currently uses the `.png` counterpart. `scripts/create-blog-art.mjs` regenerates the existing artwork; review it before changing or rerunning it.
 2. Create a document in `portfolio.posts` with `status: "draft"`, a unique slug, title, excerpt, category, actual publication date string (`YYYY-MM-DD`), image, imageAlt, intro, sections and sources. Each section needs a unique id, title, paragraphs and optional code/image. `lib/posts.ts` is the retained migration snapshot, not the live editor. Only published records whose dates have arrived are public.
 3. For meaningful revisions, add/update `updatedAt` with the actual revision date. Do not automatically stamp all pages with today's date.
 4. Review spelling, factual accuracy, sources, internal anchors, mobile reading, and code examples. Use original words and attribution where needed.
 5. Run `npm run blog:validate`, then set `status` to `published`. Inspect the live article and discovery endpoints after caches regenerate. For code or new image files, also run `npm run check`, review with `npm start`, and deploy through Vercel.
 
-Publishing a post makes `/blog/<slug>/`, archive/home cards, related links, BlogPosting metadata, sitemap membership and RSS available through server rendering and regeneration. Database-only edits do not need a rebuild. There is no browser publishing dashboard in this phase.
+Publishing a post makes `/blog/<slug>/`, archive/home cards, related links, BlogPosting metadata, sitemap membership and RSS available through server rendering and regeneration. Database-only edits do not need a rebuild. The protected /studio/ editor supports writing, image uploads and publishing.
 
 Word counts include the introduction, section headings, and paragraphs. They exclude code, captions, source labels, title, and excerpt. Reading time is a minimum of one minute at 200 words per minute. Counts are calculated server-side from the current article and passed as small card summaries.
 

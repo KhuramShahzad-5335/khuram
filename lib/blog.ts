@@ -5,7 +5,13 @@ export type PostSection = {
   paragraphs: string[];
   code?: string;
   links?: { title: string; url: string }[];
-  image?: { src: string; alt: string; caption: string };
+  image?: {
+    src: string;
+    alt: string;
+    caption: string;
+    width?: number;
+    height?: number;
+  };
 };
 export type Post = {
   slug: string;
@@ -16,6 +22,8 @@ export type Post = {
   updatedAt?: string;
   image: string;
   imageAlt: string;
+  imageWidth?: number;
+  imageHeight?: number;
   intro: string;
   sections: PostSection[];
   sources: { title: string; url: string }[];
