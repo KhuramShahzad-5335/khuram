@@ -62,7 +62,7 @@ export default async function Page({
   const { slug } = await params;
   const p = await getPublishedPost(slug);
   if (!p) notFound();
-  const postIndex = await getPostIndex();
+  const postIndex = await getPostIndex(RELATED_POST_LIMIT, 0, slug);
   const schema = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",

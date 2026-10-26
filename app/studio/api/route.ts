@@ -5,9 +5,25 @@ import {
   logoutStudio,
   sameOrigin,
 } from "@/lib/server/studio-auth";
-import { blogCollection } from "@/lib/server/database";
+import {
+  studioCollection,
+  listStudioArticles,
+  loadStudioArticle,
+} from "@/lib/server/studio-posts";
 import { parsePostRecord } from "@/lib/post-record";
 export const dynamic = "force-dynamic";
+function refreshBlog() {
+  for (const path of [
+    "/",
+    "/blog",
+    "/sitemap.xml",
+    "/feed.xml",
+    "/blog/search-index.json",
+  ])
+    revalidatePath(path);
+  revalidatePath("/blog/[slug]", "page");
+  revalidatePath("/blog/page/[page]", "page");
+}
 function reply(body: object, status = 200) {
   return Response.json(body, {
     status,
@@ -66,6 +82,91 @@ export async function POST(request: Request) {
       await logoutStudio();
       return reply({ ok: true });
     }
+    if (input.action === "list") {
+      if (
+        !Number.isSafeInteger(input.page) ||
+        input.page < 1 ||
+        input.page > 100000 ||
+        typeof input.trash !== "boolean"
+      )
+        return reply({ error: "Invalid page." }, 400);
+      return reply(await listStudioArticles(input.page, input.trash));
+    }
+    if (
+      ["get", "history", "revision", "trash", "untrash"].includes(input.action)
+    ) {
+      if (
+        typeof input.slug !== "string" ||
+        !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(input.slug)
+      )
+        return reply({ error: "Invalid article." }, 400);
+      if (input.action === "get") {
+        const article = await loadStudioArticle(input.slug);
+        return article
+          ? reply(article)
+          : reply({ error: "Article not found." }, 404);
+      }
+      const collection = await studioCollection();
+      const current = await collection.findOne({ slug: input.slug });
+      if (!current) return reply({ error: "Article not found." }, 404);
+      const history = current._history || [];
+      if (input.action === "history")
+        return reply({
+          history: history
+            .map(({ post, revision, savedAt }) => ({
+              title: post.title,
+              revision,
+              savedAt,
+            }))
+            .reverse(),
+        });
+      if (input.action === "revision") {
+        const found = history.find((h) => h.revision === input.revision);
+        return found
+          ? reply({ post: parsePostRecord(found.post) })
+          : reply({ error: "Revision not found." }, 404);
+      }
+      if (
+        !Number.isSafeInteger(input.revision) ||
+        input.revision !== (current._studioRevision || 0)
+      )
+        return reply(
+          { error: "Article changed. Reload before continuing." },
+          409,
+        );
+      const oldRevision = current._studioRevision;
+      const filter = {
+        slug: input.slug,
+        _studioRevision:
+          oldRevision === undefined ? { $exists: false } : oldRevision,
+      };
+      const result = await collection.updateOne(filter, {
+        $set: {
+          _trashed: input.action === "trash",
+          status: "draft",
+          _studioRevision: input.revision + 1,
+        },
+        $push: {
+          _history: {
+            $each: [
+              {
+                post: parsePostRecord(current),
+                revision: input.revision,
+                savedAt: new Date().toISOString(),
+              },
+            ],
+            $slice: -10,
+          },
+        },
+      });
+      if (!result.matchedCount)
+        return reply(
+          { error: "Article changed. Reload before continuing." },
+          409,
+        );
+      refreshBlog();
+      return reply({ ok: true });
+    }
     if (input.action !== "save")
       return reply({ error: "Unknown action." }, 400);
     if (!Number.isSafeInteger(input.revision) || input.revision < 0)
@@ -97,7 +198,7 @@ export async function POST(request: Request) {
         { error: "Choose today or an earlier publication date." },
         400,
       );
-    const collection = await blogCollection();
+    const collection = await studioCollection();
     await collection.createIndex(
       { slug: 1 },
       { unique: true, name: "unique_blog_slug" },
@@ -125,10 +226,43 @@ export async function POST(request: Request) {
               ],
             }
           : { _studioRevision: input.revision };
-      const result = await collection.updateOne(
-        { slug: post.slug, ...revisionFilter },
-        { $set: { ...post, _studioRevision: revision } },
+      const filter = {
+        slug: post.slug,
+        _trashed: { $ne: true },
+        ...revisionFilter,
+      };
+      const previous = await collection.findOne(filter, {
+        projection: { _history: 0 },
+      });
+      if (!previous)
+        return reply(
+          {
+            error:
+              "This article changed or was moved to Trash. Reload before saving.",
+          },
+          409,
+        );
+      const unset = Object.fromEntries(
+        ["updatedAt", "imageWidth", "imageHeight"]
+          .filter((key) => !(key in post))
+          .map((key) => [key, "" as const]),
       );
+      const result = await collection.updateOne(filter, {
+        $set: { ...post, _studioRevision: revision },
+        ...(Object.keys(unset).length ? { $unset: unset } : {}),
+        $push: {
+          _history: {
+            $each: [
+              {
+                post: parsePostRecord(previous),
+                revision: input.revision,
+                savedAt: new Date().toISOString(),
+              },
+            ],
+            $slice: -10,
+          },
+        },
+      });
       if (!result.matchedCount)
         return reply(
           {
@@ -138,16 +272,7 @@ export async function POST(request: Request) {
           409,
         );
     }
-    for (const path of [
-      "/",
-      "/blog",
-      "/sitemap.xml",
-      "/feed.xml",
-      "/blog/search-index.json",
-    ])
-      revalidatePath(path);
-    revalidatePath("/blog/[slug]", "page");
-    revalidatePath("/blog/page/[page]", "page");
+    refreshBlog();
     return reply({ ok: true, post, revision });
   } catch (error) {
     if (

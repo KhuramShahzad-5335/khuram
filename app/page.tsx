@@ -1,6 +1,6 @@
 import { Home } from "@/components/home";
 import { Services } from "@/components/services";
-import { getPostIndex } from "@/lib/post-index";
+import { getPostSummaries, getPostStats } from "@/lib/server/posts";
 import { HOME_POST_LIMIT } from "@/lib/notebook";
 import { site, siteUrl, serializeJsonLd } from "@/lib/site";
 import { pageMetadata } from "@/lib/metadata";
@@ -17,7 +17,10 @@ export const metadata = {
 };
 export const revalidate = 60;
 export default async function Page() {
-  const postIndex = await getPostIndex();
+  const [postIndex, stats] = await Promise.all([
+    getPostSummaries(HOME_POST_LIMIT),
+    getPostStats(),
+  ]);
   const schema = {
     "@context": "https://schema.org",
     "@graph": [
@@ -45,11 +48,7 @@ export default async function Page() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(schema) }}
       />
-      <Home
-        posts={postIndex.slice(0, HOME_POST_LIMIT)}
-        postCount={postIndex.length}
-        services={<Services />}
-      />
+      <Home posts={postIndex} postCount={stats.total} services={<Services />} />
     </>
   );
 }

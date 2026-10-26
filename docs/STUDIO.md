@@ -40,7 +40,7 @@ All uploaded images are public, **including draft images**. Do not upload privat
 
 After the one-time code deployment, new uploaded images and articles require no Git push. Files manually added under `public/images/` still need deployment. Missing storage configuration produces an upload error without affecting existing images or article editing.
 
-The five existing articles were migrated to eleven lightweight WebP illustrations on 26 October 2026. Editable vector originals live in `assets/blog/`; redundant public copies were removed. `lib/blog-media-redirects.json` keeps old SVG/PNG image links working through permanent redirects to Blob. Preserve these redirects and their destination files. The local article snapshot uses the same Blob URLs. Backups of the previous database records and removed files are kept outside the repository, not served publicly.
+The five existing articles were migrated to eleven lightweight WebP illustrations on 26 October 2026. Editable vector originals are archived outside the repository; the website uses only Blob images. `lib/blog-media-redirects.json` keeps old SVG/PNG image links working through permanent redirects to Blob. Preserve these redirects and their destination files. The local article snapshot uses the same Blob URLs. Backups of the previous database records and removed files are kept outside the repository, not served publicly.
 
 ## Authentication and operations
 

@@ -39,7 +39,6 @@ lib/                  Typed content, article helpers, palettes, SEO settings
 styles/               Shared section patterns, illustrations, and animation
 public/               Local illustrations, social images, verification files
 scripts/              Database migration, server audit, validation utilities
-assets/blog/          Editable vector originals; published images live in Blob
 docs/                Design, architecture, content and deployment guides
 ```
 

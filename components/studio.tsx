@@ -1,13 +1,12 @@
 "use client";
-import { useEffect, useId, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { PostRecord } from "@/lib/post-record";
 import { wordCount, readingMinutes } from "@/lib/blog";
 import { StudioImageUpload } from "./studio-image-upload";
 
-type Article = { post: PostRecord; revision: number };
-const inputClass =
-  "mt-2 w-full rounded-lg border border-(--border) bg-(--background) px-3 py-2.5 text-(--text) outline-offset-4";
+import type { Article, ArticleCard } from "@/lib/studio/types";
+import { Field, LinksEditor, inputClass } from "./studio/fields";
 const box = "rounded-2xl border border-(--border) bg-(--surface) p-5 sm:p-7";
 const today = () => new Date().toISOString().slice(0, 10);
 function blank(): PostRecord {
@@ -35,68 +34,25 @@ async function request(body: object) {
   if (!response.ok) throw new Error(result.error || "Request failed.");
   return result;
 }
-function Field({
-  label,
-  value,
-  onChange,
-  multiline = false,
-  type = "text",
-  disabled = false,
-  hint,
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  multiline?: boolean;
-  type?: string;
-  disabled?: boolean;
-  hint?: string;
-}) {
-  const id = useId();
-  return (
-    <div className="block text-sm font-medium">
-      <label htmlFor={id}>{label}</label>
-      {multiline ? (
-        <textarea
-          id={id}
-          aria-describedby={hint ? id + "-hint" : undefined}
-          className={inputClass + " min-h-32 resize-y"}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-        />
-      ) : (
-        <input
-          id={id}
-          aria-describedby={hint ? id + "-hint" : undefined}
-          className={inputClass}
-          type={type}
-          value={value}
-          disabled={disabled}
-          onChange={(e) => onChange(e.target.value)}
-        />
-      )}{" "}
-      {hint && (
-        <span
-          id={id + "-hint"}
-          className="mt-1 block text-xs font-normal text-(--muted)"
-        >
-          {hint}
-        </span>
-      )}
-    </div>
-  );
-}
 export function Studio({
   configured,
   authenticated,
   articles,
+  total,
 }: {
   configured: boolean;
   authenticated: boolean;
-  articles: Article[];
+  articles: ArticleCard[];
+  total: number;
 }) {
   const router = useRouter();
   const [list, setList] = useState(articles);
+  const [listTotal, setListTotal] = useState(total);
+  const [listPage, setListPage] = useState(1);
+  const [trash, setTrash] = useState(false);
+  const [history, setHistory] = useState<
+    { title: string; revision: number; savedAt: string }[]
+  >([]);
   const [post, setPost] = useState<PostRecord>(blank);
   const [originalSlug, setOriginalSlug] = useState<string | null>(null);
   const [revision, setRevision] = useState(0);
@@ -108,7 +64,12 @@ export function Studio({
   const [failed, setFailed] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [preview, setPreview] = useState(false);
-  useEffect(() => setList(articles), [articles]);
+  useEffect(() => {
+    setList(articles);
+    setListTotal(total);
+    setListPage(1);
+    setTrash(false);
+  }, [articles, total]);
   useEffect(() => {
     function warn(e: BeforeUnloadEvent) {
       if (dirty || uploading) {
@@ -123,14 +84,41 @@ export function Studio({
     setPost((p) => ({ ...p, ...patch }));
     setDirty(true);
   }
-  function select(article?: Article) {
-    if (dirty && !window.confirm("Discard your unsaved changes?")) return;
+  function setArticle(article?: Article) {
     setPost(article ? structuredClone(article.post) : blank());
     setOriginalSlug(article?.post.slug ?? null);
     setRevision(article?.revision ?? 0);
     setDirty(false);
     setMessage("");
     setPreview(false);
+    setHistory([]);
+  }
+  async function refreshList(page = listPage, inTrash = trash) {
+    const result = await request({ action: "list", page, trash: inTrash });
+    setList(result.articles);
+    setListTotal(result.total);
+    setListPage(page);
+    setTrash(inTrash);
+  }
+  function select(article?: ArticleCard) {
+    if (dirty && !window.confirm("Discard your unsaved changes?")) return;
+    if (!article) {
+      setArticle();
+      return;
+    }
+    if (trash && !window.confirm("Restore this article as a private draft?"))
+      return;
+    void run(async () => {
+      if (trash) {
+        await request({
+          action: "untrash",
+          slug: article.post.slug,
+          revision: article.revision,
+        });
+        await refreshList(1, false);
+      }
+      setArticle(await request({ action: "get", slug: article.post.slug }));
+    });
   }
   async function run(task: () => Promise<void>) {
     setBusy(true);
@@ -188,10 +176,12 @@ export function Studio({
       setOriginalSlug(article.post.slug);
       setRevision(article.revision);
       setDirty(false);
-      setList((old) => [
-        article,
-        ...old.filter((a) => a.post.slug !== article.post.slug),
-      ]);
+      setHistory([]);
+      try {
+        await refreshList(1, false);
+      } catch {
+        /* Saved data remains authoritative if listing is temporarily unavailable. */
+      }
       setMessage(
         status === "published"
           ? "Published. Your blog, homepage, sitemap, and feed will refresh on their next request."
@@ -285,7 +275,26 @@ export function Studio({
             >
               New article
             </button>
-            <h2 className="mb-3 text-sm font-semibold">Your articles</h2>
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+              <h2 className="text-sm font-semibold">
+                {trash ? "Trash" : "Your articles"}
+              </h2>
+              <button
+                className="text-link"
+                disabled={busy}
+                onClick={() => void run(() => refreshList(1, !trash))}
+              >
+                {trash ? "Show articles" : "Show trash"}
+              </button>
+            </div>
+            {trash && (
+              <p className="mb-3 text-xs text-(--muted)">
+                Select an article to restore it as a draft.
+              </p>
+            )}
+            {!list.length && (
+              <p className="text-sm text-(--muted)">Nothing here yet.</p>
+            )}
             <ul className="space-y-2">
               {list.map((a) => (
                 <li key={a.post.slug}>
@@ -310,6 +319,28 @@ export function Studio({
                 </li>
               ))}
             </ul>
+            <nav
+              aria-label="Studio article pages"
+              className="mt-4 flex items-center justify-between gap-2 text-xs"
+            >
+              <button
+                className="text-link"
+                disabled={busy || listPage === 1}
+                onClick={() => void run(() => refreshList(listPage - 1))}
+              >
+                Previous
+              </button>
+              <span>
+                {listPage} / {Math.max(1, Math.ceil(listTotal / 20))}
+              </span>
+              <button
+                className="text-link"
+                disabled={busy || listPage * 20 >= listTotal}
+                onClick={() => void run(() => refreshList(listPage + 1))}
+              >
+                Next
+              </button>
+            </nav>
           </aside>
           <div className="min-w-0 space-y-6">
             <div
@@ -336,6 +367,117 @@ export function Studio({
                 {preview ? "Back to editor" : "Preview"}
               </button>
             </div>
+            {originalSlug && (
+              <div className={box + " space-y-3"}>
+                <div className="flex flex-wrap gap-4">
+                  <button
+                    disabled={busy}
+                    className="text-link"
+                    onClick={() =>
+                      void run(async () => {
+                        const result = await request({
+                          action: "history",
+                          slug: originalSlug,
+                        });
+                        setHistory(result.history);
+                        if (!result.history.length)
+                          setMessage(
+                            "No earlier saved versions yet. Future saves keep the previous ten versions.",
+                          );
+                      })
+                    }
+                  >
+                    View saved versions
+                  </button>
+                  <button
+                    disabled={busy}
+                    className="text-link"
+                    onClick={() => {
+                      const url = URL.createObjectURL(
+                        new Blob([JSON.stringify(post, null, 2)], {
+                          type: "application/json",
+                        }),
+                      );
+                      const anchor = document.createElement("a");
+                      anchor.href = url;
+                      anchor.download = post.slug + ".json";
+                      anchor.click();
+                      setTimeout(() => URL.revokeObjectURL(url), 1000);
+                    }}
+                  >
+                    Download article
+                  </button>
+                  <button
+                    disabled={busy}
+                    className="text-link"
+                    onClick={() => {
+                      if (
+                        !window.confirm(
+                          "Move this article to Trash? It will leave the public blog. Unsaved changes will be discarded. You can restore it later.",
+                        )
+                      )
+                        return;
+                      void run(async () => {
+                        await request({
+                          action: "trash",
+                          slug: originalSlug,
+                          revision,
+                        });
+                        setArticle();
+                        await refreshList(1, false);
+                        setMessage(
+                          "Moved to Trash. Restore it from the sidebar whenever needed.",
+                        );
+                      });
+                    }}
+                  >
+                    Move to Trash
+                  </button>
+                </div>
+                {history.length > 0 && (
+                  <ul className="space-y-2 text-sm">
+                    {history.map((item) => (
+                      <li
+                        key={item.revision}
+                        className="flex flex-wrap justify-between gap-2"
+                      >
+                        <span>
+                          Version {item.revision} ·{" "}
+                          {new Date(item.savedAt).toLocaleString()}
+                        </span>
+                        <button
+                          disabled={busy}
+                          className="text-link"
+                          onClick={() => {
+                            if (
+                              !window.confirm(
+                                "Load this version into the editor? Unsaved edits will be replaced. Nothing goes live until you save or publish.",
+                              )
+                            )
+                              return;
+                            void run(async () => {
+                              const result = await request({
+                                action: "revision",
+                                slug: originalSlug,
+                                revision: item.revision,
+                              });
+                              setPost({ ...result.post, status: post.status });
+                              setDirty(true);
+                              setPreview(false);
+                              setMessage(
+                                "Earlier version loaded. Review it before saving or publishing.",
+                              );
+                            });
+                          }}
+                        >
+                          Load version {item.revision}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
             {preview ? (
               <article className={box + " space-y-6 break-words"}>
                 <span className="eyebrow">Private preview · {post.status}</span>
@@ -641,54 +783,6 @@ export function Studio({
           </div>
         </div>
       )}
-    </div>
-  );
-}
-function LinksEditor({
-  label,
-  links,
-  onChange,
-}: {
-  label: string;
-  links: { title: string; url: string }[];
-  onChange: (links: { title: string; url: string }[]) => void;
-}) {
-  return (
-    <div className="space-y-4">
-      <h3 className="text-sm font-medium">{label} (optional)</h3>
-      {links.map((link, index) => (
-        <div
-          className="grid gap-3 rounded-lg border border-(--border) p-3"
-          key={index}
-        >
-          <Field
-            label={label + " " + (index + 1) + " label"}
-            value={link.title}
-            onChange={(title) =>
-              onChange(links.map((l, i) => (i === index ? { ...l, title } : l)))
-            }
-          />
-          <Field
-            label={label + " " + (index + 1) + " URL"}
-            value={link.url}
-            onChange={(url) =>
-              onChange(links.map((l, i) => (i === index ? { ...l, url } : l)))
-            }
-          />
-          <button
-            className="text-link justify-self-start"
-            onClick={() => onChange(links.filter((_, i) => i !== index))}
-          >
-            Remove link
-          </button>
-        </div>
-      ))}
-      <button
-        className="text-link"
-        onClick={() => onChange([...links, { title: "", url: "" }])}
-      >
-        Add {label.toLowerCase()} link
-      </button>
     </div>
   );
 }

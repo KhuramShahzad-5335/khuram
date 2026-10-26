@@ -93,7 +93,7 @@ The HTTP audit passed for 27 routes and 66 unique internal references with the c
 
 ## Cleanup and uploaded blog illustrations - 26 October 2026
 
-Removed the museum gallery component, deck/data, styles, twelve cached paintings, unused GSAP/Framer Motion dependencies, obsolete planning/research documents, duplicate blog PNGs, the superseded art generator and the old ignored export directory. Removed files are recoverable outside the repository. Editable blog SVG originals remain under `assets/blog/`; active developer guides, the hero model, section animations, verification files and commented JSX are preserved. A reference scan found no other orphaned component modules.
+Removed the museum gallery component, deck/data, styles, twelve cached paintings, unused GSAP/Framer Motion dependencies, obsolete planning/research documents, duplicate blog PNGs, the superseded art generator and the old ignored export directory. Removed files are recoverable outside the repository. Editable blog SVG originals were subsequently archived outside the repository; active developer guides, the hero model, section animations, verification files and commented JSX are preserved. A reference scan found no other orphaned component modules.
 
 Eleven WebP illustrations were uploaded and byte-verified, ranging from about 6 to 21 KB (140,296 bytes total). The five MongoDB articles now use those URLs and dimensions. Revision checks prevented concurrent edits from being overwritten; read-back comparisons verified all text, captions, dates and slugs remained unchanged. Public HTTP checks returned 200 and showed the new cover URLs for all five articles. Legacy image URLs have sixteen permanent redirects, checked by the HTTP audit.
 

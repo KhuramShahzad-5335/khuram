@@ -12,7 +12,7 @@ The owner's placeholder testimonial section is commented out. Keep it disabled u
 
 ## Add an article
 
-1. Upload cover and inline illustrations through /studio/. The editor resizes and compresses files, saves their Blob URLs, and keeps alt text and captions editable. There are no manual image paths or URL inputs. The editable originals of the migrated illustrations are retained under `assets/blog/`; runtime images are in Blob. See [STUDIO.md](STUDIO.md).
+1. Upload cover and inline illustrations through /studio/. The editor resizes and compresses files, saves their Blob URLs, and keeps alt text and captions editable. There are no manual image paths or URL inputs. Blog images are stored in Blob; editable originals are archived outside the repository. See [STUDIO.md](STUDIO.md).
 2. Create a document in `portfolio.posts` with `status: "draft"`, a unique slug, title, excerpt, category, actual publication date string (`YYYY-MM-DD`), image, imageAlt, intro, sections and sources. Each section needs a unique id, title, paragraphs and optional code/image. `lib/posts.ts` is the retained migration snapshot, not the live editor. Only published records whose dates have arrived are public.
 3. For meaningful revisions, add/update `updatedAt` with the actual revision date. Do not automatically stamp all pages with today's date.
 4. Review spelling, factual accuracy, sources, internal anchors, mobile reading, and code examples. Use original words and attribution where needed.

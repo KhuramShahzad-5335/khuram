@@ -3,12 +3,12 @@ import { projects, experiments } from "@/lib/content";
 import { siteUrl } from "@/lib/site";
 import { getNotebook } from "@/lib/post-index";
 import { notebookUrl } from "@/lib/notebook";
-import { getPublishedPosts } from "@/lib/server/posts";
+import { getPostSummaries } from "@/lib/server/posts";
 export const dynamic = "force-static";
 export const revalidate = 60;
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { blogPageCount } = await getNotebook();
-  const posts = await getPublishedPosts();
+  const posts = await getPostSummaries();
   return [
     ...[
       "/",

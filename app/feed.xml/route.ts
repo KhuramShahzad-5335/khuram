@@ -1,4 +1,4 @@
-import { getPublishedPosts } from "@/lib/server/posts";
+import { getPostSummaries } from "@/lib/server/posts";
 import { site, siteUrl, absoluteUrl } from "@/lib/site";
 export const dynamic = "force-static";
 export const revalidate = 60;
@@ -16,7 +16,7 @@ function xml(value: string) {
   );
 }
 export async function GET() {
-  const posts = await getPublishedPosts();
+  const posts = await getPostSummaries();
   const entries = [...posts]
     .sort((a, b) => b.date.localeCompare(a.date))
     .map((post) => {

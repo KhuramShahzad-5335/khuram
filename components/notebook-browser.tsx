@@ -5,18 +5,6 @@ import type { PostSummary } from "@/lib/blog";
 import { BLOG_PAGE_SIZE, notebookUrl } from "@/lib/notebook";
 import { BlogCard } from "./blog-card";
 
-let indexRequest: Promise<PostSummary[]> | undefined;
-function loadIndex() {
-  return (indexRequest ??= fetch("/blog/search-index.json")
-    .then((response) => {
-      if (!response.ok) throw new Error("Index unavailable");
-      return response.json() as Promise<PostSummary[]>;
-    })
-    .catch((error) => {
-      indexRequest = undefined;
-      throw error;
-    }));
-}
 export function NotebookBrowser({
   initialPosts,
   initialPage,
@@ -34,47 +22,53 @@ export function NotebookBrowser({
   useEffect(() => setReady(true), []);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("");
-  const [index, setIndex] = useState<PostSummary[] | null>(null);
+  const [result, setResult] = useState<{
+    posts: PostSummary[];
+    total: number;
+  } | null>(null);
+  const [loading, setLoading] = useState(false);
   const [failed, setFailed] = useState(false);
   const [retry, setRetry] = useState(0);
   const [filteredPage, setFilteredPage] = useState(1);
   const resultsRef = useRef<HTMLDivElement>(null);
   const filtering = Boolean(query.trim() || category);
   useEffect(() => {
-    if (!filtering || index) return;
-    let active = true;
+    if (!filtering) {
+      setLoading(false);
+      return;
+    }
+    const controller = new AbortController();
+    setLoading(true);
     setFailed(false);
-    loadIndex()
-      .then((data) => {
-        if (active) setIndex(data);
-      })
-      .catch(() => {
-        if (active) setFailed(true);
-      });
+    const timer = setTimeout(async () => {
+      try {
+        const params = new URLSearchParams({
+          q: query.trim(),
+          category,
+          page: String(filteredPage),
+        });
+        const response = await fetch("/blog/search/?" + params, {
+          signal: controller.signal,
+        });
+        if (!response.ok) throw new Error("Search unavailable");
+        const data = await response.json();
+        if (!controller.signal.aborted) setResult(data);
+      } catch {
+        if (!controller.signal.aborted) setFailed(true);
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    }, 250);
     return () => {
-      active = false;
+      clearTimeout(timer);
+      controller.abort();
     };
-  }, [filtering, index, retry]);
-  const terms = query.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
-  const matches = (index ?? []).filter(
-    (post) =>
-      (!category || post.category === category) &&
-      terms.every((term) =>
-        `${post.title} ${post.excerpt} ${post.category}`
-          .toLocaleLowerCase()
-          .includes(term),
-      ),
-  );
+  }, [filtering, query, category, filteredPage, retry]);
   const pages = filtering
-    ? Math.ceil(matches.length / BLOG_PAGE_SIZE)
+    ? Math.ceil((result?.total || 0) / BLOG_PAGE_SIZE)
     : pageCount;
-  const current = filtering
-    ? Math.min(filteredPage, Math.max(1, pages))
-    : initialPage;
-  const visible = filtering
-    ? matches.slice((current - 1) * BLOG_PAGE_SIZE, current * BLOG_PAGE_SIZE)
-    : initialPosts;
-  const loading = filtering && !index && !failed;
+  const current = filtering ? filteredPage : initialPage;
+  const visible = filtering ? result?.posts || [] : initialPosts;
   function reset() {
     setQuery("");
     setCategory("");
@@ -92,6 +86,7 @@ export function NotebookBrowser({
           <input
             disabled={!ready}
             type="search"
+            maxLength={150}
             value={query}
             onChange={(event) => {
               setQuery(event.target.value);
@@ -136,11 +131,11 @@ export function NotebookBrowser({
       >
         <p role="status" className="text-sm text-(--muted)">
           {loading
-            ? "Loading the search index…"
+            ? "Searching the notebook…"
             : failed && filtering
               ? "Search is unavailable. The archive is still below."
               : filtering
-                ? `${matches.length} matching ${matches.length === 1 ? "article" : "articles"}`
+                ? `${result?.total || 0} matching ${result?.total === 1 ? "article" : "articles"}`
                 : `${total} articles · Page ${initialPage} of ${pageCount}`}
         </p>
         {filtering && (
@@ -163,14 +158,22 @@ export function NotebookBrowser({
           </Link>
         </div>
       )}
-      <div className="blog-card-grid">
+      <div className="blog-card-grid" aria-busy={loading}>
         {(loading || (failed && filtering) ? initialPosts : visible).map(
           (post) => (
             <BlogCard key={post.slug} post={post} />
           ),
         )}
       </div>
-      {filtering && index && matches.length === 0 && (
+      {!filtering && total === 0 && (
+        <div className="rounded-xl border border-dashed border-(--border) p-10 text-center">
+          <h2 className="text-xl">The next note is taking shape.</h2>
+          <p className="mt-3 text-sm text-(--muted)">
+            Come back soon for something useful from the workbench.
+          </p>
+        </div>
+      )}
+      {filtering && result && !loading && !failed && result.total === 0 && (
         <div className="rounded-xl border border-(--border) p-8">
           <h2 className="mb-3 text-xl">No notes found.</h2>
           <p className="text-sm text-(--muted)">
@@ -178,7 +181,7 @@ export function NotebookBrowser({
           </p>
         </div>
       )}
-      {filtering && index ? (
+      {filtering && result && !failed ? (
         pages > 1 && (
           <nav
             aria-label="Search result pages"
@@ -187,7 +190,7 @@ export function NotebookBrowser({
             <button
               type="button"
               className="button secondary disabled:opacity-40"
-              disabled={current === 1}
+              disabled={loading || current === 1}
               onClick={() => changePage(current - 1)}
             >
               Previous
@@ -198,7 +201,7 @@ export function NotebookBrowser({
             <button
               type="button"
               className="button secondary disabled:opacity-40"
-              disabled={current === pages}
+              disabled={loading || current >= pages}
               onClick={() => changePage(current + 1)}
             >
               Next
