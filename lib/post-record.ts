@@ -1,9 +1,9 @@
-import type { Post, PostSection } from "./blog.ts";
+import type { Post, PostSection, PostSummary } from "./blog.ts";
 import { isArticleImage } from "./article-images.ts";
 
 export type PostRecord = Post & { status: "draft" | "published" };
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-const reserved = new Set(["welcome", "page", "search-index", "feed"]);
+const reserved = new Set(["welcome", "page", "search-index", "search", "feed"]);
 function object(value: unknown): Record<string, unknown> {
   if (!value || typeof value !== "object" || Array.isArray(value))
     throw new Error("Expected an article object");
@@ -138,4 +138,31 @@ export function isPublished(
   today = new Date().toISOString().slice(0, 10),
 ) {
   return record.status === "published" && record.date <= today;
+}
+
+/** Validate the bounded database projection without loading article bodies. */
+export function parsePostSummary(value: unknown): PostSummary {
+  const raw = object(value);
+  const slug = text(raw.slug, "slug", 160);
+  if (!slugPattern.test(slug) || reserved.has(slug))
+    throw new Error("Invalid article slug");
+  if (!Number.isSafeInteger(raw.words) || (raw.words as number) < 0)
+    throw new Error("Invalid reading count");
+  const published = date(raw.date, "date");
+  const updatedAt =
+    raw.updatedAt === undefined ? undefined : date(raw.updatedAt, "updatedAt");
+  if (updatedAt && updatedAt < published)
+    throw new Error("updatedAt cannot precede date");
+  return {
+    slug,
+    title: text(raw.title, "title", 200),
+    excerpt: text(raw.excerpt, "excerpt", 2000),
+    category: text(raw.category, "category", 100),
+    date: published,
+    ...(updatedAt ? { updatedAt } : {}),
+    image: imagePath(raw.image),
+    imageAlt: text(raw.imageAlt, "imageAlt", 1000),
+    words: raw.words as number,
+    minutes: Math.max(1, Math.ceil((raw.words as number) / 200)),
+  };
 }

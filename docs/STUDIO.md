@@ -54,3 +54,11 @@ The five existing articles were migrated to eleven lightweight WebP illustration
 - For an expired session, sign in in another tab and return to retry saving; the editor keeps unsaved text after a failed request.
 
 Before deployment run npm run check. Test unauthorized writes, wrong-origin requests, private draft exclusion, publishing a new slug without a build, logout revocation, rate limits and mobile/keyboard editing in an isolated database. Never publish test articles to the production collection. Keep QA credentials and screenshots outside Git.
+
+## Saved versions and Trash
+
+The sidebar loads 20 article summaries at a time; selecting an article loads its body. Existing saves retain the previous version atomically, up to ten versions per article. **View saved versions** loads an older version into the editor for review; it does not publish it automatically. Save explicitly after reviewing. **Download article** exports the current editor contents, including unsaved changes, as JSON.
+
+**Move to Trash** changes an article to draft and excludes it from public queries. Open **Show trash** and select the article to restore it as a draft. No permanent delete is offered. Cache refresh is request-driven; inspect public URLs after unpublishing. Existing downloaded content cannot be recalled.
+
+History starts with saves made after this feature was installed. Compass edits bypass studio history and optimistic revision checks, so do not edit concurrently in Compass and the studio. Versions in the same database are convenient undo, not an independent backup. See BLOG_DATABASE.md for export/restore and Atlas backup requirements.

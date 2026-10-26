@@ -14,7 +14,12 @@ concurrency:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
+    services:
+      mongo:
+        image: mongo:7
+        ports:
+          - 27017:27017
     env:
       NEXT_PUBLIC_SITE_URL: https://www.khuramshahzad.dev
       VERCEL_ENV: production
@@ -29,3 +34,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run check
+      - run: npx playwright install --with-deps chromium
+      - run: npm run check:browser
+      - run: npm run check:studio:integration
+        env:
+          MONGODB_URI: mongodb://127.0.0.1:27017

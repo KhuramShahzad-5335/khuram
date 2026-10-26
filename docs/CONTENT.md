@@ -42,7 +42,7 @@ Section-level `links` in `PostSection` render contextual primary references and 
 
 ## Growing the notebook
 
-Posts are ordered by publication date, newest first, then slug for deterministic ties. Home and related previews are limited to three. Archives use three cards per page and support new `/blog/page/<number>/` routes on demand. Search uses a lazily downloaded summary index. Limits live in `lib/notebook.ts`. Database edits refresh through ISR; code/limit changes require deployment. Review pagination and Search Console after archive membership changes. See `ARCHITECTURE.md` for the search-index size tradeoff and no-JavaScript fallback.
+Posts are ordered by publication date, newest first, then slug for deterministic ties. Home and related previews are limited to three. Archives use three cards per page and support new `/blog/page/<number>/` routes on demand. Search requests bounded result pages from the server. Limits live in `lib/notebook.ts`. Database edits refresh through ISR; code/limit changes require deployment. Review pagination and Search Console after archive membership changes. See `ARCHITECTURE.md` for query boundaries and the no-JavaScript fallback.
 
 ## Selected avatar
 

@@ -1,15 +1,16 @@
 import { notFound } from "next/navigation";
 import { NotebookPage } from "@/components/notebook-page";
-import { getNotebook } from "@/lib/post-index";
+import { getPostStats } from "@/lib/server/posts";
 import { pageMetadata } from "@/lib/metadata";
-import { notebookUrl } from "@/lib/notebook";
+import { BLOG_PAGE_SIZE, notebookUrl } from "@/lib/notebook";
 export const dynamicParams = true;
 export const revalidate = 60;
 export function generateStaticParams() {
   return [];
 }
 async function validPage(value: string) {
-  const { blogPageCount } = await getNotebook();
+  const { total } = await getPostStats();
+  const blogPageCount = Math.max(1, Math.ceil(total / BLOG_PAGE_SIZE));
   const page = Number(value);
   if (
     !/^\d+$/.test(value) ||

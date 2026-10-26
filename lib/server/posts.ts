@@ -1,7 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { blogCollection } from "./database";
-import { isPublished, parsePostRecord } from "../post-record";
+import { isPublished, parsePostRecord, parsePostSummary } from "../post-record";
 import { summarizePost, type PostSummary } from "../blog";
 
 function fileSource() {
@@ -118,10 +118,7 @@ export const getPostSummaries = cache(
         { maxTimeMS: 10000 },
       )
       .toArray();
-    return records.map((p) => ({
-      ...p,
-      minutes: Math.max(1, Math.ceil(p.words / 200)),
-    }));
+    return records.map(parsePostSummary);
   },
 );
 export async function searchPosts(
@@ -181,9 +178,6 @@ export async function searchPosts(
   ]);
   return {
     total,
-    posts: records.map((p) => ({
-      ...p,
-      minutes: Math.max(1, Math.ceil(p.words / 200)),
-    })),
+    posts: records.map(parsePostSummary),
   };
 }

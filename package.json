@@ -10,7 +10,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check:site": "node scripts/check-site.mjs",
-    "check": "npm run check:config && npm run check:palettes && npm run check:blog && npm run check:studio && npm run typecheck && npm run format:check && npm run build && npm run check:site",
+    "check": "npm run check:config && npm run check:palettes && npm run check:blog && npm run check:studio && npm run check:backup && npm run typecheck && npm run format:check && npm run build && npm run check:site",
     "check:blog": "node --experimental-strip-types scripts/check-blog.mjs",
     "blog:migrate": "node --experimental-strip-types scripts/migrate-blog.mjs",
     "blog:validate": "node --experimental-strip-types scripts/validate-blog.mjs",
@@ -18,7 +18,12 @@
     "check:palettes": "node --experimental-strip-types scripts/check-palettes.mjs",
     "indexnow": "node scripts/indexnow.mjs",
     "studio:password": "node scripts/studio-password.mjs",
-    "check:studio": "node --experimental-strip-types scripts/check-studio.mjs"
+    "check:studio": "node --experimental-strip-types scripts/check-studio.mjs",
+    "blog:backup": "node --experimental-strip-types scripts/blog-backup.mjs export",
+    "blog:restore": "node --experimental-strip-types scripts/blog-backup.mjs restore",
+    "check:backup": "node --experimental-strip-types scripts/check-backup.mjs",
+    "check:browser": "node scripts/check-browser.mjs",
+    "check:studio:integration": "node --experimental-strip-types scripts/check-studio-integration.mjs"
   },
   "dependencies": {
     "@react-three/drei": "10.7.9",
@@ -35,6 +40,7 @@
     "three": "0.186.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "@tailwindcss/postcss": "4.3.3",
     "@types/node": "26.6.5",
     "@types/react": "19.3.0",
@@ -46,5 +52,10 @@
   },
   "engines": {
     "node": ">=22.13.0"
+  },
+  "overrides": {
+    "@vercel/cli-config": {
+      "zod": "4.6.6"
+    }
   }
 }

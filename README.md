@@ -57,7 +57,7 @@ docs/                Design, architecture, content and deployment guides
 | Header/footer                                      | `components/site-header.tsx`, `components/site-footer.tsx` |
 | Theme colors and generators                        | `lib/palettes.ts`, `components/palette-editor.tsx`         |
 
-The homepage previews three recent articles. The notebook has server-rendered archive pagination, search, and topic filters; its summary-only search index downloads when used. Full articles stay outside the homepage browser bundle. The hero Three.js scene loads near its viewport and stops when offscreen or the browser tab is hidden. Reduced-motion visitors get static alternatives. Theme settings are stored only in the visitor's browser, with graceful fallback when storage is blocked.
+The homepage previews three recent articles. The notebook has server-rendered archive pagination, search, and topic filters; search requests return one bounded page of summaries. Full articles stay outside the homepage browser bundle. The hero Three.js scene loads near its viewport and stops when offscreen or the browser tab is hidden. Reduced-motion visitors get static alternatives. Theme settings are stored only in the visitor's browser, with graceful fallback when storage is blocked.
 
 ## Documentation
 
@@ -118,3 +118,15 @@ Mobile performance: section reveals use native browser animation and process-pan
 Open /studio/ directly after running npm run studio:password and restarting the server. The owner-only editor supports drafts, preview, sections, sources and publishing with cache refresh. It is not linked publicly. See [studio setup and security](docs/STUDIO.md). Add STUDIO_PASSWORD_HASH privately to Vercel and redeploy to enable the live editor. Upload images through the studio without deploying; local image files still require deployment.
 
 Blog image uploads use public Vercel Blob and the existing studio owner session. Configure private `BLOB_READ_WRITE_TOKEN`; see [the studio upload workflow](docs/STUDIO.md#image-uploads-with-vercel-blob). Uploaded images are public even for drafts.
+
+## Notebook reliability and recovery
+
+The archive uses one detailed card per row and visible topic buttons. Homepage and related-article previews stay compact. Search is debounced, cancellable, paginated on the server, and never downloads article bodies. Old archive links remain crawlable without JavaScript.
+
+- `npm run check` includes content, backup-format, type, formatting, production-build and route checks.
+- `npx playwright install chromium`, then `npm run check:browser` runs mobile, keyboard, search failure/retry, palette, reload and no-JavaScript checks against a production build. CI runs these with the file snapshot. Optional `CHROME_BINARY` selects an existing Chrome executable.
+- `npm run check:studio:integration` uses the configured MongoDB connection to create and remove uniquely named temporary databases. It checks owner authentication, pagination, conflict protection, history, Trash, and an actual backup/restore drill. It never writes to the configured portfolio database; the database user needs permission to create temporary databases. CI uses its own temporary MongoDB service, without production credentials.
+- `npm run blog:backup -- "../portfolio-backup.json"` exports articles, drafts, Trash and saved versions to a new file outside this repository.
+- `npm run blog:restore -- "../portfolio-backup.json" --target portfolio_recovery` validates a restore into a separate empty database. Add `--apply` only after reviewing the dry run.
+
+See [database recovery](docs/BLOG_DATABASE.md#backup-and-recovery) and [studio recovery controls](docs/STUDIO.md#saved-versions-and-trash). Automatic Atlas backups still need to be enabled in the owner's account; local exports are not a scheduled backup service.

@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { Search, X, Check } from "lucide-react";
 import type { PostSummary } from "@/lib/blog";
 import { BLOG_PAGE_SIZE, notebookUrl } from "@/lib/notebook";
 import { BlogCard } from "./blog-card";
@@ -34,6 +35,8 @@ export function NotebookBrowser({
   const filtering = Boolean(query.trim() || category);
   useEffect(() => {
     if (!filtering) {
+      setResult(null);
+      setFailed(false);
       setLoading(false);
       return;
     }
@@ -80,42 +83,66 @@ export function NotebookBrowser({
   }
   return (
     <section aria-label="Browse notebook articles">
-      <div className="my-8 grid gap-4 rounded-xl border border-(--border) bg-(--surface) p-5 sm:grid-cols-[1fr_240px]">
-        <label className="grid gap-2 text-sm">
-          Search the notebook
-          <input
-            disabled={!ready}
-            type="search"
-            maxLength={150}
-            value={query}
-            onChange={(event) => {
-              setQuery(event.target.value);
-              setFilteredPage(1);
-            }}
-            placeholder="Title, topic, or keyword"
-            className="min-w-0 rounded-lg border border-(--border) bg-(--background) px-4 py-3 text-(--text)"
-          />
-        </label>
-        <label className="grid gap-2 text-sm">
-          <span id="notebook-topic-label">Topic</span>
-          <select
-            aria-labelledby="notebook-topic-label"
-            disabled={!ready}
-            value={category}
-            onChange={(event) => {
-              setCategory(event.target.value);
-              setFilteredPage(1);
-            }}
-            className="min-w-0 rounded-lg border border-(--border) bg-(--background) px-4 py-3 text-(--text)"
+      <div className="my-8 rounded-xl border border-(--border) bg-(--surface) p-5 sm:p-6">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <label
+            className="grid w-full max-w-xl gap-2 text-sm"
+            htmlFor="notebook-search"
           >
-            <option value="">All topics</option>
-            {categories.map((topic) => (
-              <option key={topic} value={topic}>
-                {topic}
-              </option>
-            ))}
-          </select>
-        </label>
+            Search the notebook
+            <span className="relative block">
+              <Search
+                size={18}
+                aria-hidden="true"
+                className="pointer-events-none absolute top-3.5 left-4 text-(--muted)"
+              />
+              <input
+                id="notebook-search"
+                disabled={!ready}
+                type="search"
+                maxLength={150}
+                value={query}
+                onChange={(event) => {
+                  setQuery(event.target.value);
+                  setFilteredPage(1);
+                }}
+                placeholder="Find an idea, a tool, or a lesson..."
+                className="w-full min-w-0 rounded-lg border border-(--border) bg-(--background) py-3 pr-4 pl-11 text-(--text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent)"
+              />
+            </span>
+          </label>
+          <span className="pb-3 font-mono text-xs text-(--muted)">
+            Latest notes first
+          </span>
+        </div>
+        <fieldset
+          className="mt-6 min-w-0 border-t border-(--border) pt-4"
+          disabled={!ready}
+        >
+          <legend className="sr-only">Filter articles by topic</legend>
+          <div className="flex flex-wrap gap-2">
+            {["", ...categories].map((topic) => {
+              const selected = category === topic;
+              return (
+                <button
+                  key={topic}
+                  type="button"
+                  aria-pressed={selected}
+                  onClick={() => {
+                    setCategory(topic);
+                    setFilteredPage(1);
+                  }}
+                  className={`inline-flex min-h-11 max-w-full items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent) motion-reduce:transition-none ${selected ? "border-(--text) bg-(--text) text-(--background)" : "border-(--border) bg-(--background) text-(--muted) hover:border-(--accent) hover:text-(--text)"}`}
+                >
+                  {selected && (
+                    <Check size={14} aria-hidden="true" className="shrink-0" />
+                  )}
+                  {topic || "All topics"}
+                </button>
+              );
+            })}
+          </div>
+        </fieldset>
         <noscript>
           <p>
             Search needs JavaScript. Browse every article using the archive
@@ -136,11 +163,15 @@ export function NotebookBrowser({
               ? "Search is unavailable. The archive is still below."
               : filtering
                 ? `${result?.total || 0} matching ${result?.total === 1 ? "article" : "articles"}`
-                : `${total} articles · Page ${initialPage} of ${pageCount}`}
+                : `${total} ${total === 1 ? "article" : "articles"}${total ? ` · Showing ${(initialPage - 1) * BLOG_PAGE_SIZE + 1}–${Math.min(initialPage * BLOG_PAGE_SIZE, total)}` : ""}`}
         </p>
         {filtering && (
-          <button type="button" onClick={reset} className="text-link">
-            Clear filters
+          <button
+            type="button"
+            onClick={reset}
+            className="inline-flex min-h-11 items-center gap-2 text-sm text-(--accent)"
+          >
+            <X size={14} aria-hidden="true" /> Clear filters
           </button>
         )}
       </div>
@@ -158,12 +189,17 @@ export function NotebookBrowser({
           </Link>
         </div>
       )}
-      <div className="blog-card-grid" aria-busy={loading}>
-        {(loading || (failed && filtering) ? initialPosts : visible).map(
-          (post) => (
-            <BlogCard key={post.slug} post={post} />
-          ),
-        )}
+      <div
+        className="grid grid-cols-1 gap-6"
+        aria-busy={loading}
+        data-notebook-list
+      >
+        {((failed && filtering) || (loading && !result)
+          ? initialPosts
+          : visible
+        ).map((post) => (
+          <BlogCard key={post.slug} post={post} layout="row" />
+        ))}
       </div>
       {!filtering && total === 0 && (
         <div className="rounded-xl border border-dashed border-(--border) p-10 text-center">
@@ -181,63 +217,63 @@ export function NotebookBrowser({
           </p>
         </div>
       )}
-      {filtering && result && !failed ? (
-        pages > 1 && (
-          <nav
-            aria-label="Search result pages"
-            className="mt-10 flex flex-wrap items-center justify-between gap-4"
-          >
-            <button
-              type="button"
-              className="button secondary disabled:opacity-40"
-              disabled={loading || current === 1}
-              onClick={() => changePage(current - 1)}
+      {filtering && result && !failed
+        ? pages > 1 && (
+            <nav
+              aria-label="Search result pages"
+              className="mt-10 flex flex-wrap items-center justify-between gap-4"
             >
-              Previous
-            </button>
-            <span className="text-sm text-(--muted)">
-              Page {current} of {pages}
-            </span>
-            <button
-              type="button"
-              className="button secondary disabled:opacity-40"
-              disabled={loading || current >= pages}
-              onClick={() => changePage(current + 1)}
+              <button
+                type="button"
+                className="button secondary disabled:opacity-40"
+                disabled={loading || current === 1}
+                onClick={() => changePage(current - 1)}
+              >
+                Previous
+              </button>
+              <span className="text-sm text-(--muted)">
+                Page {current} of {pages}
+              </span>
+              <button
+                type="button"
+                className="button secondary disabled:opacity-40"
+                disabled={loading || current >= pages}
+                onClick={() => changePage(current + 1)}
+              >
+                Next
+              </button>
+            </nav>
+          )
+        : pageCount > 1 && (
+            <nav
+              aria-label="Notebook archive pages"
+              className="mt-10 flex flex-wrap items-center justify-between gap-4"
             >
-              Next
-            </button>
-          </nav>
-        )
-      ) : (
-        <nav
-          aria-label="Notebook archive pages"
-          className="mt-10 flex flex-wrap items-center justify-between gap-4"
-        >
-          {initialPage > 1 ? (
-            <Link
-              className="button secondary"
-              href={notebookUrl(initialPage - 1)}
-            >
-              Newer notes
-            </Link>
-          ) : (
-            <span />
+              {initialPage > 1 ? (
+                <Link
+                  className="button secondary"
+                  href={notebookUrl(initialPage - 1)}
+                >
+                  Newer notes
+                </Link>
+              ) : (
+                <span />
+              )}
+              <span className="text-sm text-(--muted)">
+                Page {initialPage} of {pageCount}
+              </span>
+              {initialPage < pageCount ? (
+                <Link
+                  className="button secondary"
+                  href={notebookUrl(initialPage + 1)}
+                >
+                  Older notes
+                </Link>
+              ) : (
+                <span />
+              )}
+            </nav>
           )}
-          <span className="text-sm text-(--muted)">
-            Page {initialPage} of {pageCount}
-          </span>
-          {initialPage < pageCount ? (
-            <Link
-              className="button secondary"
-              href={notebookUrl(initialPage + 1)}
-            >
-              Older notes
-            </Link>
-          ) : (
-            <span />
-          )}
-        </nav>
-      )}
     </section>
   );
 }

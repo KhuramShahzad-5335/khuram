@@ -60,7 +60,7 @@ The private studio is now the recommended publishing interface. Run `npm run blo
 
 Studio publishing additionally invalidates affected paths immediately for regeneration on their next request. Compass edits use the fallback TTL described below. This site uses the documented Next.js ISR model without Cache Components. Page and discovery endpoints have `revalidate = 60`; React `cache()` deduplicates database reads within a server render, rather than retaining a second long-lived database cache. The homepage, notebook, article pages, archive pagination, search JSON, RSS, and sitemap all use the same published-content rules.
 
-After a cached page is 60 seconds old, the next request can receive the old HTML while regeneration runs. A following request receives the update after regeneration succeeds. This is request-driven, **not a promise of publication exactly 60 seconds after saving**. New slugs and archive pages can render on demand without rebuilding. An already-open browser search session may retain its loaded summaries until reload.
+After a cached page is 60 seconds old, the next request can receive the old HTML while regeneration runs. A following request receives the update after regeneration succeeds. This is request-driven, **not a promise of publication exactly 60 seconds after saving**. New slugs and archive pages can render on demand without rebuilding. Each new search/filter request reads current published summaries; archive pages retain ISR behavior.
 
 Unpublishing also takes effect after affected caches regenerate. ISR may continue serving a previously generated page if the database is unavailable or a published document is invalid. This protects availability but is unsuitable for emergency confidential-content removal; remove such content through hosting/cache controls and verify every URL. Database changes do not invalidate already downloaded content.
 
@@ -84,3 +84,20 @@ For a database-only publication, inspect the public article and wait for the sit
 Use the Vercel Next.js preset, repository root, `npm ci`, and `npm run build`. Remove any custom `out` output-directory override. Set the private database variables in Production and the appropriate Preview environment, and redeploy. The server needs database access at build time for the homepage/archive/discovery routes and at runtime for regeneration. Vercel Preview remains noindex.
 
 The owner handles GitHub pushes and Vercel promotion. A local migration or build does not deploy the site. To roll back code, promote the previous Vercel deployment. An explicit `BLOG_SOURCE=files` rebuild serves the retained snapshot, which will not contain posts added after migration. It does not modify or remove MongoDB records.
+
+## Backup and recovery
+
+Run `npm run blog:backup -- "../portfolio-backup-2026-10-26.json"` before significant edits. Choose an existing folder outside the repository and a new filename; exports never overwrite files. The export whitelists article content, publication state, saved revisions and Trash flags. It excludes sessions, credentials and unrelated collections. It is a logical content export, not a point-in-time cluster snapshot; avoid concurrent editing while exporting. The CLI caps exports/restores at 100 MB; use Atlas tooling beyond that size.
+
+Restore first performs a dry run:
+
+```sh
+npm run blog:restore -- "../portfolio-backup-2026-10-26.json" --target portfolio_recovery
+npm run blog:restore -- "../portfolio-backup-2026-10-26.json" --target portfolio_recovery --apply
+```
+
+The target must be a separate empty database; the configured active database and system databases are refused. All records are validated before writing. Restore creates the posts collection and indexes exclusively, then inserts data; an interrupted restore may leave a partial recovery database, so retry with a new empty target. It never deletes or overwrites the live collection. Review the restored articles before deliberately changing `MONGODB_DB` and redeploying.
+
+Image URLs are included, but Blob image bytes are not. Keep referenced Blob objects, including images used by drafts and historical versions. Exporting text does not replace an independent media backup.
+
+Enable scheduled Atlas backups and retention separately in the owner's account when supported by the cluster tier. This code does not configure or claim that service is enabled. The isolated integration check exercises an actual export and restore using disposable databases. Keep backups private and outside Git.

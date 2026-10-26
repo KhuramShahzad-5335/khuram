@@ -76,3 +76,9 @@ Typography controls include a preview, independent heading/body selectors, artic
 The museum gallery was removed at the owner’s request. Do not restore art API calls, museum images, trivia or games.
 
 Mobile WebGL renders at a pixel ratio of 1; desktop is capped at 1.5. Preserve the complete model, label plates, soft corners, floating motion and drag-to-disassemble behavior. Do not replace mobile functionality with a required play button or remove animation to improve a lab score.
+
+## Notebook archive
+
+Use one full-width article per row. On desktop, place contained cover artwork to the left and article details to the right; on mobile, stack the image above the text. Show the full excerpt, author, publication date, reading time, word count and a clear reading action. An actual changed `updatedAt` may be shown; do not fabricate freshness dates. Homepage and related cards retain their compact grid variant.
+
+Topics are wrapping buttons with a visible selected check and `aria-pressed`, not a native dropdown. Buttons have 44px minimum touch height and visible focus. Keep theme tokens, quiet borders and readable spacing; no extra animation runtime. Search, failure/retry, empty results and archive pagination must remain usable on narrow screens and with reduced motion. Without JavaScript, server-rendered archive links still work.

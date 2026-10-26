@@ -45,6 +45,7 @@ assert(!isPublished({ ...record, date: "2099-01-01" }, "2026-10-26"));
 assert(isPublished(record, "2026-10-26"));
 for (const bad of [
   { ...record, slug: "welcome" },
+  { ...record, slug: "search" },
   { ...record, slug: "../oops" },
   { ...record, status: "public" },
   { ...record, date: "2026-02-30" },

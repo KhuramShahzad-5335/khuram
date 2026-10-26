@@ -30,7 +30,14 @@ export type Post = {
 };
 export type PostSummary = Pick<
   Post,
-  "slug" | "title" | "excerpt" | "category" | "date" | "image" | "imageAlt"
+  | "slug"
+  | "title"
+  | "excerpt"
+  | "category"
+  | "date"
+  | "updatedAt"
+  | "image"
+  | "imageAlt"
 > & { words: number; minutes: number };
 export function wordCount(post: Post) {
   return [
@@ -46,13 +53,15 @@ export function readingMinutes(post: Post) {
   return Math.max(1, Math.ceil(wordCount(post) / 200));
 }
 export function summarizePost(post: Post): PostSummary {
-  const { slug, title, excerpt, category, date, image, imageAlt } = post;
+  const { slug, title, excerpt, category, date, updatedAt, image, imageAlt } =
+    post;
   return {
     slug,
     title,
     excerpt,
     category,
     date,
+    ...(updatedAt ? { updatedAt } : {}),
     image,
     imageAlt,
     words: wordCount(post),
