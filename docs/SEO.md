@@ -2,6 +2,8 @@
 
 This guide describes the current portfolio's search strategy and maintenance requirements. Read it with [deployment instructions](DEPLOYMENT.md), [content publishing](CONTENT.md), and [release validation](VALIDATION.md). Owner instructions take precedence. Technical crawl readiness, confirmed Google indexing, and search performance are separate states.
 
+See [the indexing progress log](INDEXING_PROGRESS.md) for the 29 October 2026 submission campaign, report dates, exclusions and the milestone of at least 33 indexed URLs from the original 64-page sitemap on each engine.
+
 ## Purpose and audience
 
 Help clients find Khuram's development services and project evidence, and help developers find useful articles about problems Khuram has actually solved. Prioritize accurate personal identity, helpful original writing, and a usable site. Do not promise rankings, indexing deadlines, or perfect SEO scores.
