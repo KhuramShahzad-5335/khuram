@@ -3,9 +3,21 @@ import blogMediaRedirects from "./lib/blog-media-redirects.json";
 const config: NextConfig = {
   images: { unoptimized: true },
   trailingSlash: true,
-  redirects: async () => blogMediaRedirects,
+  redirects: async () => [
+    ...blogMediaRedirects,
+    { source: "/pocket/", destination: "/pocket/index.html", permanent: false },
+  ],
   async headers() {
     return [
+      {
+        source: "/pocket/:path*",
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow" },
+          { key: "Referrer-Policy", value: "no-referrer" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-Frame-Options", value: "DENY" },
+        ],
+      },
       {
         source: "/studio/:path*",
         headers: [

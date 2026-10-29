@@ -3,6 +3,30 @@ import { readFile } from "node:fs/promises";
 import { withLocalSite } from "./local-site.mjs";
 
 await withLocalSite(async (base) => {
+  const pocketRedirect = await fetch(base + "/pocket/", { redirect: "manual" });
+  assert.equal(pocketRedirect.status, 307);
+  assert.equal(pocketRedirect.headers.get("location"), "/pocket/index.html");
+  const pocket = await fetch(base + "/pocket/index.html");
+  assert.equal(pocket.status, 200);
+  assert.equal(pocket.headers.get("x-robots-tag"), "noindex, nofollow");
+  const pocketHtml = await pocket.text();
+  assert(pocketHtml.includes("./app.mjs"));
+  assert(
+    !pocketHtml.includes("/_next/"),
+    "Pocket must remain a separate document",
+  );
+  for (const asset of [
+    "app.mjs",
+    "model.mjs",
+    "store.mjs",
+    "pocket.css",
+    "sw.js",
+    "manifest.webmanifest",
+    "icon-192.png",
+    "icon-512.png",
+  ]) {
+    assert.equal((await fetch(base + "/pocket/" + asset)).status, 200, asset);
+  }
   const redirects = JSON.parse(
     await readFile("lib/blog-media-redirects.json", "utf8"),
   );
