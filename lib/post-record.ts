@@ -82,6 +82,32 @@ export function parsePostRecord(value: unknown): PostRecord {
         ),
       };
       if (section.code !== undefined) result.code = text(section.code, "code");
+      if (section.table !== undefined) {
+        const table = object(section.table);
+        const headers = list(table.headers, "table headers").map((cell) =>
+          fieldText(cell, "table heading", 200),
+        );
+        const rows = list(table.rows, "table rows").map((row) =>
+          list(row, "table row").map((cell) =>
+            fieldText(cell, "table cell", 2000),
+          ),
+        );
+        if (
+          headers.length < 2 ||
+          headers.length > 6 ||
+          !rows.length ||
+          rows.length > 40 ||
+          rows.some((row) => row.length !== headers.length)
+        )
+          throw new Error(
+            "Tables need 2–6 columns and 1–40 rows with matching cells",
+          );
+        result.table = {
+          caption: fieldText(table.caption, "table caption", 500),
+          headers,
+          rows,
+        };
+      }
       if (section.links !== undefined)
         result.links = list(section.links, "links").map(link);
       if (section.image !== undefined) {
@@ -97,10 +123,11 @@ export function parsePostRecord(value: unknown): PostRecord {
         raw.status === "published" &&
         !result.paragraphs.length &&
         !result.code &&
+        !result.table &&
         !result.image
       )
         throw new Error(
-          "Each published section needs paragraphs, code, or an image",
+          "Each published section needs paragraphs, code, a table, or an image",
         );
       return result;
     },

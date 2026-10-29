@@ -2,7 +2,17 @@
 
 For AI-assisted editorial standards, the October research collection, and advertising readiness, see [ADSENSE.md](ADSENSE.md). Public readers can inspect `/editorial/` and contact the publisher about corrections. Topic popularity is a research hypothesis until actual search data supports it.
 
-Current publishing uses MongoDB and Compass, approved on 26 October 2026. Follow [BLOG_DATABASE.md](BLOG_DATABASE.md) for credentials, migration, document validation, draft/publication rules, cache timing, images and rollback.
+Before drafting or revising, follow the editorial quality gate, evidence labels, keyword research workflow, and article-brief requirements in [ADSENSE.md](ADSENSE.md#editorial-quality-gate-owner-requirement-29-october-2026). The owner's million-impressions-per-day rule applies to **new topics**, requires daily evidence across a week, and must not prevent quality improvements to existing articles. Do not infer niche demand from a parent keyword's total or claim firsthand testing that was not performed.
+
+Current publishing uses MongoDB with a private studio and Compass, approved on 26 October 2026. Follow [BLOG_DATABASE.md](BLOG_DATABASE.md) for credentials, migration, document validation, draft/publication rules, cache timing, images and rollback. See [KEYWORD_RESEARCH.md](KEYWORD_RESEARCH.md) for dated Google/Bing observations, limitations and topic decisions.
+
+## Tables and visual variety
+
+Use a table for comparisons, evidence ledgers and verification worksheets. Sections support an optional `table` with a descriptive `caption`, 2–6 `headers` and 1–40 `rows` of matching plain-text cells. Published cells and headings must be filled; label unknowns explicitly instead of leaving a blank that could be mistaken for zero. The first column labels rows. The studio includes row/column controls and a preview. Tables render as semantic server HTML with a keyboard-focusable horizontal scroll region on narrow screens. Table text contributes to article and database-summary reading counts.
+
+Prefer topic-specific illustrations over a repeated headline-card template: receipts for cost arithmetic, storyboards for video planning, and state diagrams for approvals. Conceptual covers are not product screenshots, empirical graphs or evidence of firsthand testing; make this clear in alt text/captions. Upload compressed WebP covers to Blob and retain editable originals outside Git. Preserve old Blob objects while backups or saved revisions reference them.
+
+The October 29 revision introduces 30 distinct cover compositions, each 1200×720 and under 26 KB. Content and images refresh through MongoDB/Blob; the table renderer and editor controls require code deployment. Until then, the previous renderer ignores the optional table field. Avoid saving table-bearing articles through an older studio, which cannot preserve that field.
 
 ## Sources and voice
 
@@ -40,7 +50,7 @@ Keep contact details consistent with `lib/site.ts` and homepage phone/WhatsApp l
 
 Keep the `case-study-log` section chronological. For future updates, record the date, deployed revision/URL if known, evidence source, query/page/device/country filters, reporting window, and observations. Distinguish source implementation, live deployment, indexing, and ranking. Do not infer measured traffic gains from design work or replace unknown metrics with zero. Earlier social profile improvements are project history, not a current public profile audit. Update `updatedAt` for meaningful revisions and retain the original publication date and slug.
 
-Section-level `links` in `PostSection` render contextual primary references and related articles. They stay in the server-rendered article and are not included in homepage summaries. The SVG cover has a PNG counterpart for Open Graph/Twitter; the two inline diagrams are conceptual illustrations, not ranking screenshots.
+Section-level `links` in `PostSection` render contextual primary references and related articles. They stay in the server-rendered article and are not included in homepage summaries. Current cover and inline images use uploaded Blob assets. The diagrams are conceptual illustrations, not ranking screenshots.
 
 ## Growing the notebook
 

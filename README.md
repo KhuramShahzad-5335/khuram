@@ -17,6 +17,8 @@ npm run dev
 
 Open http://127.0.0.1:3000. For a production-style preview:
 
+Set `NEXT_PUBLIC_SITE_URL=https://www.khuramshahzad.dev` in your private `.env.local` before a production-style build. This aligns locally generated canonical URLs and crawl directives with production. Without it, the deliberate safety fallback uses `example.com` and `noindex`; it does not indicate a problem with the deployed site. Keep Vercel Preview deployments non-indexable.
+
 ```sh
 npm run check:config
 npm run typecheck
@@ -69,6 +71,8 @@ The homepage previews three recent articles. The notebook has server-rendered ar
 - [MongoDB setup, migration, Compass publishing and rollback](docs/BLOG_DATABASE.md)
 - [Deployment, indexing, and launch checks](docs/DEPLOYMENT.md)
 - [SEO strategy, live condition, and maintenance](docs/SEO.md)
+- [Google/Bing keyword evidence and topic decisions](docs/KEYWORD_RESEARCH.md)
+- [Article quality standards and AdSense preparation](docs/ADSENSE.md)
 - [Release validation and limitations](docs/VALIDATION.md)
 - [Agent handoff instructions](AGENTS.md)
 
@@ -94,7 +98,13 @@ Typography settings live in `lib/typography.ts`; the editor provides six local p
 
 ## IndexNow and search discovery
 
-**Latest owner-reported result — 15 October 2026:** the command verified the live ownership file and submitted 26 canonical URLs. IndexNow returned **HTTP 202**: URLs received, with search-engine key validation still pending. This is submission evidence, not confirmed crawling, indexing, rankings, or traffic.
+**Latest verified result — 29 October 2026:** at the owner's explicit request, the helper submitted the complete live sitemap: **64 canonical URLs**, receiving **HTTP 200** from `https://api.indexnow.org/indexnow`. This was a one-time full submission; future notifications should target new or meaningfully changed pages.
+
+Earlier that day, the live UTF-8 ownership file was verified and a POST for the 25 new research articles also received HTTP 200. Bing's IndexNow dashboard listed those 25 article URLs, source Self, submitted at 7:38 PM Asia/Karachi. All four setup steps were confirmed for that batch. The subsequent full batch has API acceptance confirmed; its dashboard count was not separately checked. Neither receipt proves crawling, indexing, rankings, or traffic.
+
+Earlier, on 15 October, the owner reported HTTP 202 for 26 URLs (received with key validation pending). Keep the existing key; a fresh key is not required for each submission.
+
+**Publishing is not automatically connected to IndexNow.** Studio/Compass publishing updates the site's discovery endpoints through cache regeneration, but an IndexNow notification still requires the manual command below after the article appears in the live sitemap. A sitemap submission or a Webmaster Tools "Request indexing" action is separate from this API POST.
 
 1. Keep the verification file defined by `indexnow.config.json` deployed at its existing public URL. Do not remove or regenerate it after submission.
 2. Add or verify the site in [Bing Webmaster Tools](https://www.bing.com/webmasters/) and submit [the production sitemap](https://www.khuramshahzad.dev/sitemap.xml).

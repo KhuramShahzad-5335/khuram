@@ -11,6 +11,7 @@ import { getPostIndex } from "@/lib/post-index";
 import { ProfileAvatar } from "@/components/profile-avatar";
 import { BlogCard } from "@/components/blog-card";
 import { socialImage } from "@/lib/article-images";
+import { ArticleTable } from "@/components/article-table";
 export function generateStaticParams() {
   return [];
 }
@@ -155,6 +156,7 @@ export default async function Page({
                   <code>{s.code}</code>
                 </pre>
               )}
+              {s.table && <ArticleTable table={s.table} />}
               {s.image && (
                 <figure>
                   <Image

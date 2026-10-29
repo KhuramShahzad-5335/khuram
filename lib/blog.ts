@@ -1,9 +1,15 @@
 /** Small browser-safe types/helpers; article bodies remain on the server; lib/posts.ts is the migration snapshot. */
+export type PostTable = {
+  caption: string;
+  headers: string[];
+  rows: string[][];
+};
 export type PostSection = {
   id: string;
   title: string;
   paragraphs: string[];
   code?: string;
+  table?: PostTable;
   links?: { title: string; url: string }[];
   image?: {
     src: string;
@@ -42,7 +48,13 @@ export type PostSummary = Pick<
 export function wordCount(post: Post) {
   return [
     post.intro,
-    ...post.sections.flatMap((s) => [s.title, ...s.paragraphs]),
+    ...post.sections.flatMap((s) => [
+      s.title,
+      ...s.paragraphs,
+      ...(s.table
+        ? [s.table.caption, ...s.table.headers, ...s.table.rows.flat()]
+        : []),
+    ]),
   ]
     .join(" ")
     .trim()

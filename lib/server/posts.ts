@@ -46,6 +46,34 @@ const prose = {
                 in: { $concat: ["$$value", " ", "$$this"] },
               },
             },
+            " ",
+            { $ifNull: ["$$this.table.caption", ""] },
+            {
+              $reduce: {
+                input: { $ifNull: ["$$this.table.headers", []] },
+                initialValue: "",
+                in: { $concat: ["$$value", " ", "$$this"] },
+              },
+            },
+            {
+              $reduce: {
+                input: { $ifNull: ["$$this.table.rows", []] },
+                initialValue: "",
+                in: {
+                  $concat: [
+                    "$$value",
+                    " ",
+                    {
+                      $reduce: {
+                        input: "$$this",
+                        initialValue: "",
+                        in: { $concat: ["$$value", " ", "$$this"] },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
           ],
         },
       },

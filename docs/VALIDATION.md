@@ -1,5 +1,15 @@
 # Release validation
 
+## Article quality and tables - 29 October 2026
+
+All 30 published articles received topic-specific explanations, practical examples and comparison tables. Thirty distinct conceptual cover illustrations were uploaded to Blob (482,126 bytes combined; largest 25,812 bytes). An external pre-edit backup and per-article saved versions were retained. Original slugs and publication dates were preserved; modification dates reflect the revision.
+
+`npm run check` passed, including the production build and HTTP audit of 64 public routes and 84 internal references. `npm run blog:validate` passed for all 30 published records and their images. Table schema checks reject malformed dimensions and invalid cells; archive and article word counts include table content consistently.
+
+HTTP checks confirmed all 30 revised bodies and covers on production. All 30 tables rendered on the updated local production build. At 390px, a table stayed within the article, scrolled horizontally by keyboard, and survived reload with content immediately visible. Full reduced-motion checks and authenticated manual Studio editing were not repeated in this pass; table editing passed type, schema and build checks.
+
+**Deployment required:** production still needs the updated renderer and Studio controls. Until then, tables are saved in MongoDB but are not displayed publicly. Avoid saving these articles through the older deployed Studio, which does not preserve the new table field. Push and deploy before further editing. No deployment, AdSense approval, traffic gain or new indexing outcome is claimed by these checks.
+
 ## Current local baseline - 26 October 2026
 
 The site uses server-backed Next.js, MongoDB articles and public Blob images. This baseline supersedes earlier static-export and loader-era checks. The owner-removed loader, art gallery and games must remain absent.

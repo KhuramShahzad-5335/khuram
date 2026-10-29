@@ -58,6 +58,8 @@ The private studio is now the recommended publishing interface. Run `npm run blo
 
 ## Caching and publication visibility
 
+Optional section tables use `{ caption, headers: string[], rows: string[][] }`. Validation limits tables to 2–6 columns and 1–40 equal-width rows, with plain text only. Captions, headings and cells are required for published posts; drafts can retain empty cells. The public page and studio preview share the semantic renderer. Table content stays server-side on public routes and contributes to reading counts without sending full articles to archive clients. Deploy the matching parser/renderer/editor before relying on these fields in the public UI; older deployments ignore tables and an older studio save can discard them.
+
 Studio publishing additionally invalidates affected paths immediately for regeneration on their next request. Compass edits use the fallback TTL described below. This site uses the documented Next.js ISR model without Cache Components. Page and discovery endpoints have `revalidate = 60`; React `cache()` deduplicates database reads within a server render, rather than retaining a second long-lived database cache. The homepage, notebook, article pages, archive pagination, search JSON, RSS, and sitemap all use the same published-content rules.
 
 After a cached page is 60 seconds old, the next request can receive the old HTML while regeneration runs. A following request receives the update after regeneration succeeds. This is request-driven, **not a promise of publication exactly 60 seconds after saving**. New slugs and archive pages can render on demand without rebuilding. Each new search/filter request reads current published summaries; archive pages retain ISR behavior.

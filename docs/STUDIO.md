@@ -16,15 +16,16 @@ There is one owner login and the same MongoDB user for all operations; no regist
 
 - Choose New article or an existing article in the list.
 - Set the title and unique lowercase hyphenated URL slug. Existing saved URLs are locked to preserve SEO and incoming links.
-- Add the summary/SEO description, category, publication date, cover and alt text, introduction, and sections. Each section has a heading, unique anchor, paragraphs, optional code, optional image and links.
+- Add the summary/SEO description, category, publication date, cover and alt text, introduction, and sections. Each section has a heading, unique anchor, paragraphs, optional code, a comparison table, image and links.
+- Choose Add comparison table to enter a caption, column headings and cells. Add/remove rows or columns with the controls; 2–6 columns and 1–40 rows are supported. The first column labels rows. Draft cells may be empty, but all headings, cells and the caption must be filled before publishing. Preview uses the same semantic table as the public article.
 - Separate paragraphs with blank lines. This editor uses plain text fields, not HTML or Markdown. Sources have separate label and URL fields.
 - Save draft keeps an unfinished article private. A title, valid slug, date and structurally valid fields are required. Blank body fields are allowed until publishing.
 - Preview renders the current unsaved article inside the protected editor. It does not create a public draft URL.
 - Publish article validates the complete document, saves it and invalidates homepage, notebook, article, archive, search, sitemap and RSS caches. Those routes regenerate on their next request. Future-dated publishing is rejected; save it as a draft instead.
 - Publish changes updates the revision date. Unpublish to draft removes the article from public routes after cache regeneration.
-- Changes are saved only when a save/publish button succeeds. Closing or switching articles warns about unsaved work; there is no background autosave or version-history recovery.
+- Changes are saved only when a save/publish button succeeds. Closing or switching articles warns about unsaved work; there is no background autosave. Successful updates retain up to ten previous versions for studio recovery; keep separate database backups as well.
 - Concurrent studio edits use a revision check; a stale save is rejected rather than replacing another studio save. Do not edit the same document in Compass simultaneously: Compass does not increment the studio revision.
-- The sidebar currently shows the newest 200 documents. For larger archives, add authenticated pagination before relying on the sidebar as a complete inventory.
+- The article list uses authenticated pagination, with 20 summaries per page and full content loaded only when selected.
 
 ## Image uploads with Vercel Blob
 

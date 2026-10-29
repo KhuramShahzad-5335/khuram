@@ -58,7 +58,11 @@ For favicon, site-name, and sitelink follow-up, see the 14 October search-appear
 
 The helper reads live robots and sitemap, refuses non-indexable/mismatched-origin sites, duplicates are removed, and unrelated hosts/fragments/query URLs/drafts are rejected. HTTP 200 means received; 202 means received with key validation pending. Neither proves crawling, indexing, visitors or rankings. A 403 needs key-file verification; a 429 needs backoff. Do not attach this command to every build or repeatedly submit the full sitemap. IndexNow notifies participating engines (including Bing); keep Google Search Console and the sitemap workflow separately.
 
-See [official IndexNow documentation](https://www.indexnow.org/documentation). Submission is pending until the ownership file is deployed and a real accepted response is recorded.
+See [official IndexNow documentation](https://www.indexnow.org/documentation) and [Bing's four-step setup](https://www.bing.com/indexnow/getstarted). On 29 October 2026, the key file was verified live and one POST containing the 25 newly published research articles returned HTTP 200 from the global endpoint. Steps 1–3 (key, hosting, submission) are confirmed. Step 4 is also confirmed: Bing Webmaster Tools subsequently listed all 25 URLs, source Self, submitted at 7:38 PM Asia/Karachi. Its earlier onboarding screen was replaced by the receipt dashboard. Receipt is not proof that the pages have been crawled or indexed.
+
+The studio and Compass workflows do not send IndexNow notifications automatically. After publication and live sitemap regeneration, run the helper with only the new or meaningfully changed URLs. Keep Google Search Console checks separate, and avoid repeated submissions merely to make Bing's dashboard change.
+
+Later on 29 October, the owner explicitly requested full coverage. A single follow-up POST submitted all **64** URLs in the live sitemap and returned **HTTP 200**. This establishes API acceptance for the full batch; its dashboard count was not separately verified. Resume targeted notifications after this one-time full submission.
 
 ### Verification file returns 404
 

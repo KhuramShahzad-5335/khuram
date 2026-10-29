@@ -10,6 +10,24 @@ Use relevant terms naturally: Khuram Shahzad, software developer in Lahore, Reac
 
 ## Current live condition
 
+### Verified 29 October 2026
+
+This audit supersedes the older live-status table below. Production is Vercel commit `98627bf` (`added more blogs`), matching local HEAD; Vercel reports Ready. Its overview showed 0% errors in the displayed six-hour window, not a guarantee about historical uptime.
+
+- Live `/robots.txt` returns HTTP 200, allows `/` for all crawlers, and declares `https://www.khuramshahzad.dev/sitemap.xml`. `/robot.txt` (singular) is not the correct endpoint.
+- The sitemap contains 64 canonical URLs, including all 30 published articles. All 64 URLs returned HTTP 200, matching canonical links, and no public-page `noindex` directives or `X-Robots-Tag` headers in this audit. RSS includes all 30 articles. The previously observed undersized sitemap is no longer present.
+- Google Search Console's Sitemaps report says Success, last read 29 October, with 64 discovered URLs. Its Page indexing overview is older (last update 23 October): 16 indexed and 14 excluded. These totals predate the new article batch and must not be treated as the current per-URL state.
+- The three redirect exclusions are the HTTP/non-www homepage variants, which correctly redirect to the canonical HTTPS www address. The one crawled-but-not-indexed URL is `/sitemap.xml`, not an article; it does not need to appear as a search result. Ten discovered-but-not-indexed examples are five experiments and five projects, all with no crawl date in that report.
+- A live Google inspection of `/projects/dula/` passed: crawl allowed, successful fetch, indexing allowed, and correct declared canonical. Its index inspection still reported unknown to Google, despite appearing in the older discovery list. Discovery reports and inspection are not perfectly synchronized; a passing live test is eligibility, not proof of indexing.
+- `/blog/ai-agent-costs-tokens-credits-budget/` is confirmed indexed in Google URL Inspection. Googlebot smartphone crawled it on 27 October and selected the inspected URL as canonical. The inspection's sitemap field displayed a temporary processing error, while the separate sitemap report was successful; this did not prevent that article from being indexed.
+- Bing's saved homepage inspection reported a redirect from its 25 October crawl. Its 29 October live test instead said the URL can be indexed and found no SEO/GEO issues. A homepage indexing request was accepted. Bing's sitemap initially showed 26 URLs from 15 October; during the audit it changed to Processing with a 29 October submission date. Wait for processing before treating its old count as current. Bing's indexed-URL explorer returned no data; that alone does not establish an exact indexed-page total.
+- Bing knew the AI agent costs article from 27 October but reported Discovered but not crawled. Its live test passed indexability and flagged one title-length issue: the generated title is 95 characters including the author suffix. Shortening this title is a search-presentation improvement, not a demonstrated crawl blocker; Google has already indexed the same URL. Bing's markup insights failed to load, so structured-data eligibility was not confirmed through that panel.
+- Local `.env.local` was missing `NEXT_PUBLIC_SITE_URL`, so a fresh local build would have used the safe non-indexable fallback. The public production origin was added locally without changing secrets. Production already had the correct value. Do not remove the preview/missing-configuration safety guard.
+
+Next checks: inspect priority article URLs individually, let Bing finish sitemap processing, and revisit Google's overview after its report date advances. Do not repeatedly validate intentional redirects, request indexing of the XML sitemap as a webpage, or submit all unchanged URLs in a loop. Improve unfinished case studies with factual, original detail, but do not label content quality as the proven cause of these exclusions. No universal indexing deadline is established.
+
+### Historical check: 13 October 2026
+
 Public HTTP checks on **13 October 2026** verified:
 
 | Item                                 | Observed condition                                                                                                                                |

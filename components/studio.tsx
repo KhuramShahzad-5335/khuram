@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import type { PostRecord } from "@/lib/post-record";
 import { wordCount, readingMinutes } from "@/lib/blog";
 import { StudioImageUpload } from "./studio-image-upload";
+import { ArticleTable } from "./article-table";
+import { TableEditor } from "./studio/table-editor";
 
 import type { Article, ArticleCard } from "@/lib/studio/types";
 import { Field, LinksEditor, inputClass } from "./studio/fields";
@@ -506,6 +508,7 @@ export function Studio({
                         <code>{s.code}</code>
                       </pre>
                     )}
+                    {s.table && <ArticleTable table={s.table} />}
                     {s.image && (
                       <figure>
                         <img
@@ -663,6 +666,10 @@ export function Studio({
                         multiline
                         value={section.code || ""}
                         onChange={(code) => edit({ code: code || undefined })}
+                      />
+                      <TableEditor
+                        table={section.table}
+                        onChange={(table) => edit({ table })}
                       />
                       <details>
                         <summary className="cursor-pointer text-sm font-medium">
